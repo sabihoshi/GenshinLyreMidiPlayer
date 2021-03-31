@@ -1,0 +1,45 @@
+﻿<Window 
+    x:Class="GenshinLyreMidiPlayer.Views.MainWindowView"
+    xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+    Title="MainWindowView" Height="450" Width="250"
+        
+    xmlns:ui="http://schemas.modernwpf.com/2019"
+    xmlns:s="https://github.com/canton7/Stylet"
+    ui:WindowHelper.UseModernWindowStyle="True">
+
+    <Grid Margin="10">
+        <Grid.RowDefinitions>
+            <RowDefinition Height="Auto" />
+            <RowDefinition Height="Auto" />
+            <RowDefinition Height="Auto" />
+
+            <RowDefinition Height="*" />
+            <RowDefinition Height="Auto" />
+        </Grid.RowDefinitions>
+
+        <Grid Grid.Row="0">
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition Width="Auto" />
+                <ColumnDefinition Width="*" />
+                <ColumnDefinition Width="Auto" />
+            </Grid.ColumnDefinitions>
+
+            <Button Command="{s:Action Some}">
+                <ui:FontIcon Glyph="&#xE8E5;" />
+            </Button>
+        </Grid>
+
+        <Grid Grid.Row="1"
+              Margin="10">
+            <ui:SimpleStackPanel 
+                Orientation="Horizontal"
+                HorizontalAlignment="Center">
+                <Button><ui:FontIcon Glyph="&#xE892;" /></Button>
+                <Button><ui:FontIcon Glyph="&#xEDB5;" /></Button>
+                <Button><ui:FontIcon Glyph="&#xE893;" /></Button>
+            </ui:SimpleStackPanel>
+        </Grid>
+    </Grid>
+
+</Window>

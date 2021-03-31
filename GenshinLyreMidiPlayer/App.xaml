@@ -1,0 +1,40 @@
+﻿<Application x:Class="GenshinLyreMidiPlayer.App"
+             xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:local="clr-namespace:GenshinLyreMidiPlayer"
+             xmlns:s="https://github.com/canton7/Stylet"
+             xmlns:ui="http://schemas.modernwpf.com/2019">
+    <Application.Resources>
+        <ResourceDictionary>
+            <ResourceDictionary.MergedDictionaries>
+
+                <s:ApplicationLoader>
+                    <s:ApplicationLoader.Bootstrapper>
+                        <local:Bootstrapper />
+                    </s:ApplicationLoader.Bootstrapper>
+                </s:ApplicationLoader>
+
+                <ui:ThemeResources />
+                <ui:XamlControlsResources />
+                <ui:IntellisenseResources Source="/ModernWpf;component/DesignTime/DesignTimeResources.xaml" />
+
+            </ResourceDictionary.MergedDictionaries>
+
+            <Style TargetType="ui:SimpleStackPanel">
+                <Setter Property="Spacing" Value="12" />
+                <Style.Resources>
+                    <Style TargetType="ComboBox" BasedOn="{StaticResource {x:Type ComboBox}}">
+                        <Setter Property="MinWidth" Value="200" />
+                    </Style>
+                    <Style TargetType="TextBox" BasedOn="{StaticResource {x:Type TextBox}}">
+                        <Setter Property="MinWidth" Value="200" />
+                    </Style>
+                    <Style TargetType="DatePicker" BasedOn="{StaticResource {x:Type DatePicker}}">
+                        <Setter Property="MinWidth" Value="200" />
+                    </Style>
+                </Style.Resources>
+            </Style>
+
+        </ResourceDictionary>
+    </Application.Resources>
+</Application>
