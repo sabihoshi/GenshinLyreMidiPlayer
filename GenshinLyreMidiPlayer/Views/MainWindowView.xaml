@@ -10,9 +10,11 @@
     xmlns:viewModels="clr-namespace:GenshinLyreMidiPlayer.ViewModels"
 
     xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+    xmlns:genshinLyreMidiPlayer="clr-namespace:GenshinLyreMidiPlayer"
     d:DataContext="{d:DesignInstance Type=viewModels:MainWindowViewModel}"
 
-    Title="Genshin Lyre MIDI Player" Height="800" Width="400"
+    Title="Genshin Lyre MIDI Player"
+    Height="800" Width="435" MinWidth="435"
     ui:WindowHelper.UseModernWindowStyle="True">
 
     <Grid Margin="10">
@@ -60,8 +62,7 @@
             </Button>
         </ui:SimpleStackPanel>
 
-        <Grid
-            Row="2" Margin="10">
+        <Grid Row="2" Margin="10, 0">
             <Grid.ColumnDefinitions>
                 <ColumnDefinition Width="Auto" />
                 <ColumnDefinition Width="*" />
@@ -70,8 +71,7 @@
             <TextBlock Grid.Column="0" VerticalAlignment="Center"
                        Text="{Binding CurrentTime}" />
             <Slider
-                Grid.Column="1" Margin="5, 0"
-                HorizontalAlignment="Stretch"
+                Grid.Column="1" Padding="5, 0"
                 Value="{Binding SongSlider}"
                 Maximum="{Binding Path=MaximumTime}" />
             <TextBlock Grid.Column="2" VerticalAlignment="Center"
@@ -80,7 +80,7 @@
 
         <GroupBox Grid.Row="3" Header="MIDI Tracks">
             <ui:SimpleStackPanel>
-                <Separator Margin="0,-20,0,0" />
+                <Separator />
                 <ScrollViewer>
                     <ItemsControl ItemsSource="{Binding MidiTracks}">
                         <ItemsControl.ItemTemplate>
@@ -98,7 +98,7 @@
 
         <GroupBox Grid.Row="5" Header="Settings">
             <ui:SimpleStackPanel>
-                <Separator Margin="0,-20,0,0" />
+                <Separator />
                 <StackPanel Orientation="Horizontal">
                     <ui:ToggleSwitch
                         Header="Transpose"
@@ -110,9 +110,9 @@
                         Value="{Binding KeyOffset}" />
                 </StackPanel>
 
-                <StackPanel Orientation="Horizontal">
+                <ui:SimpleStackPanel Orientation="Horizontal">
                     <GroupBox Header="MIDI Instrument">
-                        <ComboBox 
+                        <ComboBox
                             ItemsSource="{Binding MidiInputs}"
                             SelectedItem="{Binding SelectedMidiInput}"
                             DisplayMemberPath="DeviceName" />
@@ -120,17 +120,26 @@
 
                     <Button Command="{s:Action RefreshDevices}"
                             Background="Transparent"
-                            Margin="10,35,0,0"> 
-                        <ui:FontIcon Glyph="&#xE72C;"/>
+                            Margin="0,35,0,0">
+                        <ui:FontIcon Glyph="&#xE72C;" />
                     </Button>
-                </StackPanel>
+                </ui:SimpleStackPanel>
 
-                <GroupBox Header="Speed">
-                    <ComboBox
-                        ItemsSource="{Binding MidiSpeeds}"
-                        SelectedItem="{Binding SelectedSpeed}"
-                        DisplayMemberPath="SpeedName" />
-                </GroupBox>
+                <ui:SimpleStackPanel Orientation="Horizontal">
+                    <GroupBox Header="Speed">
+                        <ComboBox
+                            ItemsSource="{Binding MidiSpeeds}"
+                            SelectedItem="{Binding SelectedSpeed}"
+                            DisplayMemberPath="SpeedName" />
+                    </GroupBox>
+
+                    <GroupBox Header="Layout">
+                        <ComboBox
+                            ItemsSource="{x:Static genshinLyreMidiPlayer:Keyboard.LayoutNames}"
+                            SelectedItem="{Binding SelectedLayout}"
+                            DisplayMemberPath="Value" />
+                    </GroupBox>
+                </ui:SimpleStackPanel>
             </ui:SimpleStackPanel>
         </GroupBox>
     </Grid>

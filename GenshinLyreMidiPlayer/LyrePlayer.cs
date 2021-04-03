@@ -3,7 +3,6 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Runtime.InteropServices;
 using WindowsInput;
-using WindowsInput.Native;
 using Melanchall.DryWetMidi.Core;
 
 namespace GenshinLyreMidiPlayer
@@ -11,35 +10,34 @@ namespace GenshinLyreMidiPlayer
     public class LyrePlayer
     {
         public const string GenshinWindowName = "Genshin Impact";
-
-        private static readonly Dictionary<int, VirtualKeyCode> LyreNotes = new Dictionary<int, VirtualKeyCode>
-        {
-            {48, VirtualKeyCode.VK_Z}, // C3
-            {50, VirtualKeyCode.VK_X}, // D3
-            {52, VirtualKeyCode.VK_C}, // E3
-            {53, VirtualKeyCode.VK_V}, // F3
-            {55, VirtualKeyCode.VK_B}, // G3
-            {57, VirtualKeyCode.VK_N}, // A3
-            {59, VirtualKeyCode.VK_M}, // B3
-
-            {60, VirtualKeyCode.VK_A}, // C4
-            {62, VirtualKeyCode.VK_S}, // D4
-            {64, VirtualKeyCode.VK_D}, // E4
-            {65, VirtualKeyCode.VK_F}, // F4
-            {67, VirtualKeyCode.VK_G}, // G4
-            {69, VirtualKeyCode.VK_H}, // A4
-            {71, VirtualKeyCode.VK_J}, // B4
-
-            {72, VirtualKeyCode.VK_Q}, // C5
-            {74, VirtualKeyCode.VK_W}, // D5
-            {76, VirtualKeyCode.VK_E}, // E5
-            {77, VirtualKeyCode.VK_R}, // F5
-            {79, VirtualKeyCode.VK_T}, // G5
-            {81, VirtualKeyCode.VK_Y}, // A5
-            {83, VirtualKeyCode.VK_U}  // B5
-        };
-
         private static readonly IInputSimulator Input = new InputSimulator();
+
+        private static readonly IReadOnlyList<int> LyreNotes = new List<int>
+        {
+            48, // C3
+            50, // D3
+            52, // E3
+            53, // F3
+            55, // G3
+            57, // A3
+            59, // B3
+
+            60, // C4
+            62, // D4
+            64, // E4
+            65, // F4
+            67, // G4
+            69, // A4
+            71, // B4
+
+            72, // C5
+            74, // D5
+            76, // E5
+            77, // F5
+            79, // G5
+            81, // A5
+            83  // B5
+        };
 
         [DllImport("user32.dll")]
         public static extern IntPtr FindWindow(string className, string windowTitle);
@@ -61,13 +59,15 @@ namespace GenshinLyreMidiPlayer
         /// <param name="note"> The note to be played.</param>
         /// <param name="transposeNotes"> Should we transpose unplayable notes?.</param>
         /// <param name="keyOffset">Set how much the scale is offset</param>
-        public static bool PlayNote(NoteOnEvent note, bool transposeNotes, int keyOffset)
+        /// <param name="selectedLayout"></param>
+        public static bool PlayNote(NoteOnEvent note, bool transposeNotes, int keyOffset,
+            Keyboard.Layout selectedLayout)
         {
             if (!IsWindowFocused(GenshinWindowName))
                 return false;
 
             var noteId = note.NoteNumber - keyOffset;
-            if (!LyreNotes.ContainsKey(noteId))
+            if (!LyreNotes.Contains(noteId))
             {
                 if (transposeNotes)
                     noteId = TransposeNote(noteId);
@@ -78,7 +78,7 @@ namespace GenshinLyreMidiPlayer
                 }
             }
 
-            PlayNote(noteId);
+            PlayNote(noteId, selectedLayout);
             return true;
         }
 
@@ -86,21 +86,21 @@ namespace GenshinLyreMidiPlayer
         {
             while (true)
             {
-                if (LyreNotes.ContainsKey(noteId))
+                if (LyreNotes.Contains(noteId))
                     return noteId;
 
-                if (noteId < LyreNotes.Keys.First())
+                if (noteId < LyreNotes.First())
                     noteId += 12;
-                else if (noteId > LyreNotes.Keys.Last())
+                else if (noteId > LyreNotes.Last())
                     noteId -= 12;
                 else
                     noteId++;
             }
         }
 
-        public static void PlayNote(int noteId)
+        public static void PlayNote(int noteId, Keyboard.Layout selectedLayout)
         {
-            var key = LyreNotes[noteId];
+            var key = Keyboard.GetLayout(selectedLayout)[noteId];
             Input.Keyboard.KeyPress(key);
         }
 
