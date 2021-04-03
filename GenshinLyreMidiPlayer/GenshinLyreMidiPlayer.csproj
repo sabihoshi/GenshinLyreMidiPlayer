@@ -6,6 +6,8 @@
     <UseWPF>true</UseWPF>
     <StartupObject>GenshinLyreMidiPlayer.App</StartupObject>
     <ApplicationManifest>app.manifest</ApplicationManifest>
+    <Version>1.1.1</Version>
+    <ApplicationIcon>item_windsong_lyre.ico</ApplicationIcon>
   </PropertyGroup>
 
   <ItemGroup>
