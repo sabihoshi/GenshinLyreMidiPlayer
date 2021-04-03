@@ -14,7 +14,6 @@ namespace GenshinLyreMidiPlayer.ViewModels
 {
     public class MainWindowViewModel : Screen, IHandle<MidiTrackModel>
     {
-        private TrackChunk _firstTrack;
         private bool _ignoreSliderChange;
         private int _keyOffset;
         private MidiFile _midiFile;
@@ -30,20 +29,6 @@ namespace GenshinLyreMidiPlayer.ViewModels
         }
 
         public BindableCollection<MidiInputModel> MidiInputs { get; set; }
-
-        public BindableCollection<MidiSpeedModel> MidiSpeeds { get; set; } = new BindableCollection<MidiSpeedModel>
-        {
-            new MidiSpeedModel("0.25", 0.25),
-            new MidiSpeedModel("0.5", 0.5),
-            new MidiSpeedModel("0.75", 0.75),
-            new MidiSpeedModel("Normal", 1),
-            new MidiSpeedModel("1.25", 1.25),
-            new MidiSpeedModel("1.5", 1.5),
-            new MidiSpeedModel("1.75", 1.75),
-            new MidiSpeedModel("2", 2)
-        };
-
-        public BindableCollection<MidiTrackModel> MidiTracks { get; set; } = new BindableCollection<MidiTrackModel>();
 
         public bool TransposeNotes { get; set; } = true;
 
@@ -140,6 +125,20 @@ namespace GenshinLyreMidiPlayer.ViewModels
             set => SetAndNotify(ref _keyOffset, Math.Clamp(value, MinOffset, MaxOffset));
         }
 
+        public List<MidiSpeedModel> MidiSpeeds { get; set; } = new List<MidiSpeedModel>
+        {
+            new MidiSpeedModel("0.25x", 0.25),
+            new MidiSpeedModel("0.5x", 0.5),
+            new MidiSpeedModel("0.75x", 0.75),
+            new MidiSpeedModel("Normal", 1),
+            new MidiSpeedModel("1.25x", 1.25),
+            new MidiSpeedModel("1.5x", 1.5),
+            new MidiSpeedModel("1.75x", 1.75),
+            new MidiSpeedModel("2x", 2)
+        };
+
+        public List<MidiTrackModel> MidiTracks { get; set; } = new List<MidiTrackModel>();
+
         public MidiInputModel SelectedMidiInput { get; set; }
 
         public MidiSpeedModel SelectedSpeed { get; set; }
@@ -174,24 +173,20 @@ namespace GenshinLyreMidiPlayer.ViewModels
                 return;
 
             CloseFile();
-            MidiTracks.Clear();
 
-            SongName = Path.GetFileNameWithoutExtension(openFileDialog.FileName);
-
+            SongName  = Path.GetFileNameWithoutExtension(openFileDialog.FileName);
             _midiFile = MidiFile.Read(openFileDialog.FileName);
-
-            CurrentTime = "0:00";
-            UpdateSlider(0);
-
             TimeSpan duration = _midiFile.GetDuration<MetricTimeSpan>();
+
+            UpdateSlider(0);
+            CurrentTime = "0:00";
             TotalTime   = duration.ToString("m\\:ss");
             MaximumTime = duration.TotalSeconds;
 
-            var chunks = _midiFile.GetTrackChunks().ToList();
-            _firstTrack = chunks.FirstOrDefault();
-            _midiFile.Chunks.Remove(_firstTrack);
-
-            MidiTracks.AddRange(chunks.Select(t => new MidiTrackModel(t)));
+            MidiTracks = _midiFile
+                .GetTrackChunks()
+                .Select(t => new MidiTrackModel(t))
+                .ToList();
             MidiTracks.First().IsChecked = true;
         }
 
@@ -245,7 +240,6 @@ namespace GenshinLyreMidiPlayer.ViewModels
                 }
 
                 _midiFile.Chunks.Clear();
-                _midiFile.Chunks.Add(_firstTrack);
                 _midiFile.Chunks.AddRange(MidiTracks
                     .Where(t => t.IsChecked)
                     .Select(t => t.Track));

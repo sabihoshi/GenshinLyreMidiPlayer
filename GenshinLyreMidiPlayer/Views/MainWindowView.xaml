@@ -106,9 +106,8 @@
                         IsOn="{Binding TransposeNotes}" />
 
                     <ui:NumberBox
-                        Header="{Binding Key}"
-                        SpinButtonPlacementMode="Compact"
-                        Minimum="-46" Maximum="37"
+                        Header="{Binding Key}" SpinButtonPlacementMode="Compact"
+                        Minimum="{Binding MinOffset}" Maximum="{Binding MaxOffset}"
                         Value="{Binding KeyOffset}" />
 
                 </StackPanel>
