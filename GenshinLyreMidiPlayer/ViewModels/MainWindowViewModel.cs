@@ -121,8 +121,6 @@ namespace GenshinLyreMidiPlayer.ViewModels
             }
         }
 
-        public IEnumerable<MidiTrackModel> MidiTracks { get; set; }
-
         public int MinOffset => KeyOffsets.Keys.Min();
 
         public int MaxOffset => KeyOffsets.Keys.Max();
@@ -144,6 +142,8 @@ namespace GenshinLyreMidiPlayer.ViewModels
             new MidiSpeedModel("1.75x", 1.75),
             new MidiSpeedModel("2x", 2)
         };
+
+        public List<MidiTrackModel> MidiTracks { get; set; } = new List<MidiTrackModel>();
 
         public MidiInputModel SelectedMidiInput
         {
@@ -208,7 +208,8 @@ namespace GenshinLyreMidiPlayer.ViewModels
 
             MidiTracks = _midiFile
                 .GetTrackChunks()
-                .Select(t => new MidiTrackModel(t));
+                .Select(t => new MidiTrackModel(t))
+                .ToList();
             MidiTracks.First().IsChecked = true;
         }
 
@@ -222,8 +223,8 @@ namespace GenshinLyreMidiPlayer.ViewModels
                 _playback = null;
             }
 
-            _midiFile  = null;
-            MidiTracks = Enumerable.Empty<MidiTrackModel>();
+            _midiFile = null;
+            MidiTracks.Clear();
 
             PlayPauseIcon = PlayIcon;
             SongName      = string.Empty;
