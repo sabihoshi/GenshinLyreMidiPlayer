@@ -1,8 +1,8 @@
 # Genshin Wingsong Lyre Midi Player
 
-A MIDI to key player made using C# and WPF.
+A MIDI to key player made using C# and WPF using Windows Fluent design.
 
-![GenshinLyreMidiPlayer_2021-04-03_09-40-43](https://user-images.githubusercontent.com/25006819/113464637-c3f02a80-9460-11eb-838c-3416df611754.png)
+![2021-04-03_13-59-35](https://user-images.githubusercontent.com/25006819/113470027-f4e25680-9484-11eb-9bcd-a0f26f647610.png)
 
 ## How to install
 
@@ -14,13 +14,13 @@ A MIDI to key player made using C# and WPF.
 
 ## Features
 
-* You can play multiple tracks at the same time.
-* You can enable transpose to transpose notes, otherwise it will skip the notes entirely.
-* Written in C# WPF with a modern WinUI design.
+* The ability to change the key. By default it is keyed to C major.
+* You can play multiple tracks of a MIDI file at the same time.
+* You can enable transposing of notes, otherwise it will skip the notes entirely.
+* Written in C# WPF with modern fluent design.
 
 ## Upcoming
 
-* The ability to change the key. It currently is in C major
 * Play using your own MIDI Input Device
   - If you have your own MIDI instrument, this will let you play directly to the Genshin Lyre
 
