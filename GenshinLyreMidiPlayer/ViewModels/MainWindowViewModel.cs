@@ -27,11 +27,7 @@ namespace GenshinLyreMidiPlayer.ViewModels
             SelectedSpeed = MidiSpeeds[3];
         }
 
-        private static string PlayIcon => "\xEDB5";
-
-        private static string PauseIcon => "\xEDB4";
-
-        public BindableCollection<MidiTrackModel> MidiTracks { get; set; } = new BindableCollection<MidiTrackModel>();
+        public BindableCollection<MidiInputModel> MidiInputs { get; set; }
 
         public BindableCollection<MidiSpeedModel> MidiSpeeds { get; set; } = new BindableCollection<MidiSpeedModel>
         {
@@ -45,17 +41,11 @@ namespace GenshinLyreMidiPlayer.ViewModels
             new MidiSpeedModel("2", 2)
         };
 
-        public string PlayPauseIcon { get; set; } = PlayIcon;
+        public BindableCollection<MidiTrackModel> MidiTracks { get; set; } = new BindableCollection<MidiTrackModel>();
 
-        public string TotalTime { get; set; } = "0:00";
-
-        public string CurrentTime { get; set; } = "0:00";
+        public bool TransposeNotes { get; set; } = true;
 
         public double MaximumTime { get; set; } = 1;
-
-        public BindableCollection<MidiInputModel> MidiInputs { get; set; }
-
-        public MidiInputModel SelectedMidiInput { get; set; }
 
         public double SongSlider
         {
@@ -82,11 +72,21 @@ namespace GenshinLyreMidiPlayer.ViewModels
             }
         }
 
-        public string SongName { get; set; }
+        public MidiInputModel SelectedMidiInput { get; set; }
 
         public MidiSpeedModel SelectedSpeed { get; set; }
 
-        public bool TransposeNotes { get; set; }
+        private static string PlayIcon => "\xEDB5";
+
+        private static string PauseIcon => "\xEDB4";
+
+        public string PlayPauseIcon { get; set; } = PlayIcon;
+
+        public string TotalTime { get; set; } = "0:00";
+
+        public string CurrentTime { get; set; } = "0:00";
+
+        public string SongName { get; set; }
 
         public void Handle(MidiTrackModel message)
         {
@@ -228,21 +228,13 @@ namespace GenshinLyreMidiPlayer.ViewModels
 
         public void OnNoteEvent(object sender, MidiEventPlayedEventArgs e)
         {
-            switch (e.Event.EventType)
+            if (e.Event.EventType == MidiEventType.NoteOn)
             {
-                case MidiEventType.SetTempo:
-                    if (e.Event is SetTempoEvent tempo)
-                        _playback.Speed = tempo.MicrosecondsPerQuarterNote;
-                    return;
-                case MidiEventType.NoteOn:
-                    var note = e.Event as NoteOnEvent;
-                    if (note != null && note.Velocity <= 0) return;
+                var note = e.Event as NoteOnEvent;
+                if (note != null && note.Velocity <= 0) return;
 
-                    if (!LyrePlayer.PlayNote(note, TransposeNotes))
-                        PlayPause();
-                    return;
-                default:
-                    return;
+                if (!LyrePlayer.PlayNote(note, TransposeNotes))
+                    PlayPause();
             }
         }
 
