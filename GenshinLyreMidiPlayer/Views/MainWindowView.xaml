@@ -12,7 +12,7 @@
     xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
     d:DataContext="{d:DesignInstance Type=viewModels:MainWindowViewModel}"
 
-    Title="Genshin Lyre MIDI Player" Height="750" Width="400"
+    Title="Genshin Lyre MIDI Player" Height="800" Width="400"
     ui:WindowHelper.UseModernWindowStyle="True">
 
     <Grid Margin="10">
@@ -22,6 +22,7 @@
             <RowDefinition Height="Auto" />
 
             <RowDefinition Height="*" />
+            <RowDefinition Height="Auto" />
             <RowDefinition Height="Auto" />
         </Grid.RowDefinitions>
 
@@ -77,9 +78,7 @@
                        Text="{Binding TotalTime}" />
         </Grid>
 
-        <GroupBox
-            Grid.Row="3"
-            Header="MIDI Tracks">
+        <GroupBox Grid.Row="3" Header="MIDI Tracks">
             <ui:SimpleStackPanel>
                 <Separator Margin="0,-20,0,0" />
                 <ScrollViewer>
@@ -97,7 +96,7 @@
             </ui:SimpleStackPanel>
         </GroupBox>
 
-        <GroupBox Grid.Row="4" Header="Settings">
+        <GroupBox Grid.Row="5" Header="Settings">
             <ui:SimpleStackPanel>
                 <Separator Margin="0,-20,0,0" />
                 <StackPanel Orientation="Horizontal">
@@ -109,7 +108,21 @@
                         Header="{Binding Key}" SpinButtonPlacementMode="Compact"
                         Minimum="{Binding MinOffset}" Maximum="{Binding MaxOffset}"
                         Value="{Binding KeyOffset}" />
+                </StackPanel>
 
+                <StackPanel Orientation="Horizontal">
+                    <GroupBox Header="MIDI Instrument">
+                        <ComboBox 
+                            ItemsSource="{Binding MidiInputs}"
+                            SelectedItem="{Binding SelectedMidiInput}"
+                            DisplayMemberPath="DeviceName" />
+                    </GroupBox>
+
+                    <Button Command="{s:Action RefreshDevices}"
+                            Background="Transparent"
+                            Margin="10,35,0,0"> 
+                        <ui:FontIcon Glyph="&#xE72C;"/>
+                    </Button>
                 </StackPanel>
 
                 <GroupBox Header="Speed">

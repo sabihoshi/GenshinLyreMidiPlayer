@@ -15,20 +15,26 @@ namespace GenshinLyreMidiPlayer.ViewModels
     public class MainWindowViewModel : Screen, IHandle<MidiTrackModel>
     {
         private bool _ignoreSliderChange;
+        private InputDevice _inputDevice;
         private int _keyOffset;
         private MidiFile _midiFile;
         private Playback _playback;
         private ITimeSpan _playTime = new MidiTimeSpan();
         private Timer _playTimer;
         private bool _reloadPlayback;
+        private MidiInputModel _selectedMidiInput;
         private double _songSlider;
 
         public MainWindowViewModel()
         {
-            SelectedSpeed = MidiSpeeds[3];
+            SelectedSpeed     = MidiSpeeds[3];
+            SelectedMidiInput = MidiInputs[0];
         }
 
-        public BindableCollection<MidiInputModel> MidiInputs { get; set; }
+        public BindableCollection<MidiInputModel> MidiInputs { get; set; } = new BindableCollection<MidiInputModel>
+        {
+            new MidiInputModel("None")
+        };
 
         public bool TransposeNotes { get; set; } = true;
 
@@ -115,6 +121,8 @@ namespace GenshinLyreMidiPlayer.ViewModels
             }
         }
 
+        public IEnumerable<MidiTrackModel> MidiTracks { get; set; }
+
         public int MinOffset => KeyOffsets.Keys.Min();
 
         public int MaxOffset => KeyOffsets.Keys.Max();
@@ -137,9 +145,24 @@ namespace GenshinLyreMidiPlayer.ViewModels
             new MidiSpeedModel("2x", 2)
         };
 
-        public List<MidiTrackModel> MidiTracks { get; set; } = new List<MidiTrackModel>();
+        public MidiInputModel SelectedMidiInput
+        {
+            get => _selectedMidiInput;
+            set
+            {
+                SetAndNotify(ref _selectedMidiInput, value);
 
-        public MidiInputModel SelectedMidiInput { get; set; }
+                _inputDevice?.Dispose();
+
+                if (_selectedMidiInput?.DeviceName != null && _selectedMidiInput.DeviceName != "None")
+                {
+                    _inputDevice = InputDevice.GetByName(_selectedMidiInput.DeviceName);
+
+                    _inputDevice.EventReceived += OnNoteEvent;
+                    _inputDevice.StartEventsListening();
+                }
+            }
+        }
 
         public MidiSpeedModel SelectedSpeed { get; set; }
 
@@ -185,8 +208,7 @@ namespace GenshinLyreMidiPlayer.ViewModels
 
             MidiTracks = _midiFile
                 .GetTrackChunks()
-                .Select(t => new MidiTrackModel(t))
-                .ToList();
+                .Select(t => new MidiTrackModel(t));
             MidiTracks.First().IsChecked = true;
         }
 
@@ -200,8 +222,8 @@ namespace GenshinLyreMidiPlayer.ViewModels
                 _playback = null;
             }
 
-            _midiFile = null;
-            MidiTracks.Clear();
+            _midiFile  = null;
+            MidiTracks = Enumerable.Empty<MidiTrackModel>();
 
             PlayPauseIcon = PlayIcon;
             SongName      = string.Empty;
@@ -290,16 +312,24 @@ namespace GenshinLyreMidiPlayer.ViewModels
             }
         }
 
-        public void OnNoteEvent(object sender, MidiEventPlayedEventArgs e)
+        private void OnNoteEvent(object sender, MidiEventPlayedEventArgs e)
         {
             if (e.Event.EventType == MidiEventType.NoteOn)
-            {
-                var note = e.Event as NoteOnEvent;
-                if (note != null && note.Velocity <= 0) return;
+                PlayNote(e.Event as NoteOnEvent);
+        }
 
-                if (!LyrePlayer.PlayNote(note, TransposeNotes, KeyOffset))
-                    PlayPause();
-            }
+        private void OnNoteEvent(object sender, MidiEventReceivedEventArgs e)
+        {
+            if (e.Event.EventType == MidiEventType.NoteOn)
+                PlayNote(e.Event as NoteOnEvent);
+        }
+
+        private void PlayNote(NoteOnEvent note)
+        {
+            if (note != null && note.Velocity <= 0) return;
+
+            if (!LyrePlayer.PlayNote(note, TransposeNotes, KeyOffset))
+                PlayPause();
         }
 
         private void PlayTimerElapsed(object sender, ElapsedEventArgs e)
