@@ -29,6 +29,7 @@ namespace GenshinLyreMidiPlayer.ViewModels
         {
             SelectedSpeed     = MidiSpeeds[3];
             SelectedMidiInput = MidiInputs[0];
+            SelectedLayout    = Keyboard.LayoutNames.First();
         }
 
         public BindableCollection<MidiInputModel> MidiInputs { get; set; } = new BindableCollection<MidiInputModel>
@@ -130,6 +131,8 @@ namespace GenshinLyreMidiPlayer.ViewModels
             get => _keyOffset;
             set => SetAndNotify(ref _keyOffset, Math.Clamp(value, MinOffset, MaxOffset));
         }
+
+        public KeyValuePair<Keyboard.Layout, string> SelectedLayout { get; set; }
 
         public List<MidiSpeedModel> MidiSpeeds { get; set; } = new List<MidiSpeedModel>
         {
@@ -329,7 +332,7 @@ namespace GenshinLyreMidiPlayer.ViewModels
         {
             if (note != null && note.Velocity <= 0) return;
 
-            if (!LyrePlayer.PlayNote(note, TransposeNotes, KeyOffset))
+            if (!LyrePlayer.PlayNote(note, TransposeNotes, KeyOffset, SelectedLayout.Key))
                 PlayPause();
         }
 
