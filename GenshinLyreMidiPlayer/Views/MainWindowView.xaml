@@ -12,7 +12,7 @@
     xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
     d:DataContext="{d:DesignInstance Type=viewModels:MainWindowViewModel}"
 
-    Title="Genshin Lyre MIDI Player" Height="450" Width="250"
+    Title="Genshin Lyre MIDI Player" Height="750" Width="400"
     ui:WindowHelper.UseModernWindowStyle="True">
 
     <Grid Margin="10">
@@ -42,7 +42,7 @@
         </Grid>
 
         <ui:SimpleStackPanel
-            Grid.Row="1" Margin="10"
+            Grid.Row="1" Margin="0,50"
             Orientation="Horizontal"
             HorizontalAlignment="Center">
             <Button Command="{s:Action Previous}"
@@ -80,30 +80,46 @@
         <GroupBox
             Grid.Row="3"
             Header="MIDI Tracks">
-            <ScrollViewer>
-                <ItemsControl ItemsSource="{Binding MidiTracks}">
-                    <ItemsControl.ItemTemplate>
-                        <DataTemplate>
-                            <ui:ToggleSwitch
-                                IsOn="{Binding IsChecked}"
-                                OffContent="{Binding TrackName, TargetNullValue=Unknown}"
-                                OnContent="{Binding TrackName, TargetNullValue=Unknown}" />
-                        </DataTemplate>
-                    </ItemsControl.ItemTemplate>
-                </ItemsControl>
-            </ScrollViewer>
+            <ui:SimpleStackPanel>
+                <Separator Margin="0,-20,0,0" />
+                <ScrollViewer>
+                    <ItemsControl ItemsSource="{Binding MidiTracks}">
+                        <ItemsControl.ItemTemplate>
+                            <DataTemplate>
+                                <ui:ToggleSwitch
+                                    IsOn="{Binding IsChecked}"
+                                    OffContent="{Binding TrackName, TargetNullValue=Unknown}"
+                                    OnContent="{Binding TrackName, TargetNullValue=Unknown}" />
+                            </DataTemplate>
+                        </ItemsControl.ItemTemplate>
+                    </ItemsControl>
+                </ScrollViewer>
+            </ui:SimpleStackPanel>
         </GroupBox>
 
-        <ui:SimpleStackPanel Grid.Row="4">
-            <ui:ToggleSwitch
-                Header="Transpose"
-                IsOn="{Binding TransposeNotes}" />
-            <GroupBox Header="Speed">
-                <ComboBox
-                    ItemsSource="{Binding MidiSpeeds}"
-                    SelectedItem="{Binding SelectedSpeed}"
-                    DisplayMemberPath="SpeedName" />
-            </GroupBox>
-        </ui:SimpleStackPanel>
+        <GroupBox Grid.Row="4" Header="Settings">
+            <ui:SimpleStackPanel>
+                <Separator Margin="0,-20,0,0" />
+                <StackPanel Orientation="Horizontal">
+                    <ui:ToggleSwitch
+                        Header="Transpose"
+                        IsOn="{Binding TransposeNotes}" />
+
+                    <ui:NumberBox
+                        Header="{Binding Key}"
+                        SpinButtonPlacementMode="Compact"
+                        Minimum="-46" Maximum="37"
+                        Value="{Binding KeyOffset}" />
+
+                </StackPanel>
+
+                <GroupBox Header="Speed">
+                    <ComboBox
+                        ItemsSource="{Binding MidiSpeeds}"
+                        SelectedItem="{Binding SelectedSpeed}"
+                        DisplayMemberPath="SpeedName" />
+                </GroupBox>
+            </ui:SimpleStackPanel>
+        </GroupBox>
     </Grid>
 </Window>

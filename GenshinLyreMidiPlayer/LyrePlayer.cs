@@ -11,7 +11,6 @@ namespace GenshinLyreMidiPlayer
     public class LyrePlayer
     {
         public const string GenshinWindowName = "Genshin Impact";
-        private static readonly IInputSimulator Input = new InputSimulator();
 
         private static readonly Dictionary<int, VirtualKeyCode> LyreNotes = new Dictionary<int, VirtualKeyCode>
         {
@@ -40,6 +39,8 @@ namespace GenshinLyreMidiPlayer
             {83, VirtualKeyCode.VK_U}  // B5
         };
 
+        private static readonly IInputSimulator Input = new InputSimulator();
+
         [DllImport("user32.dll")]
         public static extern IntPtr FindWindow(string className, string windowTitle);
 
@@ -59,12 +60,13 @@ namespace GenshinLyreMidiPlayer
         /// </summary>
         /// <param name="note"> The note to be played.</param>
         /// <param name="transposeNotes"> Should we transpose unplayable notes?.</param>
-        public static bool PlayNote(NoteOnEvent note, bool transposeNotes)
+        /// <param name="keyOffset">Set how much the scale is offset</param>
+        public static bool PlayNote(NoteOnEvent note, bool transposeNotes, int keyOffset)
         {
             if (!IsWindowFocused(GenshinWindowName))
                 return false;
 
-            var noteId = (int) note.NoteNumber;
+            var noteId = note.NoteNumber - keyOffset;
             if (!LyreNotes.ContainsKey(noteId))
             {
                 if (transposeNotes)
