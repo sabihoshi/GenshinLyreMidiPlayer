@@ -38,3 +38,7 @@ The short answer is that it's uncertain. I have used this in development with my
 ## Special Thanks
 * Credits to [ShawzinBot](https://github.com/ianespana/ShawzinBot) by [ianespana](ianespana) where most of the inspiration comes from.
 * Lantua for explaining to me music theory; what octaves, transposition, keys, and scales are.
+
+## License
+* This project is under the [MIT](LICENSE.md) license.
+* This project is not affiliated or endorsed by miHoYo. Genshin Impact, game content and materials are trademarks and copyrights of miHoYo.
