@@ -30,8 +30,7 @@ namespace GenshinLyreMidiPlayer.Core
 
             SwitchToThisWindow((IntPtr) genshinWindow, true);
 
-            return !genshinWindow.Equals(IntPtr.Zero) &&
-                   GetForegroundWindow().Equals(genshinWindow);
+            return GetForegroundWindow().Equals(genshinWindow);
         }
 
         private static bool IsWindowFocused(IntPtr windowPtr)
