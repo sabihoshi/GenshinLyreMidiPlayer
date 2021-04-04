@@ -41,4 +41,4 @@ The short answer is that it's uncertain. I have used this in development with my
 
 ## License
 * This project is under the [MIT](LICENSE.md) license.
-* This project is not affiliated or endorsed by miHoYo. Genshin Impact, game content and materials are trademarks and copyrights of miHoYo.
+* © All rights reserved by miHoYo Co., Ltd. This project is not affiliated nor endorsed by miHoYo. Genshin Impact™ and other properties belong to their respective owners.
