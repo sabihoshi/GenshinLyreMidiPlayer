@@ -1,7 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Runtime.InteropServices;
 using WindowsInput;
 using Melanchall.DryWetMidi.Core;
 
@@ -9,7 +8,6 @@ namespace GenshinLyreMidiPlayer.Core
 {
     public class LyrePlayer
     {
-        public const string GenshinWindowName = "Genshin Impact";
         private static readonly IInputSimulator Input = new InputSimulator();
 
         private static readonly List<int> LyreNotes = new List<int>
@@ -39,20 +37,6 @@ namespace GenshinLyreMidiPlayer.Core
             83  // B5
         };
 
-        [DllImport("user32.dll")]
-        public static extern IntPtr FindWindow(string className, string windowTitle);
-
-        public static IntPtr FindWindow(string lpWindowName)
-        {
-            return FindWindow(null, lpWindowName);
-        }
-
-        [DllImport("user32.dll", CharSet = CharSet.Auto, ExactSpelling = true)]
-        private static extern IntPtr GetForegroundWindow();
-
-        [DllImport("user32.dll")]
-        private static extern void SwitchToThisWindow(IntPtr hWnd, bool fUnknown);
-
         /// <summary>
         ///     Play a MIDI note.
         /// </summary>
@@ -63,7 +47,7 @@ namespace GenshinLyreMidiPlayer.Core
         public static bool PlayNote(NoteOnEvent note, bool transposeNotes, int keyOffset,
             Keyboard.Layout selectedLayout)
         {
-            if (!IsWindowFocused(GenshinWindowName))
+            if (!WindowHelper.IsGameFocused())
                 return false;
 
             var noteId = note.NoteNumber - keyOffset;
@@ -103,28 +87,6 @@ namespace GenshinLyreMidiPlayer.Core
             var keyIndex = LyreNotes.IndexOf(noteId);
             var key = Keyboard.GetLayout(selectedLayout)[keyIndex];
             Input.Keyboard.KeyPress(key);
-        }
-
-        public static bool EnsureWindowOnTop()
-        {
-            var genshinWindow = FindWindow(GenshinWindowName);
-            SwitchToThisWindow(genshinWindow, true);
-
-            return !genshinWindow.Equals(IntPtr.Zero) &&
-                   GetForegroundWindow().Equals(genshinWindow);
-        }
-
-        public static bool IsWindowFocused(IntPtr windowPtr)
-        {
-            var hWnd = GetForegroundWindow();
-            return hWnd.Equals(windowPtr)
-                   && !windowPtr.Equals(IntPtr.Zero);
-        }
-
-        public static bool IsWindowFocused(string windowName)
-        {
-            var windowPtr = FindWindow(windowName);
-            return IsWindowFocused(windowPtr);
         }
     }
 }

@@ -299,7 +299,7 @@ namespace GenshinLyreMidiPlayer.ViewModels
             {
                 PlayPauseIcon = PauseIcon;
 
-                LyrePlayer.EnsureWindowOnTop();
+                WindowHelper.EnsureGameOnTop();
                 _playTimer         =  new Timer {Interval = 100};
                 _playTimer.Elapsed += PlayTimerElapsed;
                 _playTimer.Start();
@@ -339,7 +339,7 @@ namespace GenshinLyreMidiPlayer.ViewModels
 
         private void PlayTimerElapsed(object sender, ElapsedEventArgs e)
         {
-            if (LyrePlayer.IsWindowFocused(LyrePlayer.GenshinWindowName))
+            if (WindowHelper.IsGameFocused())
             {
                 _playback.Start();
                 _playTimer.Dispose();
