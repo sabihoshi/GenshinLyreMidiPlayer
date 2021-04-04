@@ -5,7 +5,7 @@ using System.Runtime.InteropServices;
 using WindowsInput;
 using Melanchall.DryWetMidi.Core;
 
-namespace GenshinLyreMidiPlayer
+namespace GenshinLyreMidiPlayer.Core
 {
     public class LyrePlayer
     {

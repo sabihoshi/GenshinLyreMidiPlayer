@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using System.Timers;
+using GenshinLyreMidiPlayer.Core;
 using GenshinLyreMidiPlayer.Models;
 using Melanchall.DryWetMidi.Core;
 using Melanchall.DryWetMidi.Devices;

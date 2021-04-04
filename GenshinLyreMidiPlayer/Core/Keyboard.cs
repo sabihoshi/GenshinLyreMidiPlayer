@@ -1,7 +1,7 @@
 ﻿using System.Collections.Generic;
 using WindowsInput.Native;
 
-namespace GenshinLyreMidiPlayer
+namespace GenshinLyreMidiPlayer.Core
 {
     public static class Keyboard
     {

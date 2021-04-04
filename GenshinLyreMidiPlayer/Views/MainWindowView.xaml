@@ -11,12 +11,12 @@
 
     xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
     xmlns:genshinLyreMidiPlayer="clr-namespace:GenshinLyreMidiPlayer"
+    xmlns:core="clr-namespace:GenshinLyreMidiPlayer.Core"
     d:DataContext="{d:DesignInstance Type=viewModels:MainWindowViewModel}"
 
     Title="Genshin Lyre MIDI Player"
-    Height="800" Width="435" MinWidth="435"
+    Height="850" Width="435" MinWidth="435"
     ui:WindowHelper.UseModernWindowStyle="True">
-
     <Grid Margin="10">
         <Grid.RowDefinitions>
             <RowDefinition Height="Auto" />
@@ -114,6 +114,10 @@
                         Value="{Binding KeyOffset}" />
                 </ui:SimpleStackPanel>
 
+                <ui:ToggleSwitch
+                    Header="Hold Keys"
+                    IsOn="{Binding TransposeNotes}" />
+
                 <ui:SimpleStackPanel Orientation="Horizontal">
                     <GroupBox Header="MIDI Instrument">
                         <ComboBox
@@ -139,7 +143,7 @@
 
                     <GroupBox Header="Layout">
                         <ComboBox
-                            ItemsSource="{x:Static genshinLyreMidiPlayer:Keyboard.LayoutNames}"
+                            ItemsSource="{x:Static core:Keyboard.LayoutNames}"
                             SelectedItem="{Binding SelectedLayout}"
                             DisplayMemberPath="Value" />
                     </GroupBox>
