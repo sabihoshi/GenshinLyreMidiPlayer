@@ -1,4 +1,4 @@
-# Genshin Wingsong Lyre Midi Player
+# Genshin Windsong Lyre Midi Player
 
 A MIDI to key player made using C# and WPF using Windows Fluent design.
 
