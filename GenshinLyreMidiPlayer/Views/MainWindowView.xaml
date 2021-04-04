@@ -79,9 +79,13 @@
         </Grid>
 
         <GroupBox Grid.Row="3" Header="MIDI Tracks">
-            <ui:SimpleStackPanel>
-                <Separator />
-                <ScrollViewer>
+            <Grid>
+                <Grid.RowDefinitions>
+                    <RowDefinition Height="Auto" />
+                    <RowDefinition Height="*" />
+                </Grid.RowDefinitions>
+                <Separator Grid.Row="0" Margin="0,0,0,15" />
+                <ScrollViewer Grid.Row="1">
                     <ItemsControl ItemsSource="{Binding MidiTracks}">
                         <ItemsControl.ItemTemplate>
                             <DataTemplate>
@@ -93,13 +97,13 @@
                         </ItemsControl.ItemTemplate>
                     </ItemsControl>
                 </ScrollViewer>
-            </ui:SimpleStackPanel>
+            </Grid>
         </GroupBox>
 
         <GroupBox Grid.Row="5" Header="Settings">
             <ui:SimpleStackPanel>
                 <Separator />
-                <StackPanel Orientation="Horizontal">
+                <ui:SimpleStackPanel Orientation="Horizontal">
                     <ui:ToggleSwitch
                         Header="Transpose"
                         IsOn="{Binding TransposeNotes}" />
@@ -108,7 +112,7 @@
                         Header="{Binding Key}" SpinButtonPlacementMode="Compact"
                         Minimum="{Binding MinOffset}" Maximum="{Binding MaxOffset}"
                         Value="{Binding KeyOffset}" />
-                </StackPanel>
+                </ui:SimpleStackPanel>
 
                 <ui:SimpleStackPanel Orientation="Horizontal">
                     <GroupBox Header="MIDI Instrument">
