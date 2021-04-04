@@ -2,7 +2,7 @@
 
 A MIDI to key player made using C# and WPF using Windows Fluent design.
 
-![GenshinLyreMidiPlayer_2021-04-04_05-39-12](https://user-images.githubusercontent.com/25006819/113492119-1c2e3780-9508-11eb-9529-50fe60f9132f.png)
+![2021-04-04_08-03-01](https://user-images.githubusercontent.com/25006819/113494611-61f4fb00-951c-11eb-98d2-c13980def63e.png)
 
 ## How to install
 
@@ -20,9 +20,9 @@ A MIDI to key player made using C# and WPF using Windows Fluent design.
 * Written in C# WPF with modern fluent design.
 * [![](https://img.shields.io/badge/v1.2.0-New!-yellow)](https://github.com/sabihoshi/GenshinLyreMidiPlayer/releases/tag/v1.2.0) Play using your own MIDI Input Device
   - If you have your own MIDI instrument, this will let you play directly to the Genshin Lyre
+* [![](https://img.shields.io/badge/v1.3.1-New!-yellow)](https://github.com/sabihoshi/GenshinLyreMidiPlayer/releases/tag/v1.3.1) Change the keyboard layout (QWERTZ, AZERTY, DVORAK, etc.)
 
 ## Upcoming
-* Different keyboard layouts (QWERTZ, AZERTY, DVORAK, etc.)
 * Output into a "Piano Sheet" in a text file.
 * History of opened MIDI files.
 * Light/Dark Theme overrides (currently respects your system theme.)
