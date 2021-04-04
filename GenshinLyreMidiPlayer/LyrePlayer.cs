@@ -12,7 +12,7 @@ namespace GenshinLyreMidiPlayer
         public const string GenshinWindowName = "Genshin Impact";
         private static readonly IInputSimulator Input = new InputSimulator();
 
-        private static readonly IReadOnlyList<int> LyreNotes = new List<int>
+        private static readonly List<int> LyreNotes = new List<int>
         {
             48, // C3
             50, // D3
@@ -100,7 +100,8 @@ namespace GenshinLyreMidiPlayer
 
         public static void PlayNote(int noteId, Keyboard.Layout selectedLayout)
         {
-            var key = Keyboard.GetLayout(selectedLayout)[noteId];
+            var keyIndex = LyreNotes.IndexOf(noteId);
+            var key = Keyboard.GetLayout(selectedLayout)[keyIndex];
             Input.Keyboard.KeyPress(key);
         }
 
