@@ -256,7 +256,7 @@ namespace GenshinLyreMidiPlayer.ViewModels
         {
             if (WindowHelper.IsGameFocused())
             {
-                _playback.Start();
+                _playback!.Start();
                 _playTimer.Dispose();
             }
         }

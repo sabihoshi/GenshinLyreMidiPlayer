@@ -5,11 +5,11 @@
         public MidiSpeedModel(string speedName, double speed)
         {
             SpeedName = speedName;
-            Speed = speed;
+            Speed     = speed;
         }
 
-        public string SpeedName { get; }
-
         public double Speed { get; }
+
+        public string SpeedName { get; }
     }
 }

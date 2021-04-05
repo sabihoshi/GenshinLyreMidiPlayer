@@ -11,7 +11,7 @@ namespace GenshinLyreMidiPlayer.ModernWPF
             Caption = caption;
         }
 
-        public string? Caption { get; }
+        protected string? Caption { get; }
 
         public T Object { get; }
 
@@ -23,12 +23,9 @@ namespace GenshinLyreMidiPlayer.ModernWPF
 
     public class CaptionedObject<T, TEnum> : CaptionedObject<T> where T : Enum
     {
-        private readonly CaptionedObject<T> _caption;
-
         public CaptionedObject(T o, TEnum type, string? caption = null) : base(o, caption)
         {
-            _caption = new CaptionedObject<T>(o, caption);
-            Type     = type;
+            Type = type;
         }
 
         public TEnum Type { get; }

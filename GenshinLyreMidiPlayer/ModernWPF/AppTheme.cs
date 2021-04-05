@@ -44,20 +44,18 @@ namespace GenshinLyreMidiPlayer.ModernWPF
     {
         public object Convert(object value, Type targetType, object parameter, CultureInfo culture)
         {
-            switch (value)
+            return value switch
             {
-                case ApplicationTheme.Light:
-                    return AppTheme.Light;
-                case ApplicationTheme.Dark:
-                    return AppTheme.Dark;
-                default:
-                    return AppTheme.Default;
-            }
+                ApplicationTheme.Light => AppTheme.Light,
+                ApplicationTheme.Dark  => AppTheme.Dark,
+                _                      => AppTheme.Default
+            };
         }
 
-        public object ConvertBack(object value, Type targetType, object parameter, CultureInfo culture)
+        public object? ConvertBack(object value, Type targetType, object parameter, CultureInfo culture)
         {
-            if (value is AppTheme appTheme) return appTheme.Value;
+            if (value is AppTheme appTheme)
+                return appTheme.Value;
 
             return AppTheme.Default;
         }

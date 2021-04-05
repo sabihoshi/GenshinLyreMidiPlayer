@@ -16,7 +16,7 @@ namespace GenshinLyreMidiPlayer.Core
             Colemak
         }
 
-        public static Dictionary<Layout, string> LayoutNames = new Dictionary<Layout, string>
+        public static readonly Dictionary<Layout, string> LayoutNames = new Dictionary<Layout, string>
         {
             [Layout.QWERTY]      = "QWERTY",
             [Layout.QWERTZ]      = "QWERTZ",

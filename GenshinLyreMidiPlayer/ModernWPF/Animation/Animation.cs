@@ -7,15 +7,14 @@ namespace GenshinLyreMidiPlayer.ModernWPF.Animation
 {
     public class Animation
     {
-        private static readonly BitmapCache _defaultBitmapCache;
         private readonly FrameworkElement _element;
         private readonly Storyboard _storyboard;
         private ClockState _currentState = ClockState.Stopped;
 
         static Animation()
         {
-            _defaultBitmapCache = new BitmapCache();
-            _defaultBitmapCache.Freeze();
+            var defaultBitmapCache = new BitmapCache();
+            defaultBitmapCache.Freeze();
         }
 
         public Animation(FrameworkElement element, Storyboard storyboard)
@@ -26,7 +25,7 @@ namespace GenshinLyreMidiPlayer.ModernWPF.Animation
             _storyboard.Completed               += OnCompleted;
         }
 
-        public event EventHandler Completed;
+        public event EventHandler? Completed;
 
         public void Begin()
         {
@@ -43,12 +42,12 @@ namespace GenshinLyreMidiPlayer.ModernWPF.Animation
             _element.InvalidateProperty(UIElement.RenderTransformOriginProperty);
         }
 
-        private void OnCurrentStateInvalidated(object sender, EventArgs e)
+        private void OnCurrentStateInvalidated(object? sender, EventArgs e)
         {
             if (sender is Clock clock) _currentState = clock.CurrentState;
         }
 
-        private void OnCompleted(object sender, EventArgs e)
+        private void OnCompleted(object? sender, EventArgs e)
         {
             Completed?.Invoke(this, EventArgs.Empty);
         }

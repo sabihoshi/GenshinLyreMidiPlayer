@@ -17,9 +17,9 @@ namespace GenshinLyreMidiPlayer.ViewModels
             PlayerView   = new LyrePlayerViewModel(SettingsView);
         }
 
-        public LyrePlayerViewModel PlayerView { get; set; }
+        public LyrePlayerViewModel PlayerView { get; }
 
-        public SettingsPageViewModel SettingsView { get; set; }
+        public SettingsPageViewModel SettingsView { get; }
 
         public string Title { get; set; } = "Genshin Lyre MIDI Player";
 

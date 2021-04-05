@@ -8,7 +8,7 @@ namespace GenshinLyreMidiPlayer.ModernWPF.Animation
     ///     Provides parameter info for the Frame.Navigate method. Controls how the transition
     ///     animation runs during the navigation action.
     /// </summary>
-    public class Transition : DependencyObject
+    public abstract class Transition : DependencyObject
     {
         internal static readonly KeySpline AccelerateKeySpline;
         internal static readonly KeySpline DecelerateKeySpline;
@@ -39,33 +39,20 @@ namespace GenshinLyreMidiPlayer.ModernWPF.Animation
             DecelerateKeySpline.Freeze();
         }
 
-        /// <summary>
-        ///     Initializes a new instance of the Transition class.
-        /// </summary>
-        protected Transition()
-        {
-        }
-
         //protected virtual string GetNavigationStateCore();
         //protected virtual void SetNavigationStateCore(string navigationState);
 
-        protected virtual Animation GetEnterAnimation(FrameworkElement element, bool movingBackwards)
-        {
-            return null;
-        }
+        protected abstract Animation? GetEnterAnimation(FrameworkElement element, bool movingBackwards);
 
-        protected virtual Animation GetExitAnimation(FrameworkElement element, bool movingBackwards)
-        {
-            return null;
-        }
+        protected abstract Animation? GetExitAnimation(FrameworkElement element, bool movingBackwards);
 
-        public Animation GetEnterAnimation(object element, bool movingBackwards)
+        public Animation? GetEnterAnimation(object element, bool movingBackwards)
         {
             return GetEnterAnimation(
                 (FrameworkElement) element, movingBackwards);
         }
 
-        public Animation GetExitAnimation(object element, bool movingBackwards)
+        public Animation? GetExitAnimation(object element, bool movingBackwards)
         {
             return GetExitAnimation(
                 (FrameworkElement) element, movingBackwards);

@@ -10,7 +10,7 @@
     xmlns:s="https://github.com/canton7/Stylet"
 
     xmlns:viewModels="clr-namespace:GenshinLyreMidiPlayer.ViewModels"
-    d:DataContext="{d:DesignInstance Type=viewModels:MainWindowViewModel}">
+    d:DataContext="{d:DesignInstance Type=viewModels:LyrePlayerViewModel}">
     <Grid Margin="10">
         <Grid.RowDefinitions>
             <RowDefinition Height="Auto" />

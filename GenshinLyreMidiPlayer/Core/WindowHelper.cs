@@ -7,7 +7,7 @@ namespace GenshinLyreMidiPlayer.Core
 {
     public static class WindowHelper
     {
-        public const string GenshinProcessName = "GenshinImpact";
+        private const string GenshinProcessName = "GenshinImpact";
 
         private static IntPtr? FindWindowByProcessName(string processName)
         {

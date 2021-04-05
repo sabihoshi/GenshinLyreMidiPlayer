@@ -96,7 +96,7 @@ namespace GenshinLyreMidiPlayer.ViewModels
 
         public KeyValuePair<Keyboard.Layout, string> SelectedLayout { get; set; }
 
-        public List<MidiSpeedModel> MidiSpeeds { get; set; } = new List<MidiSpeedModel>
+        public List<MidiSpeedModel> MidiSpeeds { get; } = new List<MidiSpeedModel>
         {
             new MidiSpeedModel("0.25x", 0.25),
             new MidiSpeedModel("0.5x", 0.5),

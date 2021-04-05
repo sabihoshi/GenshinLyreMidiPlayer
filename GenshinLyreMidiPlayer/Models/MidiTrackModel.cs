@@ -7,21 +7,14 @@ namespace GenshinLyreMidiPlayer.Models
     {
         public MidiTrackModel(TrackChunk track)
         {
-            Track = track;
+            Track     = track;
             TrackName = track.Events.OfType<SequenceTrackNameEvent>().FirstOrDefault()?.Text;
         }
-
-        public MidiTrackModel(TrackChunk track, bool isChecked)
-        {
-            Track = track;
-            TrackName = track.Events.OfType<SequenceTrackNameEvent>().FirstOrDefault()?.Text;
-            IsChecked = isChecked;
-        }
-
-        public string TrackName { get; set; }
-
-        public TrackChunk Track { get; set; }
 
         public bool IsChecked { get; set; }
+
+        public string? TrackName { get; }
+
+        public TrackChunk Track { get; }
     }
 }
