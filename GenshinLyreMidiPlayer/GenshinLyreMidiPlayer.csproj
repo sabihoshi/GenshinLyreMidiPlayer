@@ -6,8 +6,15 @@
     <UseWPF>true</UseWPF>
     <StartupObject>GenshinLyreMidiPlayer.App</StartupObject>
     <ApplicationManifest>app.manifest</ApplicationManifest>
-    <Version>1.3.3</Version>
+    <Version>1.4.0</Version>
     <ApplicationIcon>item_windsong_lyre.ico</ApplicationIcon>
+    <Nullable>enable</Nullable>
+    <RepositoryUrl>https://github.com/sabihoshi/GenshinLyreMidiPlayer</RepositoryUrl>
+    <Authors>sabihoshi</Authors>
+    <Product>Genshin Lyre MIDI Player</Product>
+    <Company />
+    <Copyright>sabihoshi</Copyright>
+    <Description>A music player that plays MIDI files into Genshin Impact's Windsong Lyre.</Description>
   </PropertyGroup>
 
   <ItemGroup>
