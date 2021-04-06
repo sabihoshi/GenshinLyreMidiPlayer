@@ -9,12 +9,12 @@ namespace GenshinLyreMidiPlayer.ViewModels
 {
     public class MainWindowViewModel : Conductor<IScreen>.StackNavigation
     {
-        private readonly Stack<NavigationViewItem> _history = new Stack<NavigationViewItem>();
+        private readonly Stack<NavigationViewItem> _history = new();
 
-        public MainWindowViewModel(IContainer ioc)
+        public MainWindowViewModel(IContainer ioc, IEventAggregator events)
         {
-            SettingsView = ioc.Get<SettingsPageViewModel>();
-            PlayerView   = new LyrePlayerViewModel(SettingsView);
+            SettingsView = new SettingsPageViewModel(events);
+            PlayerView   = new LyrePlayerViewModel(events, SettingsView);
         }
 
         public LyrePlayerViewModel PlayerView { get; }

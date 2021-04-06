@@ -13,26 +13,30 @@ using Stylet;
 
 namespace GenshinLyreMidiPlayer.ViewModels
 {
-    public class LyrePlayerViewModel : Screen, IHandle<MidiTrackModel>
+    public class LyrePlayerViewModel : Screen, IHandle<MidiTrackModel>, IHandle<MidiSpeedModel>
     {
+        private readonly IEventAggregator _events;
         private readonly SettingsPageViewModel _settings;
         private bool _ignoreSliderChange;
         private InputDevice? _inputDevice;
         private MidiFile? _midiFile;
         private Playback? _playback;
         private ITimeSpan _playTime = new MidiTimeSpan();
-        private Timer _playTimer = new Timer();
+        private Timer _playTimer = new();
         private bool _reloadPlayback;
         private MidiInputModel? _selectedMidiInput;
         private double _songSlider;
 
-        public LyrePlayerViewModel(SettingsPageViewModel settings)
+        public LyrePlayerViewModel(IEventAggregator events, SettingsPageViewModel settings)
         {
             _settings         = settings;
             SelectedMidiInput = MidiInputs[0];
+
+            _events = events;
+            _events.Subscribe(this);
         }
 
-        public BindableCollection<MidiInputModel> MidiInputs { get; set; } = new BindableCollection<MidiInputModel>
+        public BindableCollection<MidiInputModel> MidiInputs { get; set; } = new()
         {
             new MidiInputModel("None")
         };
@@ -64,7 +68,7 @@ namespace GenshinLyreMidiPlayer.ViewModels
             }
         }
 
-        public List<MidiTrackModel> MidiTracks { get; set; } = new List<MidiTrackModel>();
+        public List<MidiTrackModel> MidiTracks { get; set; } = new();
 
         public MidiInputModel? SelectedMidiInput
         {
@@ -97,6 +101,15 @@ namespace GenshinLyreMidiPlayer.ViewModels
 
         public string SongName { get; set; } = "Open MIDI file...";
 
+        public void Handle(MidiSpeedModel message)
+        {
+            if (_playback != null)
+            {
+                _playback.Speed = message.Speed;
+                _reloadPlayback = true;
+            }
+        }
+
         public void Handle(MidiTrackModel message)
         {
             _reloadPlayback = true;
@@ -125,7 +138,7 @@ namespace GenshinLyreMidiPlayer.ViewModels
 
             MidiTracks = _midiFile
                 .GetTrackChunks()
-                .Select(t => new MidiTrackModel(t))
+                .Select(t => new MidiTrackModel(_events, t))
                 .ToList();
             MidiTracks.First().IsChecked = true;
         }
@@ -232,24 +245,45 @@ namespace GenshinLyreMidiPlayer.ViewModels
 
         private void OnNoteEvent(object? sender, MidiEventPlayedEventArgs e)
         {
-            if (e.Event.EventType == MidiEventType.NoteOn)
-                PlayNote(e.Event as NoteOnEvent);
+            if (e.Event is not NoteEvent noteEvent)
+                return;
+
+            PlayNote(noteEvent);
         }
 
         private void OnNoteEvent(object? sender, MidiEventReceivedEventArgs e)
         {
-            if (e.Event.EventType == MidiEventType.NoteOn)
-                PlayNote(e.Event as NoteOnEvent);
-        }
-
-        private void PlayNote(NoteOnEvent? note)
-        {
-            if (note is null || note.Velocity <= 0)
+            if (e.Event is not NoteEvent noteEvent)
                 return;
 
-            if (!LyrePlayer.PlayNote(note, _settings.TransposeNotes, _settings.KeyOffset,
-                _settings.SelectedLayout.Key))
+            PlayNote(noteEvent);
+        }
+
+        private void PlayNote(NoteEvent noteEvent)
+        {
+            if (!WindowHelper.IsGameFocused())
+            {
                 PlayPause();
+                return;
+            }
+
+            var layout = _settings.SelectedLayout.Key;
+            var note = noteEvent.NoteNumber - _settings.KeyOffset;
+            if (_settings.TransposeNotes)
+                note = LyrePlayer.TransposeNote(note);
+
+            if (noteEvent.EventType == MidiEventType.NoteOff)
+                LyrePlayer.NoteUp(note, layout);
+            else if (noteEvent.EventType == MidiEventType.NoteOn)
+            {
+                if (noteEvent.Velocity <= 0)
+                    return;
+
+                if (_settings.HoldNotes)
+                    LyrePlayer.NoteDown(note, layout);
+                else
+                    LyrePlayer.PlayNote(note, layout);
+            }
         }
 
         private void PlayTimerElapsed(object? sender, ElapsedEventArgs e)

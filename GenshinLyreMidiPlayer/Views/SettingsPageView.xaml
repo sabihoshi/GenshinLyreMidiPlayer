@@ -29,8 +29,8 @@
             </ui:SimpleStackPanel>
 
             <ui:ToggleSwitch
-                Header="Hold Keys" IsEnabled="False"
-                IsOn="{Binding TransposeNotes}" />
+                Header="Hold Notes"
+                IsOn="{Binding HoldNotes}" />
 
             <ui:SimpleStackPanel Orientation="Horizontal">
                 <GroupBox Header="Speed">

@@ -1,8 +1,8 @@
-﻿using System;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using System.Linq;
 using WindowsInput;
-using Melanchall.DryWetMidi.Core;
+using WindowsInput.Native;
+using static GenshinLyreMidiPlayer.Core.Keyboard;
 
 namespace GenshinLyreMidiPlayer.Core
 {
@@ -10,7 +10,7 @@ namespace GenshinLyreMidiPlayer.Core
     {
         private static readonly IInputSimulator Input = new InputSimulator();
 
-        private static readonly List<int> LyreNotes = new List<int>
+        private static readonly List<int> LyreNotes = new()
         {
             48, // C3
             50, // D3
@@ -37,36 +37,7 @@ namespace GenshinLyreMidiPlayer.Core
             83  // B5
         };
 
-        /// <summary>
-        ///     Play a MIDI note.
-        /// </summary>
-        /// <param name="note"> The note to be played.</param>
-        /// <param name="transposeNotes"> Should we transpose unplayable notes?.</param>
-        /// <param name="keyOffset">Set how much the scale is offset</param>
-        /// <param name="selectedLayout"></param>
-        public static bool PlayNote(NoteOnEvent note, bool transposeNotes, int keyOffset,
-            Keyboard.Layout selectedLayout)
-        {
-            if (!WindowHelper.IsGameFocused())
-                return false;
-
-            var noteId = note.NoteNumber - keyOffset;
-            if (!LyreNotes.Contains(noteId))
-            {
-                if (transposeNotes)
-                    noteId = TransposeNote(noteId);
-                else
-                {
-                    Console.WriteLine($"Missing note: {noteId}");
-                    return true;
-                }
-            }
-
-            PlayNote(noteId, selectedLayout);
-            return true;
-        }
-
-        private static int TransposeNote(int noteId)
+        public static int TransposeNote(int noteId)
         {
             while (true)
             {
@@ -82,11 +53,29 @@ namespace GenshinLyreMidiPlayer.Core
             }
         }
 
-        public static void PlayNote(int noteId, Keyboard.Layout selectedLayout)
+        public static void PlayNote(int noteId, Layout selectedLayout)
+        {
+            var key = GetKey(noteId, selectedLayout);
+            Input.Keyboard.KeyPress(key);
+        }
+
+        public static void NoteDown(int noteId, Layout selectedLayout)
+        {
+            var key = GetKey(noteId, selectedLayout);
+            Input.Keyboard.KeyDown(key);
+        }
+
+        public static void NoteUp(int noteId, Layout selectedLayout)
+        {
+            var key = GetKey(noteId, selectedLayout);
+            Input.Keyboard.KeyUp(key);
+        }
+
+        private static VirtualKeyCode GetKey(int noteId, Layout selectedLayout)
         {
             var keyIndex = LyreNotes.IndexOf(noteId);
-            var key = Keyboard.GetLayout(selectedLayout)[keyIndex];
-            Input.Keyboard.KeyPress(key);
+            var key = GetLayout(selectedLayout)[keyIndex];
+            return key;
         }
     }
 }
