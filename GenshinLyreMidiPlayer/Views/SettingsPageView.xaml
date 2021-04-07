@@ -38,7 +38,7 @@
                     IsOn="{Binding MergeNotes}" />
 
                 <ui:NumberBox
-                    Header="Tolerance (ms)" IsEnabled="{Binding MergeNotes}" 
+                    Header="Tolerance (ms)" IsEnabled="{Binding MergeNotes}"
                     Minimum="0" SpinButtonPlacementMode="Compact"
                     Value="{Binding MergeMilliseconds}" />
             </ui:SimpleStackPanel>
@@ -68,10 +68,24 @@
                 </ui:RadioButtons>
             </GroupBox>
 
-            <GroupBox Header="Transition Style">
+            <Expander Header="Transition style">
                 <ui:RadioButtons
                     ItemsSource="{Binding Transitions}"
                     SelectedItem="{Binding Transition}" />
+            </Expander>
+
+
+            <GroupBox Header="License">
+                <ui:SimpleStackPanel Margin="10">
+                    <TextBlock>
+                        Created by © 2021 sabihoshi under the
+                        <Hyperlink
+                            NavigateUri="https://github.com/sabihoshi/GenshinLyreMidiPlayer/blob/main/LICENSE.md">
+                            MIT License
+                        </Hyperlink>.
+                    </TextBlock>
+                    <TextBlock TextWrapping="Wrap">© All rights reserved by miHoYo Co., Ltd. This project is not affiliated nor endorsed by miHoYo. Genshin Impact™ and other properties belong to their respective owners.</TextBlock>
+                </ui:SimpleStackPanel>
             </GroupBox>
         </ui:SimpleStackPanel>
     </ScrollViewer>

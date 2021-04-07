@@ -1,9 +1,15 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using System.Linq;
+using System.Net.Http;
+using System.Net.Http.Headers;
+using System.Reflection;
+using System.Text.Json;
+using System.Threading.Tasks;
+using GenshinLyreMidiPlayer.Models;
 using GenshinLyreMidiPlayer.Views;
 using ModernWpf.Controls;
 using Stylet;
-using StyletIoC;
 
 namespace GenshinLyreMidiPlayer.ViewModels
 {
@@ -11,17 +17,57 @@ namespace GenshinLyreMidiPlayer.ViewModels
     {
         private readonly Stack<NavigationViewItem> _history = new();
 
-        public MainWindowViewModel(IContainer ioc, IEventAggregator events)
+        public MainWindowViewModel(IEventAggregator events)
         {
             SettingsView = new SettingsPageViewModel(events);
             PlayerView   = new LyrePlayerViewModel(events, SettingsView);
+
+            Task.Run(async () =>
+            {
+                var client = new HttpClient();
+                UpdateString     += "(Checking for updates)";
+                IsCheckingUpdate =  true;
+
+                try
+                {
+                    var request = new HttpRequestMessage(HttpMethod.Get,
+                        "https://api.github.com/repos/sabihoshi/GenshinLyreMidiPlayer/releases/latest");
+
+                    var productInfo = new ProductInfoHeaderValue("GenshinLyreMidiPlayer", ProgramVersion?.ToString());
+
+                    request.Headers.UserAgent.Add(productInfo);
+
+                    var response = await client.SendAsync(request);
+                    var version = JsonSerializer.Deserialize<GitVersion>(await response.Content.ReadAsStringAsync());
+                    if (version.Version > ProgramVersion && !(version.Draft || version.Prerelease))
+                        UpdateString = $"(Update available! {version.TagName})";
+                    else
+                        UpdateString = string.Empty;
+                }
+                catch (Exception)
+                {
+                    // Ignored
+                }
+                finally
+                {
+                    IsCheckingUpdate = false;
+                }
+            });
         }
+
+        public bool IsCheckingUpdate { get; set; }
 
         public LyrePlayerViewModel PlayerView { get; }
 
         public SettingsPageViewModel SettingsView { get; }
 
         public string Title { get; set; } = "Genshin Lyre MIDI Player";
+
+        public string UpdateString { get; set; }
+
+        public string VersionString { get; set; } = $"v{ProgramVersion?.ToString(3)}";
+
+        private static Version? ProgramVersion { get; } = Assembly.GetExecutingAssembly().GetName().Version;
 
         protected override void OnViewLoaded()
         {

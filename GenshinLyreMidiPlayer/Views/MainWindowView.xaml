@@ -17,15 +17,20 @@
     ui:WindowHelper.UseModernWindowStyle="True"
     ui:TitleBar.ExtendViewIntoTitleBar="True">
     <Grid>
-        <Grid VerticalAlignment="Top" Canvas.ZIndex="1"
+        <ui:SimpleStackPanel 
+              Orientation="Horizontal" VerticalAlignment="Top" Canvas.ZIndex="1"
               Height="{Binding ElementName=NavView, Path=CompactPaneLength}">
             <TextBlock
                 Margin="50,0,0,0"
                 VerticalAlignment="Center"
 
-                Text="{Binding Title}"
-                Style="{DynamicResource CaptionTextBlockStyle}" />
-        </Grid>
+                Style="{DynamicResource CaptionTextBlockStyle}">
+                <Run Text="{Binding Title}" />
+                <Run Text="{Binding VersionString}" />
+                <Run Text="{Binding UpdateString}" />
+            </TextBlock>
+            <ui:ProgressRing IsActive="{Binding IsCheckingUpdate}" />
+        </ui:SimpleStackPanel>
 
         <ui:NavigationView
             x:Name="NavView" AlwaysShowHeader="True"
