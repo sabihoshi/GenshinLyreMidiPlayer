@@ -1,10 +1,10 @@
 # Genshin Windsong Lyre Midi Player ![GitHub release (latest by date)](https://img.shields.io/github/v/release/sabihoshi/GenshinLyreMidiPlayer) ![GitHub all releases](https://img.shields.io/github/downloads/sabihoshi/GenshinLyreMidiPlayer/total)
 
-A MIDI to key player for Genshin Impact's Windsong Lyre made using C# and WPF using Windows Fluent design.
+A MIDI to key player for Genshin Impact's Windsong Lyre made using C# and WPF using Windows Fluent design. If you enjoyed my project, you can contribute or star the repository. Thank you~
 
 ![2021-04-05_08-31-16](https://user-images.githubusercontent.com/25006819/113526431-989a4680-95ec-11eb-9896-47154c86b333.png)
 
-## How to install
+## How to use
 
 1. Download the latest version found here. [Download](https://github.com/sabihoshi/GenshinLyreMidiPlayer/releases/latest)
 2. Run the program, no installation is required.
@@ -39,6 +39,7 @@ You can resize the player as small as you want and it should close the panels ac
 ## Upcoming
 * Output into a "Piano Sheet" in a text file.
 * History of opened MIDI files.
+* Preview songs by playing to your speakers.
 
 ## About
 
@@ -47,6 +48,50 @@ MIDI files (.mid) is a set of instructions that play various instruments on what
 
 ### Can this get me banned?
 The short answer is that it's uncertain. I have used this in development with my own account for a week now and so far, I have not gotten banned. But use it at your own risk. Do not play songs that will spam the keyboard, listen to the MIDI file first and make sure to play only one instrument so that the tool doesn't spam keyboard inputs. [Here is miHoYo's response](https://genshin.mihoyo.com/en/news/detail/5763) to using 3rd party tools.
+
+## Contributing
+When contributing to this repository, please first discuss the change you wish to make via issue, email (sabihoshi.dev@gmail.com), or any other method with me or the maintainers of this repository before making a change. 
+
+This project has a [Code of Conduct](CONTRIBUTING.md), please follow it in all your interactions with the project.
+
+### Pull Request Process
+
+1. Do not include the build itself where the project is cleaned using `dotnet clean`.
+2. Update the README.md with details of changes to the project, new features, and others that are applicable.
+3. Increase the version number of the project and the README.md to the new version that this
+   Pull Request would represent. The versioning scheme we use is [SemVer](http://semver.org/).
+4. You may merge the Pull Request in once you have the the approval of the maintainers.
+
+## Build
+
+### Requirements
+* [Git](https://git-scm.com) for cloning the project
+* [.NET Core 3.1](https://dotnet.microsoft.com/download/dotnet/3.1) SDK
+
+#### Publish a single binary for Windows
+```bat
+git clone https://github.com/sabihoshi/GenshinLyreMidiPlayer.git
+cd GenshinLyreMidiPlayer\GenshinLyreMidiPlayer
+
+dotnet publish -r win-x86 --framework netcoreapp3.1 -o bin\publish --no-self-contained -p:PublishSingleFile=true
+```
+> For other runtimes, visit the [RID Catalog](https://docs.microsoft.com/en-us/dotnet/core/rid-catalog) and change the runtime value.
+
+#### Build the project (not necessary if you published)
+```bat
+git clone https://github.com/sabihoshi/GenshinLyreMidiPlayer.git
+cd GenshinLyreMidiPlayer
+
+dotnet build
+```
+
+#### Publsh the project using defaults
+```bat
+git clone https://github.com/sabihoshi/GenshinLyreMidiPlayer.git
+cd GenshinLyreMidiPlayer
+
+dotnet publish
+```
 
 ## Special Thanks
 * Credits to [ShawzinBot](https://github.com/ianespana/ShawzinBot) by [ianespana](ianespana) where most of the inspiration comes from.
