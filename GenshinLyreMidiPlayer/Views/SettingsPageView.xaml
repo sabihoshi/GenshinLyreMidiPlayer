@@ -28,9 +28,20 @@
                     Value="{Binding KeyOffset}" />
             </ui:SimpleStackPanel>
 
-            <ui:ToggleSwitch
-                Header="Hold Notes"
-                IsOn="{Binding HoldNotes}" />
+            <ui:SimpleStackPanel Orientation="Horizontal">
+                <ui:ToggleSwitch
+                    Header="Hold notes"
+                    IsOn="{Binding HoldNotes}" />
+
+                <ui:ToggleSwitch
+                    Header="Merge nearby notes"
+                    IsOn="{Binding MergeNotes}" />
+
+                <ui:NumberBox
+                    Header="Tolerance (ms)" IsEnabled="{Binding MergeNotes}" 
+                    Minimum="0" SpinButtonPlacementMode="Compact"
+                    Value="{Binding MergeMilliseconds}" />
+            </ui:SimpleStackPanel>
 
             <ui:SimpleStackPanel Orientation="Horizontal">
                 <GroupBox Header="Speed">

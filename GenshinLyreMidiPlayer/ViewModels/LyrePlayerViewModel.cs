@@ -8,12 +8,13 @@ using GenshinLyreMidiPlayer.Models;
 using Melanchall.DryWetMidi.Core;
 using Melanchall.DryWetMidi.Devices;
 using Melanchall.DryWetMidi.Interaction;
+using Melanchall.DryWetMidi.Tools;
 using Microsoft.Win32;
 using Stylet;
 
 namespace GenshinLyreMidiPlayer.ViewModels
 {
-    public class LyrePlayerViewModel : Screen, IHandle<MidiTrackModel>, IHandle<MidiSpeedModel>
+    public class LyrePlayerViewModel : Screen, IHandle<MidiTrackModel>, IHandle<SettingsPageViewModel>
     {
         private readonly IEventAggregator _events;
         private readonly SettingsPageViewModel _settings;
@@ -101,18 +102,18 @@ namespace GenshinLyreMidiPlayer.ViewModels
 
         public string SongName { get; set; } = "Open MIDI file...";
 
-        public void Handle(MidiSpeedModel message)
-        {
-            if (_playback != null)
-            {
-                _playback.Speed = message.Speed;
-                _reloadPlayback = true;
-            }
-        }
-
         public void Handle(MidiTrackModel message)
         {
             _reloadPlayback = true;
+        }
+
+        public void Handle(SettingsPageViewModel message)
+        {
+            if (_playback != null)
+            {
+                _playback.Speed = message.SelectedSpeed.Speed;
+                _reloadPlayback = true;
+            }
         }
 
         public void OpenFile()
@@ -197,11 +198,19 @@ namespace GenshinLyreMidiPlayer.ViewModels
                     .Where(t => t.IsChecked)
                     .Select(t => t.Track));
 
+                if (_settings.MergeNotes)
+                {
+                    _midiFile.MergeNotes(new NotesMergingSettings
+                    {
+                        Tolerance = new MetricTimeSpan(0, 0, 0, (int) _settings.MergeMilliseconds)
+                    });
+                }
+
                 _playback       = _midiFile.GetPlayback();
                 _playback.Speed = _settings.SelectedSpeed.Speed;
 
                 _playback.MoveToTime(_playTime);
-                _playback.Finished += (s, e) => { CloseFile(); };
+                _playback.Finished += (_, _) => { CloseFile(); };
 
                 PlaybackCurrentTimeWatcher.Instance.AddPlayback(_playback, TimeSpanType.Metric);
                 PlaybackCurrentTimeWatcher.Instance.CurrentTimeChanged += OnSongTick;

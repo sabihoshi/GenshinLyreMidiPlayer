@@ -13,6 +13,8 @@ namespace GenshinLyreMidiPlayer.ViewModels
     {
         private readonly IEventAggregator _events;
         private int _keyOffset;
+        private uint _mergeMilliseconds;
+        private bool _mergeNotes;
         private MidiSpeedModel _selectedSpeed;
 
         public SettingsPageViewModel(IEventAggregator events)
@@ -28,6 +30,16 @@ namespace GenshinLyreMidiPlayer.ViewModels
         public bool HoldNotes { get; set; } = false;
 
         public bool TransposeNotes { get; set; } = true;
+
+        public bool MergeNotes
+        {
+            get => _mergeNotes;
+            set
+            {
+                SetAndNotify(ref _mergeNotes, value);
+                _events.Publish(this);
+            }
+        }
 
         public static CaptionedObject<Transition> Transition { get; set; }
 
@@ -103,14 +115,14 @@ namespace GenshinLyreMidiPlayer.ViewModels
 
         public List<MidiSpeedModel> MidiSpeeds { get; } = new()
         {
-            new("0.25x", 0.25),
-            new("0.5x", 0.5),
-            new("0.75x", 0.75),
-            new("Normal", 1),
-            new("1.25x", 1.25),
-            new("1.5x", 1.5),
-            new("1.75x", 1.75),
-            new("2x", 2)
+            new MidiSpeedModel("0.25x", 0.25),
+            new MidiSpeedModel("0.5x", 0.5),
+            new MidiSpeedModel("0.75x", 0.75),
+            new MidiSpeedModel("Normal", 1),
+            new MidiSpeedModel("1.25x", 1.25),
+            new MidiSpeedModel("1.5x", 1.5),
+            new MidiSpeedModel("1.75x", 1.75),
+            new MidiSpeedModel("2x", 2)
         };
 
         public MidiSpeedModel SelectedSpeed
@@ -118,11 +130,21 @@ namespace GenshinLyreMidiPlayer.ViewModels
             get => _selectedSpeed;
             set
             {
-                _selectedSpeed = value;
-                _events.Publish(value);
+                SetAndNotify(ref _selectedSpeed, value);
+                _events.Publish(this);
             }
         }
 
         public string Key => $"Key: {KeyOffsets[KeyOffset]}";
+
+        public uint MergeMilliseconds
+        {
+            get => _mergeMilliseconds;
+            set
+            {
+                SetAndNotify(ref _mergeMilliseconds, value);
+                _events.Publish(this);
+            }
+        }
     }
 }
