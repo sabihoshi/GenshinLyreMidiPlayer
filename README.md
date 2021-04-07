@@ -1,6 +1,6 @@
-# Genshin Windsong Lyre Midi Player
+# Genshin Windsong Lyre Midi Player ![GitHub release (latest by date)](https://img.shields.io/github/v/release/sabihoshi/GenshinLyreMidiPlayer) ![GitHub all releases](https://img.shields.io/github/downloads/sabihoshi/GenshinLyreMidiPlayer/total)
 
-A MIDI to key player made using C# and WPF using Windows Fluent design.
+A MIDI to key player for Genshin Impact's Windsong Lyre made using C# and WPF using Windows Fluent design.
 
 ![2021-04-05_08-31-16](https://user-images.githubusercontent.com/25006819/113526431-989a4680-95ec-11eb-9896-47154c86b333.png)
 
@@ -13,16 +13,22 @@ A MIDI to key player made using C# and WPF using Windows Fluent design.
 5. Press play.
 
 ## Features
-![2021-04-05_08-30-35](https://user-images.githubusercontent.com/25006819/113526428-97691980-95ec-11eb-8374-2f2cb3469756.png)
+![GenshinLyreMidiPlayer_2021-04-07_13-50-29](https://user-images.githubusercontent.com/25006819/113817035-40a83f00-97a8-11eb-901e-0752fd28aebe.png)
 * The ability to change the key. By default, it is keyed to C major.
 * You can play multiple tracks of a MIDI file at the same time.
 * You can enable transposing of notes, otherwise it will skip the notes entirely.
 * Written in C# WPF with modern fluent design.
-* [![](https://img.shields.io/badge/v1.2.0-New!-yellow)](https://github.com/sabihoshi/GenshinLyreMidiPlayer/releases/tag/v1.2.0) Play using your own MIDI Input Device
-  - If you have your own MIDI instrument, this will let you play directly to the Genshin Lyre
-* [![](https://img.shields.io/badge/v1.3.1-New!-yellow)](https://github.com/sabihoshi/GenshinLyreMidiPlayer/releases/tag/v1.3.1) Change the keyboard layout (QWERTZ, AZERTY, DVORAK, etc.)
+* Change the keyboard layout (QWERTZ, AZERTY, DVORAK, etc.)
 
-### [![](https://img.shields.io/badge/v1.4.0-New!-yellow)](https://github.com/sabihoshi/GenshinLyreMidiPlayer/releases/tag/v1.4.0) Light Mode
+### Play using your own MIDI Input Device
+If you have your own MIDI instrument, this will let you play directly to the Genshin Lyre. This lets you play directly without using a MIDI file.
+
+### [![](https://img.shields.io/badge/v1.5.0-New!-yellow)](https://github.com/sabihoshi/GenshinLyreMidiPlayer/releases/tag/v1.5.0) Hold notes & Merge nearby notes
+  - You can set the player to hold sustained notes (does not really make a difference. Off by default.)
+  - Some songs sound better when nearby notes are merged see [#4](https://github.com/sabihoshi/GenshinLyreMidiPlayer/issues/4) for an example
+
+### Light Mode
+You can set the player to light mode/dark mode (uses your system's theme by default.)
 ![GenshinLyreMidiPlayer_2021-04-05_08-58-35](https://user-images.githubusercontent.com/25006819/113526575-237b4100-95ed-11eb-813c-1e9c661624cf.png)
 
 ### Mini Mode
