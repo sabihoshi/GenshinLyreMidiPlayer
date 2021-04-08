@@ -27,7 +27,7 @@ namespace GenshinLyreMidiPlayer.ViewModels
             SelectedSpeed  = MidiSpeeds[3];
         }
 
-        public bool HoldNotes { get; set; } = false;
+        public bool HoldNotes { get; set; }
 
         public bool TransposeNotes { get; set; } = true;
 
@@ -41,7 +41,7 @@ namespace GenshinLyreMidiPlayer.ViewModels
             }
         }
 
-        public static CaptionedObject<Transition> Transition { get; set; }
+        public static CaptionedObject<Transition>? Transition { get; set; }
 
         public Dictionary<int, string> KeyOffsets { get; set; } = new()
         {
@@ -99,7 +99,7 @@ namespace GenshinLyreMidiPlayer.ViewModels
             [24]  = "C5"
         };
 
-        public static IEnumerable<CaptionedObject<Transition>> Transitions { get; private set; }
+        public IEnumerable<CaptionedObject<Transition>> Transitions { get; }
 
         public int MinOffset => KeyOffsets.Keys.Min();
 

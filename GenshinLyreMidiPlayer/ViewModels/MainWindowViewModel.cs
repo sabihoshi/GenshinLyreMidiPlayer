@@ -24,12 +24,12 @@ namespace GenshinLyreMidiPlayer.ViewModels
 
             Task.Run(async () =>
             {
-                var client = new HttpClient();
                 UpdateString     += "(Checking for updates)";
                 IsCheckingUpdate =  true;
 
                 try
                 {
+                    var client = new HttpClient();
                     var request = new HttpRequestMessage(HttpMethod.Get,
                         "https://api.github.com/repos/sabihoshi/GenshinLyreMidiPlayer/releases/latest");
 
@@ -46,7 +46,7 @@ namespace GenshinLyreMidiPlayer.ViewModels
                 }
                 catch (Exception)
                 {
-                    // Ignored
+                    UpdateString = "(Failed to check updates)";
                 }
                 finally
                 {
@@ -63,9 +63,9 @@ namespace GenshinLyreMidiPlayer.ViewModels
 
         public string Title { get; set; } = "Genshin Lyre MIDI Player";
 
-        public string UpdateString { get; set; }
-
         public string VersionString { get; set; } = $"v{ProgramVersion?.ToString(3)}";
+
+        public string UpdateString { get; set; } = string.Empty;
 
         private static Version? ProgramVersion { get; } = Assembly.GetExecutingAssembly().GetName().Version;
 

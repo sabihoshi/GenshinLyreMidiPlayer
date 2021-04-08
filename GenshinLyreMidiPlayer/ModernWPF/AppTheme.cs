@@ -26,11 +26,11 @@ namespace GenshinLyreMidiPlayer.ModernWPF
 
         public ApplicationTheme? Value { get; }
 
-        public static AppTheme Light { get; } = new AppTheme("Light", ApplicationTheme.Light);
+        public static AppTheme Light { get; } = new("Light", ApplicationTheme.Light);
 
-        public static AppTheme Dark { get; } = new AppTheme("Dark", ApplicationTheme.Dark);
+        public static AppTheme Dark { get; } = new("Dark", ApplicationTheme.Dark);
 
-        public static AppTheme Default { get; } = new AppTheme("Use system setting", null);
+        public static AppTheme Default { get; } = new("Use system setting", null);
 
         public string Name { get; }
 

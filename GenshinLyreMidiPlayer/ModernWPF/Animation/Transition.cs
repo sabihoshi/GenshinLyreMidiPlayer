@@ -12,19 +12,19 @@ namespace GenshinLyreMidiPlayer.ModernWPF.Animation
     {
         internal static readonly KeySpline AccelerateKeySpline;
         internal static readonly KeySpline DecelerateKeySpline;
-        internal static readonly PropertyPath OpacityPath = new PropertyPath(UIElement.OpacityProperty);
+        internal static readonly PropertyPath OpacityPath = new(UIElement.OpacityProperty);
 
         internal static readonly PropertyPath TranslateXPath =
-            new PropertyPath("(UIElement.RenderTransform).(TranslateTransform.X)");
+            new("(UIElement.RenderTransform).(TranslateTransform.X)");
 
         internal static readonly PropertyPath TranslateYPath =
-            new PropertyPath("(UIElement.RenderTransform).(TranslateTransform.Y)");
+            new("(UIElement.RenderTransform).(TranslateTransform.Y)");
 
         internal static readonly PropertyPath ScaleXPath =
-            new PropertyPath("(UIElement.RenderTransform).(ScaleTransform.ScaleX)");
+            new("(UIElement.RenderTransform).(ScaleTransform.ScaleX)");
 
         internal static readonly PropertyPath ScaleYPath =
-            new PropertyPath("(UIElement.RenderTransform).(ScaleTransform.ScaleY)");
+            new("(UIElement.RenderTransform).(ScaleTransform.ScaleY)");
 
         internal static readonly TimeSpan ExitDuration = TimeSpan.FromMilliseconds(150);
         internal static readonly TimeSpan EnterDuration = TimeSpan.FromMilliseconds(300);
