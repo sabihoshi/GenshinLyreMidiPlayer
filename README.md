@@ -1,6 +1,8 @@
-# Genshin Windsong Lyre Midi Player ![GitHub release (latest by date)](https://img.shields.io/github/v/release/sabihoshi/GenshinLyreMidiPlayer) ![GitHub all releases](https://img.shields.io/github/downloads/sabihoshi/GenshinLyreMidiPlayer/total)
+# Genshin Lyre MIDI Player ![GitHub release (latest by date)](https://img.shields.io/github/v/release/sabihoshi/GenshinLyreMidiPlayer) ![GitHub all releases](https://img.shields.io/github/downloads/sabihoshi/GenshinLyreMidiPlayer/total)
 
-A MIDI to key player for Genshin Impact's Windsong Lyre made using C# and WPF using Windows Fluent design. If you enjoyed my project, you can contribute or star the repository. Thank you~
+A MIDI to key player for Genshin Impact's Windsong Lyre made using C# and WPF using Windows Fluent design. If you enjoyed this project, consider [contributing](https://github.com/sabihoshi/GenshinLyreMidiPlayer#contributing) or 🌟 starring the repository. Thank you~
+
+> Check out [yoroshikun](https://github.com/yoroshikun)'s Flutter implementation of a **[Genshin Lyre Player](https://github.com/yoroshikun/flutter_genshin_lyre_player)** written in Dart!
 
 ![2021-04-05_08-31-16](https://user-images.githubusercontent.com/25006819/113526431-989a4680-95ec-11eb-9896-47154c86b333.png)
 
@@ -49,12 +51,12 @@ MIDI files (.mid) is a set of instructions that play various instruments on what
 ### Can this get me banned?
 The short answer is that it's uncertain. I have used this in development with my own account for a week now and so far, I have not gotten banned. But use it at your own risk. Do not play songs that will spam the keyboard, listen to the MIDI file first and make sure to play only one instrument so that the tool doesn't spam keyboard inputs. [Here is miHoYo's response](https://genshin.mihoyo.com/en/news/detail/5763) to using 3rd party tools.
 
-## Contributing
-When contributing to this repository, please first discuss the change you wish to make via issue, email (sabihoshi.dev@gmail.com), or any other method with me or the maintainers of this repository before making a change. 
+# Contributing
+When contributing to this repository, please first discuss the change you wish to make via issue, email (sabihoshi.dev@gmail.com), or any other method with me or the maintainers of this repository before making a change.
 
 This project has a [Code of Conduct](CONTRIBUTING.md), please follow it in all your interactions with the project.
 
-### Pull Request Process
+## Pull Request Process
 
 1. Do not include the build itself where the project is cleaned using `dotnet clean`.
 2. Update the README.md with details of changes to the project, new features, and others that are applicable.
@@ -85,7 +87,7 @@ cd GenshinLyreMidiPlayer
 dotnet build
 ```
 
-#### Publsh the project using defaults
+#### Publish the project using defaults
 ```bat
 git clone https://github.com/sabihoshi/GenshinLyreMidiPlayer.git
 cd GenshinLyreMidiPlayer
@@ -93,10 +95,13 @@ cd GenshinLyreMidiPlayer
 dotnet publish
 ```
 
-## Special Thanks
-* Credits to [ShawzinBot](https://github.com/ianespana/ShawzinBot) by [ianespana](ianespana) where most of the inspiration comes from.
-* Lantua for explaining to me music theory; what octaves, transposition, keys, and scales are.
+# Special Thanks
+* Credits to [ianespana](ianespana) and their project **[ShawzinBot](https://github.com/ianespana/ShawzinBot)** where most of the inspiration comes from.
+* Credits to [yoroshikun](https://github.com/yoroshikun) and their project **[Flutter Genshin Lyre Auto Player](https://github.com/yoroshikun/flutter_genshin_lyre_player)** for giving ideas such as history and fluent design.
+* **[Lantua](https://github.com/lantua)** for explaining to me music theory; what octaves, transposition, keys, and scales are.
 
-## License
+# License
 * This project is under the [MIT](LICENSE.md) license.
 * © All rights reserved by miHoYo Co., Ltd. This project is not affiliated nor endorsed by miHoYo. Genshin Impact™ and other properties belong to their respective owners.
+* This project uses third-party libraries or other resources that may be
+distributed under [different licenses](/THIRD-PARTY-NOTICES.md).
