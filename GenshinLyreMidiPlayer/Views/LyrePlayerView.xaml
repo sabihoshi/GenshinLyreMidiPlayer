@@ -61,14 +61,15 @@
                 <ColumnDefinition Width="*" />
                 <ColumnDefinition Width="Auto" />
             </Grid.ColumnDefinitions>
+
             <TextBlock Grid.Column="0" VerticalAlignment="Center"
-                       Text="{Binding CurrentTime}" />
+                       Text="{Binding CurrentTime, StringFormat=m\\:ss}" />
             <Slider
                 Grid.Column="1" Padding="5, 0"
                 Value="{Binding SongSlider}"
                 Maximum="{Binding Path=MaximumTime}" />
             <TextBlock Grid.Column="2" VerticalAlignment="Center"
-                       Text="{Binding TotalTime}" />
+                       Text="{Binding Duration, StringFormat=m\\:ss}" />
         </Grid>
 
         <GroupBox Grid.Row="3" Header="MIDI Tracks">
