@@ -4,15 +4,17 @@ A MIDI to key player for Genshin Impact's Windsong Lyre made using C# and WPF us
 
 > Check out [yoroshikun](https://github.com/yoroshikun)'s Flutter implementation of a **[Genshin Lyre Player](https://github.com/yoroshikun/flutter_genshin_lyre_player)** written in Dart!
 
+## [Download latest version](https://github.com/sabihoshi/GenshinLyreMidiPlayer/releases/latest)
+
 ![2021-04-05_08-31-16](https://user-images.githubusercontent.com/25006819/113526431-989a4680-95ec-11eb-9896-47154c86b333.png)
 
 ## How to use
 
-1. Download the latest version found here. [Download](https://github.com/sabihoshi/GenshinLyreMidiPlayer/releases/latest)
-2. Run the program, no installation is required.
-3. Open a .mid file by pressing the open file button at the top left.
-4. Enable the tracks that you want to be played back.
-5. Press play.
+1. [Download the program](https://github.com/sabihoshi/GenshinLyreMidiPlayer/releases/latest) and then run, no need for installation.
+2. Open a .mid file by pressing the open file button at the top left.
+3. Enable the tracks that you want to be played back.
+4. Press play it should automatically switch to Genshin Impact.
+5. Automatically stops playing if you switch to a different window.
 
 ## Features
 ![GenshinLyreMidiPlayer_2021-04-07_13-50-29](https://user-images.githubusercontent.com/25006819/113817035-40a83f00-97a8-11eb-901e-0752fd28aebe.png)
@@ -42,6 +44,8 @@ You can resize the player as small as you want and it should close the panels ac
 * Output into a "Piano Sheet" in a text file.
 * History of opened MIDI files.
 * Preview songs by playing to your speakers.
+* Playlist controls such as shuffle, repeat.
+* Pause without having to switch windows.
 
 ## About
 
@@ -102,6 +106,6 @@ dotnet publish
 
 # License
 * This project is under the [MIT](LICENSE.md) license.
-* © All rights reserved by miHoYo Co., Ltd. This project is not affiliated nor endorsed by miHoYo. Genshin Impact™ and other properties belong to their respective owners.
+* All rights reserved by © miHoYo Co., Ltd. This project is not affiliated nor endorsed by miHoYo. Genshin Impact™ and other properties belong to their respective owners.
 * This project uses third-party libraries or other resources that may be
 distributed under [different licenses](/THIRD-PARTY-NOTICES.md).

@@ -10,13 +10,14 @@
     xmlns:modernWpf="clr-namespace:GenshinLyreMidiPlayer.ModernWPF"
     xmlns:core="clr-namespace:GenshinLyreMidiPlayer.Core"
     xmlns:viewModels="clr-namespace:GenshinLyreMidiPlayer.ViewModels"
+    xmlns:s="https://github.com/canton7/Stylet"
     d:DataContext="{d:DesignInstance Type=viewModels:SettingsPageViewModel}">
     <UserControl.Resources>
         <modernWpf:AppThemeConverter x:Key="AppThemeConverter" />
     </UserControl.Resources>
 
     <ScrollViewer>
-        <ui:SimpleStackPanel Margin="10">
+        <ui:SimpleStackPanel>
             <ui:SimpleStackPanel Orientation="Horizontal">
                 <ui:ToggleSwitch
                     Header="Transpose"
@@ -74,7 +75,6 @@
                     SelectedItem="{Binding Transition}" />
             </Expander>
 
-
             <GroupBox Header="License">
                 <ui:SimpleStackPanel Margin="10">
                     <TextBlock>
@@ -84,7 +84,29 @@
                             MIT License
                         </Hyperlink>.
                     </TextBlock>
-                    <TextBlock TextWrapping="Wrap">© All rights reserved by miHoYo Co., Ltd. This project is not affiliated nor endorsed by miHoYo. Genshin Impact™ and other properties belong to their respective owners.</TextBlock>
+                    <TextBlock TextWrapping="Wrap">All rights reserved by © miHoYo Co., Ltd. This project is not affiliated nor endorsed by miHoYo. Genshin Impact™ and other properties belong to their respective owners.</TextBlock>
+                </ui:SimpleStackPanel>
+            </GroupBox>
+
+            <GroupBox Header="Version">
+                <ui:SimpleStackPanel>
+                    <ui:SimpleStackPanel Orientation="Horizontal">
+                        <TextBlock x:Name="VersionText">
+                            You are running version
+                            <Run Text="{x:Static viewModels:SettingsPageViewModel.VersionString}"/>
+                        </TextBlock>
+                        <Button Command="{s:Action CheckForUpdate}"
+                                Visibility="{Binding IsCheckingUpdate, Converter={x:Static s:BoolToVisibilityConverter.InverseInstance}}"
+                                Background="Transparent">
+                            <ui:FontIcon 
+                                Glyph="&#xE72C;"
+                                FontSize="{Binding ElementName=VersionText, Path=FontSize}" />
+                        </Button>
+                        <ui:ProgressRing IsActive="{Binding IsCheckingUpdate}" />
+                    </ui:SimpleStackPanel>
+
+                    <ui:ToggleSwitch Header="Automatically check updates" IsEnabled="{Binding AutoCheckUpdates}" />
+                    <ui:ToggleSwitch Header="Include beta updates" IsEnabled="{Binding IncludeBetaUpdates}" />
                 </ui:SimpleStackPanel>
             </GroupBox>
         </ui:SimpleStackPanel>

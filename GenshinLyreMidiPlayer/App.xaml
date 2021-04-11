@@ -21,15 +21,12 @@
             </ResourceDictionary.MergedDictionaries>
 
             <Style TargetType="ui:SimpleStackPanel">
-                <Setter Property="Spacing" Value="12" />
+                <Setter Property="Spacing" Value="10" />
                 <Style.Resources>
                     <Style TargetType="ComboBox" BasedOn="{StaticResource {x:Type ComboBox}}">
                         <Setter Property="MinWidth" Value="200" />
                     </Style>
                     <Style TargetType="TextBox" BasedOn="{StaticResource {x:Type TextBox}}">
-                        <Setter Property="MinWidth" Value="200" />
-                    </Style>
-                    <Style TargetType="DatePicker" BasedOn="{StaticResource {x:Type DatePicker}}">
                         <Setter Property="MinWidth" Value="200" />
                     </Style>
                 </Style.Resources>

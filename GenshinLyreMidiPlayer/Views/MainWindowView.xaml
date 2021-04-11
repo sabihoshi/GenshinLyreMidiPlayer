@@ -26,10 +26,10 @@
 
                 Style="{DynamicResource CaptionTextBlockStyle}">
                 <Run Text="{Binding Title}" />
-                <Run Text="{Binding VersionString}" />
-                <Run Text="{Binding UpdateString}" />
+                <Run Text="{x:Static viewModels:SettingsPageViewModel.VersionString}" />
+                <Run Text="{Binding SettingsView.UpdateString}" />
             </TextBlock>
-            <ui:ProgressRing IsActive="{Binding IsCheckingUpdate}" />
+            <ui:ProgressRing IsActive="{Binding SettingsView.IsCheckingUpdate}" />
         </ui:SimpleStackPanel>
 
         <ui:NavigationView
@@ -44,7 +44,7 @@
                 <ui:NavigationViewItem Content="Windsong Lyre Player" Icon="60495" Tag="{Binding PlayerView}" />
             </ui:NavigationView.MenuItems>
 
-            <modernWpf:AnimatedContentControl s:View.Model="{Binding ActiveItem}" />
+            <modernWpf:AnimatedContentControl Margin="10" s:View.Model="{Binding ActiveItem}" />
         </ui:NavigationView>
     </Grid>
 </Window>

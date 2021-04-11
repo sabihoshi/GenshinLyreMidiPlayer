@@ -11,7 +11,7 @@
 
     xmlns:viewModels="clr-namespace:GenshinLyreMidiPlayer.ViewModels"
     d:DataContext="{d:DesignInstance Type=viewModels:LyrePlayerViewModel}">
-    <Grid Margin="10">
+    <Grid>
         <Grid.RowDefinitions>
             <RowDefinition Height="Auto" />
             <RowDefinition Height="Auto" />

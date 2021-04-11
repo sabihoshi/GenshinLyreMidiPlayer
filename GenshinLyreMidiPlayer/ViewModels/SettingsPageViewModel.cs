@@ -1,6 +1,11 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Net.Http;
+using System.Net.Http.Headers;
+using System.Reflection;
+using System.Text.Json;
+using System.Threading.Tasks;
 using GenshinLyreMidiPlayer.Core;
 using GenshinLyreMidiPlayer.Models;
 using GenshinLyreMidiPlayer.ModernWPF;
@@ -12,6 +17,8 @@ namespace GenshinLyreMidiPlayer.ViewModels
     public class SettingsPageViewModel : Screen
     {
         private readonly IEventAggregator _events;
+        private bool _autoCheckUpdates = true;
+        private bool _includeBetaUpdates;
         private int _keyOffset;
         private uint _mergeMilliseconds;
         private bool _mergeNotes;
@@ -38,6 +45,31 @@ namespace GenshinLyreMidiPlayer.ViewModels
             {
                 SetAndNotify(ref _mergeNotes, value);
                 _events.Publish(this);
+            }
+        }
+
+        public bool IncludeBetaUpdates
+        {
+            get => _includeBetaUpdates;
+            set
+            {
+                SetAndNotify(ref _includeBetaUpdates, value);
+
+                _ = CheckForUpdate();
+            }
+        }
+
+        public bool IsCheckingUpdate { get; set; }
+
+        public bool AutoCheckUpdates
+        {
+            get => _autoCheckUpdates;
+            set
+            {
+                SetAndNotify(ref _autoCheckUpdates, value);
+
+                if (_autoCheckUpdates)
+                    _ = CheckForUpdate();
             }
         }
 
@@ -137,6 +169,10 @@ namespace GenshinLyreMidiPlayer.ViewModels
 
         public string Key => $"Key: {KeyOffsets[KeyOffset]}";
 
+        public static string VersionString { get; } = $"{ProgramVersion()?.ToString(3)}";
+
+        public string UpdateString { get; set; } = string.Empty;
+
         public uint MergeMilliseconds
         {
             get => _mergeMilliseconds;
@@ -145,6 +181,58 @@ namespace GenshinLyreMidiPlayer.ViewModels
                 SetAndNotify(ref _mergeMilliseconds, value);
                 _events.Publish(this);
             }
+        }
+
+        protected override void OnActivate()
+        {
+            if (AutoCheckUpdates)
+                _ = CheckForUpdate();
+        }
+
+        public static Version? ProgramVersion()
+        {
+            return Assembly.GetExecutingAssembly().GetName().Version;
+        }
+
+        public async Task CheckForUpdate()
+        {
+            if (IsCheckingUpdate)
+                return;
+
+            UpdateString     += "(Checking for updates)";
+            IsCheckingUpdate =  true;
+
+            try
+            {
+                var version = await GetLatestVersion();
+                UpdateString = version.Version > ProgramVersion()
+                    ? $"(Update available! {version.TagName})"
+                    : string.Empty;
+            }
+            catch (Exception)
+            {
+                UpdateString = "(Failed to check updates)";
+            }
+            finally
+            {
+                IsCheckingUpdate = false;
+            }
+        }
+
+        public async Task<GitVersion> GetLatestVersion()
+        {
+            var client = new HttpClient();
+            var request = new HttpRequestMessage(HttpMethod.Get,
+                "https://api.github.com/repos/sabihoshi/GenshinLyreMidiPlayer/releases");
+
+            var productInfo = new ProductInfoHeaderValue("GenshinLyreMidiPlayer", ProgramVersion()?.ToString());
+
+            request.Headers.UserAgent.Add(productInfo);
+
+            var response = await client.SendAsync(request);
+            var versions = JsonSerializer.Deserialize<List<GitVersion>>(await response.Content.ReadAsStringAsync());
+
+            return versions.First(v => !v.Draft && !v.Prerelease || IncludeBetaUpdates);
         }
     }
 }
