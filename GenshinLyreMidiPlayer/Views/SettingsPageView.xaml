@@ -105,8 +105,8 @@
                         <ui:ProgressRing IsActive="{Binding IsCheckingUpdate}" />
                     </ui:SimpleStackPanel>
 
-                    <ui:ToggleSwitch Header="Automatically check updates" IsEnabled="{Binding AutoCheckUpdates}" />
-                    <ui:ToggleSwitch Header="Include beta updates" IsEnabled="{Binding IncludeBetaUpdates}" />
+                    <ui:ToggleSwitch Header="Automatically check updates" IsOn="{Binding AutoCheckUpdates}" />
+                    <ui:ToggleSwitch Header="Include beta updates" IsOn="{Binding IncludeBetaUpdates}" />
                 </ui:SimpleStackPanel>
             </GroupBox>
         </ui:SimpleStackPanel>

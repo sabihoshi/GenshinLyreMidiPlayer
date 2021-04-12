@@ -1,4 +1,5 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using System.Linq;
 using WindowsInput;
 using WindowsInput.Native;
@@ -55,27 +56,29 @@ namespace GenshinLyreMidiPlayer.Core
 
         public static void PlayNote(int noteId, Layout selectedLayout)
         {
-            var key = GetKey(noteId, selectedLayout);
-            Input.Keyboard.KeyPress(key);
+            InteractNote(noteId, selectedLayout, Input.Keyboard.KeyPress);
         }
 
         public static void NoteDown(int noteId, Layout selectedLayout)
         {
-            var key = GetKey(noteId, selectedLayout);
-            Input.Keyboard.KeyDown(key);
+            InteractNote(noteId, selectedLayout, Input.Keyboard.KeyDown);
         }
 
         public static void NoteUp(int noteId, Layout selectedLayout)
         {
-            var key = GetKey(noteId, selectedLayout);
-            Input.Keyboard.KeyUp(key);
+            InteractNote(noteId, selectedLayout, Input.Keyboard.KeyUp);
         }
 
-        private static VirtualKeyCode GetKey(int noteId, Layout selectedLayout)
+        public static void InteractNote(int noteId, Layout selectedLayout,
+            Func<VirtualKeyCode, IKeyboardSimulator> action)
         {
+            var layout = GetLayout(selectedLayout);
             var keyIndex = LyreNotes.IndexOf(noteId);
-            var key = GetLayout(selectedLayout)[keyIndex];
-            return key;
+            if (keyIndex < 0 || keyIndex > layout.Count)
+                return;
+
+            var key = layout[keyIndex];
+            action.Invoke(key);
         }
     }
 }
