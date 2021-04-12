@@ -5,9 +5,9 @@ namespace GenshinLyreMidiPlayer.Models
 {
     public class GitVersion
     {
-        public bool Draft { get; set; }
+        [JsonPropertyName("draft")] public bool Draft { get; set; }
 
-        public bool Prerelease { get; set; }
+        [JsonPropertyName("prerelease")] public bool Prerelease { get; set; }
 
         [JsonPropertyName("tag_name")] public string TagName { get; set; }
 

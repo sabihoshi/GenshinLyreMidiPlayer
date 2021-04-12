@@ -189,18 +189,15 @@ namespace GenshinLyreMidiPlayer.ViewModels
                 _ = CheckForUpdate();
         }
 
-        public static Version? ProgramVersion()
-        {
-            return Assembly.GetExecutingAssembly().GetName().Version;
-        }
+        public static Version? ProgramVersion() => Assembly.GetExecutingAssembly().GetName().Version;
 
         public async Task CheckForUpdate()
         {
             if (IsCheckingUpdate)
                 return;
 
-            UpdateString     += "(Checking for updates)";
-            IsCheckingUpdate =  true;
+            UpdateString     = "(Checking for updates)";
+            IsCheckingUpdate = true;
 
             try
             {
@@ -232,7 +229,9 @@ namespace GenshinLyreMidiPlayer.ViewModels
             var response = await client.SendAsync(request);
             var versions = JsonSerializer.Deserialize<List<GitVersion>>(await response.Content.ReadAsStringAsync());
 
-            return versions.First(v => !v.Draft && !v.Prerelease || IncludeBetaUpdates);
+            return versions
+                .OrderByDescending(v => v.Version)
+                .First(v => !v.Draft && !v.Prerelease || IncludeBetaUpdates);
         }
     }
 }
