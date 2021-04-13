@@ -58,7 +58,7 @@
                     Margin="12,6,0,0"
 
                     Text="{Binding Title, Mode=OneTime}"
-                    Style="{DynamicResource BaseTextBoxStyle}" />
+                    Style="{DynamicResource BaseTextBlockStyle}" />
 
                 <TextBlock
                     Grid.Column="1" Grid.Row="1"
