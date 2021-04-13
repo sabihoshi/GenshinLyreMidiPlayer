@@ -11,7 +11,9 @@ namespace GenshinLyreMidiPlayer.Models
 
         public MidiTrackModel(IEventAggregator events, TrackChunk track)
         {
-            _events   = events;
+            _events    = events;
+            _isChecked = true;
+
             Track     = track;
             TrackName = track.Events.OfType<SequenceTrackNameEvent>().FirstOrDefault()?.Text;
         }

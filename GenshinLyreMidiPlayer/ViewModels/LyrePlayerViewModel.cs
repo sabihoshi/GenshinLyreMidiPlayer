@@ -1,6 +1,5 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.IO;
 using System.Linq;
 using System.Threading.Tasks;
 using GenshinLyreMidiPlayer.Core;
@@ -9,28 +8,32 @@ using Melanchall.DryWetMidi.Core;
 using Melanchall.DryWetMidi.Devices;
 using Melanchall.DryWetMidi.Interaction;
 using Melanchall.DryWetMidi.Tools;
-using Microsoft.Win32;
 using Stylet;
+using static GenshinLyreMidiPlayer.ViewModels.PlaylistViewModel;
 
 namespace GenshinLyreMidiPlayer.ViewModels
 {
-    public class LyrePlayerViewModel : Screen, IHandle<MidiTrackModel>, IHandle<SettingsPageViewModel>
+    public class LyrePlayerViewModel : Screen,
+        IHandle<MidiFileModel>,
+        IHandle<MidiTrackModel>,
+        IHandle<SettingsPageViewModel>
     {
         private readonly IEventAggregator _events;
+        private readonly PlaybackCurrentTimeWatcher _playbackWatcher = PlaybackCurrentTimeWatcher.Instance;
         private readonly SettingsPageViewModel _settings;
         private bool _ignoreSliderChange;
         private InputDevice? _inputDevice;
-        private MidiFile? _midiFile;
-        private Playback? _playback;
         private ITimeSpan _playTime = new MidiTimeSpan();
-        private bool _reloadPlayback;
         private MidiInputModel? _selectedMidiInput;
         private double _songSlider;
 
-        public LyrePlayerViewModel(IEventAggregator events, SettingsPageViewModel settings)
+        public LyrePlayerViewModel(IEventAggregator events,
+            SettingsPageViewModel settings, PlaylistViewModel playlist)
         {
-            _settings         = settings;
             SelectedMidiInput = MidiInputs[0];
+
+            _settings = settings;
+            Playlist  = playlist;
 
             _events = events;
             _events.Subscribe(this);
@@ -41,9 +44,21 @@ namespace GenshinLyreMidiPlayer.ViewModels
             new MidiInputModel("None")
         };
 
-        public bool CanPlayPause { get; set; }
+        public bool CanHitPlayPause => Playback is not null;
 
-        public double MaximumTime { get; set; } = 1;
+        public bool CanHitPrevious => CurrentTime > TimeSpan.FromSeconds(3) || Playlist.History.Count > 1;
+
+        public bool CanHitNext
+        {
+            get
+            {
+                if (Playlist.Loop == LoopState.All)
+                    return true;
+
+                var last = Playlist.GetPlaylist().LastOrDefault();
+                return Playlist.OpenedFile != last;
+            }
+        }
 
         public double SongSlider
         {
@@ -52,16 +67,13 @@ namespace GenshinLyreMidiPlayer.ViewModels
             {
                 SetAndNotify(ref _songSlider, value);
 
-                if (!_ignoreSliderChange && _playback != null)
+                if (!_ignoreSliderChange && Playback != null)
                 {
-                    if (_playback.IsRunning)
-                    {
-                        _playback.Stop();
-                        PlayPauseIcon = PlayIcon;
-                    }
+                    if (Playback.IsRunning)
+                        Playback.Stop();
 
                     var time = TimeSpan.FromSeconds(_songSlider);
-                    _playback.MoveToTime((MetricTimeSpan) time);
+                    Playback.MoveToTime((MetricTimeSpan) time);
                 }
 
                 _ignoreSliderChange = false;
@@ -89,148 +101,147 @@ namespace GenshinLyreMidiPlayer.ViewModels
             }
         }
 
-        private static string PlayIcon => "\xEDB5";
+        public Playback? Playback { get; private set; }
+
+        public PlaylistViewModel Playlist { get; }
+
+        private static string PlayIcon => "\xF5B0";
 
         private static string PauseIcon => "\xEDB4";
 
-        public string PlayPauseIcon { get; set; } = PlayIcon;
+        public string PlayPauseIcon => Playback?.IsRunning ?? false ? PauseIcon : PlayIcon;
 
-        public string SongName { get; set; } = "Open MIDI file...";
-
-        public TimeSpan Duration { get; set; }
+        public TimeSpan MaximumTime => Playlist.OpenedFile?.Duration ?? TimeSpan.Zero;
 
         public TimeSpan CurrentTime => TimeSpan.FromSeconds(SongSlider);
 
-        public void Handle(MidiTrackModel message)
+        public void Handle(MidiFileModel file)
         {
-            _reloadPlayback = true;
+            CloseFile();
+            Playlist.OpenedFile = file;
+            Playlist.History.Push(file);
+
+            MidiTracks = file.Midi
+                .GetTrackChunks()
+                .Select(t => new MidiTrackModel(_events, t))
+                .ToList();
+
+            InitializePlayback();
+
+            NotifyOfPropertyChange(() => MaximumTime);
+            NotifyOfPropertyChange(() => CanHitNext);
+            NotifyOfPropertyChange(() => CanHitPrevious);
+        }
+
+        public void Handle(MidiTrackModel track)
+        {
+            ReloadPlayback();
         }
 
         public void Handle(SettingsPageViewModel message)
         {
-            if (_playback != null)
-            {
-                _playback.Speed = message.SelectedSpeed.Speed;
-                _reloadPlayback = true;
-            }
+            ReloadPlayback();
+        }
+
+        public void ToggleShuffle()
+        {
+            Playlist.ToggleShuffle();
         }
 
         public void OpenFile()
         {
-            var openFileDialog = new OpenFileDialog
-            {
-                Filter = "MIDI file|*.mid;*.midi"
-            };
-
-            if (openFileDialog.ShowDialog() != true)
-                return;
-
-            CloseFile();
-
-            SongName  = Path.GetFileNameWithoutExtension(openFileDialog.FileName);
-            _midiFile = MidiFile.Read(openFileDialog.FileName);
-
-            MoveSlider(0);
-
-            Duration    = _midiFile.GetDuration<MetricTimeSpan>();
-            MaximumTime = Duration.TotalSeconds;
-
-            MidiTracks = _midiFile
-                .GetTrackChunks()
-                .Select(t => new MidiTrackModel(_events, t))
-                .ToList();
-            MidiTracks.First().IsChecked = true;
-
-            InitializePlayback();
+            Playlist.AddFiles();
         }
 
         public void CloseFile()
         {
-            if (_playback != null)
+            if (Playback != null)
             {
-                _playback.Stop();
-                PlaybackCurrentTimeWatcher.Instance.RemovePlayback(_playback);
-                _playback.Dispose();
-                _playback = null;
+                _playbackWatcher.RemovePlayback(Playback);
+
+                Playback.Stop();
+                Playback.Dispose();
             }
 
-            _midiFile = null;
             MidiTracks.Clear();
+            MoveSlider(0);
 
-            CanPlayPause  = false;
-            PlayPauseIcon = PlayIcon;
-
-            SongName    = string.Empty;
-            MaximumTime = 1;
+            Playback            = null;
+            Playlist.OpenedFile = null;
         }
 
         private void InitializePlayback()
         {
-            _midiFile.Chunks.Clear();
-            _midiFile.Chunks.AddRange(MidiTracks
+            var midi = Playlist.OpenedFile!.Midi;
+            midi.Chunks.Clear();
+            midi.Chunks.AddRange(MidiTracks
                 .Where(t => t.IsChecked)
                 .Select(t => t.Track));
 
             if (_settings.MergeNotes)
             {
-                _midiFile.MergeNotes(new NotesMergingSettings
+                midi.MergeNotes(new NotesMergingSettings
                 {
                     Tolerance = new MetricTimeSpan(0, 0, 0, (int) _settings.MergeMilliseconds)
                 });
             }
 
-            _playback       = _midiFile.GetPlayback();
-            _playback.Speed = _settings.SelectedSpeed.Speed;
+            Playback       = midi.GetPlayback();
+            Playback.Speed = _settings.SelectedSpeed.Speed;
 
-            _playback.Finished    += (_, _) => { CloseFile(); };
-            _playback.EventPlayed += OnNoteEvent;
+            Playback.Finished    += (_, _) => { Next(); };
+            Playback.EventPlayed += OnNoteEvent;
 
-            _reloadPlayback = false;
-            CanPlayPause    = true;
+            Playback.Started += (_, _) => { NotifyOfPropertyChange(() => PlayPauseIcon); };
+            Playback.Stopped += (_, _) => { NotifyOfPropertyChange(() => PlayPauseIcon); };
+        }
+
+        private void ReloadPlayback()
+        {
+            if (Playback is null)
+                return;
+
+            _playTime = Playback.GetCurrentTime(TimeSpanType.Midi);
+            Playback.Stop();
+            Playback.Dispose();
+
+            InitializePlayback();
+            Playback.MoveToTime(_playTime);
         }
 
         public void Previous()
         {
-            if (_playback != null)
+            if (CurrentTime > TimeSpan.FromSeconds(3))
             {
-                _playback.MoveToStart();
+                Playback.MoveToStart();
                 MoveSlider(0);
             }
+            else
+                Playlist.Previous();
         }
 
         public void Next()
         {
-            CloseFile();
+            Playlist.Next();
+
+            if (Playback is not null)
+                PlayPause();
+
+            NotifyOfPropertyChange(() => PlayPauseIcon);
         }
 
         public void PlayPause()
         {
-            if (_playback is null)
+            if (Playback is null)
                 InitializePlayback();
 
-            if (_reloadPlayback)
-            {
-                _playTime = _playback!.GetCurrentTime(TimeSpanType.Midi);
-                _playback.Stop();
-                _playback.Dispose();
-
-                InitializePlayback();
-                _playback!.MoveToTime(_playTime);
-            }
-
-            if (_playback!.IsRunning)
-            {
-                PlayPauseIcon = PlayIcon;
-                _playback.Stop();
-            }
+            if (Playback.IsRunning)
+                Playback.Stop();
             else
             {
-                PlayPauseIcon = PauseIcon;
-
-                var watcher = PlaybackCurrentTimeWatcher.Instance;
-                watcher.AddPlayback(_playback, TimeSpanType.Metric);
-                watcher.CurrentTimeChanged += OnSongTick;
-                watcher.Start();
+                _playbackWatcher.AddPlayback(Playback, TimeSpanType.Metric);
+                _playbackWatcher.CurrentTimeChanged += OnSongTick;
+                _playbackWatcher.Start();
 
                 Task.Run(async () =>
                 {
@@ -239,8 +250,8 @@ namespace GenshinLyreMidiPlayer.ViewModels
 
                     if (WindowHelper.IsGameFocused())
                     {
-                        _playback.PlaybackStart = _playback.GetCurrentTime(TimeSpanType.Midi);
-                        _playback.Start();
+                        Playback.PlaybackStart = Playback.GetCurrentTime(TimeSpanType.Midi);
+                        Playback.Start();
                     }
                 });
             }
@@ -253,6 +264,8 @@ namespace GenshinLyreMidiPlayer.ViewModels
                 TimeSpan time = (MetricTimeSpan) playbackTime.Time;
                 MoveSlider(time.TotalSeconds);
             }
+
+            NotifyOfPropertyChange(() => CanHitPrevious);
         }
 
         private void OnNoteEvent(object? sender, MidiEventPlayedEventArgs e)
@@ -275,7 +288,7 @@ namespace GenshinLyreMidiPlayer.ViewModels
         {
             if (!WindowHelper.IsGameFocused())
             {
-                PlayPause();
+                Playback?.Stop();
                 return;
             }
 

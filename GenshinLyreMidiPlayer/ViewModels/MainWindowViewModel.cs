@@ -13,13 +13,16 @@ namespace GenshinLyreMidiPlayer.ViewModels
         public MainWindowViewModel(IEventAggregator events)
         {
             SettingsView = new SettingsPageViewModel(events);
-            PlayerView   = new LyrePlayerViewModel(events, SettingsView);
+            PlaylistView = new PlaylistViewModel(events);
+            PlayerView   = new LyrePlayerViewModel(events, SettingsView, PlaylistView);
 
             if (SettingsView.AutoCheckUpdates)
                 _ = SettingsView.CheckForUpdate();
         }
 
         public LyrePlayerViewModel PlayerView { get; }
+
+        public PlaylistViewModel PlaylistView { get; }
 
         public SettingsPageViewModel SettingsView { get; }
 
@@ -42,8 +45,8 @@ namespace GenshinLyreMidiPlayer.ViewModels
 
             // Work around to select the navigation item that this IScreen is a part of
             _history.Pop();
-            sender.IsBackEnabled = _history.Count > 2;
             sender.SelectedItem  = _history.Pop();
+            sender.IsBackEnabled = _history.Count > 1;
         }
 
         private void Navigate(NavigationView sender, NavigationViewSelectionChangedEventArgs args)

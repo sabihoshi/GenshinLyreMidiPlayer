@@ -18,7 +18,7 @@ namespace GenshinLyreMidiPlayer.ViewModels
     {
         private readonly IEventAggregator _events;
         private bool _autoCheckUpdates = true;
-        private bool _includeBetaUpdates;
+        private bool _includeBetaUpdates = true;
         private int _keyOffset;
         private uint _mergeMilliseconds;
         private bool _mergeNotes;

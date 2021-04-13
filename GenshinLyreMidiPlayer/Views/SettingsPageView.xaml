@@ -61,8 +61,9 @@
             </ui:SimpleStackPanel>
 
             <GroupBox Header="Theme Mode">
-                <ui:RadioButtons
-                    SelectedItem="{Binding Source={x:Static ui:ThemeManager.Current}, Path=ApplicationTheme, Converter={StaticResource AppThemeConverter}}">
+                <ui:RadioButtons SelectedItem="{Binding 
+                    Source={x:Static ui:ThemeManager.Current}, Path=ApplicationTheme, 
+                    Converter={StaticResource AppThemeConverter}}">
                     <ui:RadioButtons.ItemsSource>
                         <modernWpf:AppThemes />
                     </ui:RadioButtons.ItemsSource>
@@ -96,8 +97,7 @@
                             <Run Text="{x:Static viewModels:SettingsPageViewModel.VersionString}"/>
                         </TextBlock>
                         <Button Command="{s:Action CheckForUpdate}"
-                                Visibility="{Binding IsCheckingUpdate, Converter={x:Static s:BoolToVisibilityConverter.InverseInstance}}"
-                                Background="Transparent">
+                                Visibility="{Binding IsCheckingUpdate, Converter={x:Static s:BoolToVisibilityConverter.InverseInstance}}">
                             <ui:FontIcon 
                                 Glyph="&#xE72C;"
                                 FontSize="{Binding ElementName=VersionText, Path=FontSize}" />
