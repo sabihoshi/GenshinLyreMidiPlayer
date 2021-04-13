@@ -1,10 +1,10 @@
-# Genshin Lyre MIDI Player ![GitHub release (latest by date)](https://img.shields.io/github/v/release/sabihoshi/GenshinLyreMidiPlayer) ![GitHub all releases](https://img.shields.io/github/downloads/sabihoshi/GenshinLyreMidiPlayer/total)
+# Genshin 原神 Windsong Lyre MIDI Auto Player [![GitHub release (latest by date)](https://img.shields.io/github/v/release/sabihoshi/GenshinLyreMidiPlayer)](https://github.com/sabihoshi/GenshinLyreMidiPlayer/releases/latest)
 
 A MIDI to key player for Genshin Impact's Windsong Lyre made using C# and WPF using Windows Fluent design. If you enjoyed this project, consider [contributing](https://github.com/sabihoshi/GenshinLyreMidiPlayer#contributing) or 🌟 starring the repository. Thank you~
 
 > Check out [yoroshikun](https://github.com/yoroshikun)'s Flutter implementation of a **[Genshin Lyre Player](https://github.com/yoroshikun/flutter_genshin_lyre_player)** written in Dart!
 
-## [Download latest version](https://github.com/sabihoshi/GenshinLyreMidiPlayer/releases/latest)
+## **[Download latest version ![GitHub all releases](https://img.shields.io/github/downloads/sabihoshi/GenshinLyreMidiPlayer/total?style=social)](https://github.com/sabihoshi/GenshinLyreMidiPlayer/releases/latest)**
 
 ![2021-04-13_22-51-12](https://user-images.githubusercontent.com/25006819/114573455-f8f34d00-9caa-11eb-8288-57c193ca2d04.png)
 
@@ -70,7 +70,7 @@ This project has a [Code of Conduct](CONTRIBUTING.md), please follow it in all y
 4. You may merge the Pull Request in once you have the the approval of the maintainers.
 
 ## Build
-
+If you just want to run the program, there are precompiled releases that can be found in [here](https://github.com/sabihoshi/GenshinLyreMidiPlayer/releases).
 ### Requirements
 * [Git](https://git-scm.com) for cloning the project
 * [.NET Core 3.1](https://dotnet.microsoft.com/download/dotnet/3.1) SDK
