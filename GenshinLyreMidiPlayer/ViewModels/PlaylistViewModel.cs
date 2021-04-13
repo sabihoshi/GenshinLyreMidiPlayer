@@ -27,9 +27,9 @@ namespace GenshinLyreMidiPlayer.ViewModels
 
         public BindableCollection<MidiFileModel> Tracks { get; set; } = new();
 
-        public bool Shuffle { get; set; }
+        public BindableCollection<MidiFileModel>? ShuffledTracks { get; set; }
 
-        public ICollection<MidiFileModel>? ShuffledTracks { get; set; }
+        public bool Shuffle { get; set; }
 
         public LoopState Loop { get; set; }
 
@@ -56,7 +56,7 @@ namespace GenshinLyreMidiPlayer.ViewModels
             Shuffle = !Shuffle;
 
             if (Shuffle)
-                ShuffledTracks = Tracks.OrderBy(_ => Guid.NewGuid()).ToList();
+                ShuffledTracks = new BindableCollection<MidiFileModel>(Tracks.OrderBy(_ => Guid.NewGuid()));
 
             RefreshPlaylist();
         }
@@ -89,7 +89,7 @@ namespace GenshinLyreMidiPlayer.ViewModels
                 _events.Publish(next);
         }
 
-        public ICollection<MidiFileModel> GetPlaylist() => (Shuffle ? ShuffledTracks : Tracks)!;
+        public BindableCollection<MidiFileModel> GetPlaylist() => (Shuffle ? ShuffledTracks : Tracks)!;
 
         public void AddFiles()
         {
@@ -115,7 +115,7 @@ namespace GenshinLyreMidiPlayer.ViewModels
                 }
             }
 
-            ShuffledTracks = Tracks.OrderBy(_ => Guid.NewGuid()).ToList();
+            ShuffledTracks = new BindableCollection<MidiFileModel>(Tracks.OrderBy(_ => Guid.NewGuid()));
             RefreshPlaylist();
 
             if (OpenedFile is null && Tracks.Count > 0)
@@ -126,19 +126,19 @@ namespace GenshinLyreMidiPlayer.ViewModels
         {
             if (SelectedFile is not null)
             {
-                GetPlaylist().Remove(SelectedFile);
+                Tracks.Remove(SelectedFile);
                 RefreshPlaylist();
             }
         }
 
         public void ClearPlaylist()
         {
-            GetPlaylist().Clear();
+            Tracks.Clear();
         }
 
         public void RefreshPlaylist()
         {
-            var playlist = GetPlaylist().ToList();
+            var playlist = GetPlaylist();
             foreach (var file in playlist)
             {
                 file.Position = playlist.IndexOf(file);
