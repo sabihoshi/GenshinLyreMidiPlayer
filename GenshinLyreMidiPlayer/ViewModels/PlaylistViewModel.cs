@@ -29,7 +29,7 @@ namespace GenshinLyreMidiPlayer.ViewModels
 
         public bool Shuffle { get; set; }
 
-        public IEnumerable<MidiFileModel>? ShuffledTracks { get; set; }
+        public ICollection<MidiFileModel>? ShuffledTracks { get; set; }
 
         public LoopState Loop { get; set; }
 
@@ -57,6 +57,8 @@ namespace GenshinLyreMidiPlayer.ViewModels
 
             if (Shuffle)
                 ShuffledTracks = Tracks.OrderBy(_ => Guid.NewGuid()).ToList();
+
+            RefreshPlaylist();
         }
 
         public void ToggleLoop()
@@ -87,7 +89,7 @@ namespace GenshinLyreMidiPlayer.ViewModels
                 _events.Publish(next);
         }
 
-        public IEnumerable<MidiFileModel> GetPlaylist() => (Shuffle ? ShuffledTracks : Tracks)!;
+        public ICollection<MidiFileModel> GetPlaylist() => (Shuffle ? ShuffledTracks : Tracks)!;
 
         public void AddFiles()
         {
@@ -114,8 +116,33 @@ namespace GenshinLyreMidiPlayer.ViewModels
             }
 
             ShuffledTracks = Tracks.OrderBy(_ => Guid.NewGuid()).ToList();
+            RefreshPlaylist();
+
             if (OpenedFile is null && Tracks.Count > 0)
                 Next();
+        }
+
+        public void RemoveTrack()
+        {
+            if (SelectedFile is not null)
+            {
+                GetPlaylist().Remove(SelectedFile);
+                RefreshPlaylist();
+            }
+        }
+
+        public void ClearPlaylist()
+        {
+            GetPlaylist().Clear();
+        }
+
+        public void RefreshPlaylist()
+        {
+            var playlist = GetPlaylist().ToList();
+            foreach (var file in playlist)
+            {
+                file.Position = playlist.IndexOf(file);
+            }
         }
 
         public void OnFileChanged(object sender, EventArgs e)

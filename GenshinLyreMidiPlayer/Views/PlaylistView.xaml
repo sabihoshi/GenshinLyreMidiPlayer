@@ -4,44 +4,126 @@
     xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
 
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
-    xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+    xmlns:d="http://schemas.microsoft.com/expression/blend/2008" mc:Ignorable="d"
 
-    xmlns:viewModels="clr-namespace:GenshinLyreMidiPlayer.ViewModels"
     xmlns:ui="http://schemas.modernwpf.com/2019"
     xmlns:s="https://github.com/canton7/Stylet"
-    mc:Ignorable="d" d:DataContext="{d:DesignInstance viewModels:PlaylistViewModel}">
+
+    xmlns:modernWpf="clr-namespace:GenshinLyreMidiPlayer.ModernWPF"
+    xmlns:componentModel="clr-namespace:System.ComponentModel;assembly=WindowsBase"
+
+    xmlns:models="clr-namespace:GenshinLyreMidiPlayer.Models"
+    xmlns:viewModels="clr-namespace:GenshinLyreMidiPlayer.ViewModels"
+
+    d:DataContext="{d:DesignInstance viewModels:PlaylistViewModel}">
+
+    <UserControl.Resources>
+        <modernWpf:ProductGroupKeyConverter x:Key="ProductGroupKeyConverter" />
+        <CollectionViewSource
+            x:Key="Tracks" Source="{Binding Tracks}">
+            <CollectionViewSource.GroupDescriptions>
+                <PropertyGroupDescription
+                    PropertyName="Title"
+                    Converter="{StaticResource ProductGroupKeyConverter}" />
+            </CollectionViewSource.GroupDescriptions>
+            <CollectionViewSource.SortDescriptions>
+                <componentModel:SortDescription PropertyName="Title" />
+            </CollectionViewSource.SortDescriptions>
+        </CollectionViewSource>
+
+        <DataTemplate x:Key="ListViewTemplate" DataType="models:MidiFileModel">
+            <Grid>
+                <Grid.RowDefinitions>
+                    <RowDefinition Height="*" />
+                    <RowDefinition Height="*" />
+                </Grid.RowDefinitions>
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition Width="Auto" />
+                    <ColumnDefinition Width="*" />
+                </Grid.ColumnDefinitions>
+
+                <ui:FontIcon
+                    Grid.Column="0" Grid.Row="0"
+                    Grid.RowSpan="2" Margin="5"
+                    VerticalAlignment="Center" HorizontalAlignment="Center"
+                    Glyph="&#xEC4F;" />
+
+                <TextBlock
+                    Grid.Column="0" Grid.Row="0" Grid.RowSpan="2"
+                    VerticalAlignment="Bottom" HorizontalAlignment="Right"
+                    Text="{Binding Position}" />
+
+                <TextBlock
+                    Grid.Column="1" Grid.Row="0"
+                    Margin="12,6,0,0"
+
+                    Text="{Binding Title, Mode=OneTime}"
+                    Style="{DynamicResource BaseTextBoxStyle}" />
+
+                <TextBlock
+                    Grid.Column="1" Grid.Row="1"
+                    Margin="12,0,0,6"
+
+                    Text="{Binding Duration, Mode=OneTime, StringFormat=m\\:ss}"
+                    Style="{DynamicResource BodyTextBlockStyle}" />
+            </Grid>
+        </DataTemplate>
+    </UserControl.Resources>
+
     <Grid>
         <Grid.RowDefinitions>
-            <RowDefinition Height="Auto"/>
-            <RowDefinition Height="*"/>
-            <RowDefinition Height="Auto"/>
+            <RowDefinition Height="Auto" />
+            <RowDefinition Height="*" />
+            <RowDefinition Height="Auto" />
         </Grid.RowDefinitions>
 
         <Grid Grid.Row="0" Margin="0,5">
             <Grid.ColumnDefinitions>
                 <ColumnDefinition Width="Auto" />
                 <ColumnDefinition Width="*" />
+                <ColumnDefinition Width="Auto" />
             </Grid.ColumnDefinitions>
 
             <Button Command="{s:Action AddFiles}" Background="Transparent">
                 <ui:FontIcon Glyph="&#xE8E5;" />
             </Button>
 
-            <TextBlock  Grid.Column="1" VerticalAlignment="Center">
+            <TextBlock Grid.Column="1" VerticalAlignment="Center">
                 Current song: <Run Text="{Binding OpenedFile.Title, Mode=OneWay, FallbackValue=Open...}" />
             </TextBlock>
+
+            <ui:SimpleStackPanel
+                Grid.Column="2" Orientation="Horizontal"
+                HorizontalAlignment="Center">
+                <Button Command="{s:Action RemoveTrack}" Content="Remove" />
+                <Button Command="{s:Action ClearPlaylist}" Content="Clear Playlist" />
+            </ui:SimpleStackPanel>
         </Grid>
 
-        <ListBox 
+        <ListView
             Grid.Row="1" Margin="0,5"
-           
-            ItemsSource="{Binding Tracks}"
-            DisplayMemberPath="Title"
+
+            ItemsSource="{Binding Source={StaticResource Tracks}}"
+            ItemTemplate="{StaticResource ListViewTemplate}"
+            VirtualizingPanel.IsVirtualizingWhenGrouping="True"
+            VirtualizingPanel.VirtualizationMode="Recycling"
 
             MouseDoubleClick="{s:Action OnFileChanged}"
-            SelectedItem="{Binding SelectedFile}"/>
+            SelectedItem="{Binding SelectedFile}">
+            <ListView.GroupStyle>
+                <GroupStyle>
+                    <GroupStyle.HeaderTemplate>
+                        <DataTemplate DataType="CollectionViewGroup">
+                            <TextBlock
+                                Text="{Binding Name, Mode=OneTime}"
+                                Style="{DynamicResource TitleTextBlockStyle}" />
+                        </DataTemplate>
+                    </GroupStyle.HeaderTemplate>
+                </GroupStyle>
+            </ListView.GroupStyle>
+        </ListView>
 
-        <ui:SimpleStackPanel 
+        <ui:SimpleStackPanel
             Grid.Row="2" Orientation="Horizontal"
             HorizontalAlignment="Center">
             <Button Command="{s:Action ToggleShuffle}">
