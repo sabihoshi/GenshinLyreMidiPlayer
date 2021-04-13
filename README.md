@@ -6,7 +6,7 @@ A MIDI to key player for Genshin Impact's Windsong Lyre made using C# and WPF us
 
 ## [Download latest version](https://github.com/sabihoshi/GenshinLyreMidiPlayer/releases/latest)
 
-![2021-04-05_08-31-16](https://user-images.githubusercontent.com/25006819/113526431-989a4680-95ec-11eb-9896-47154c86b333.png)
+![2021-04-13_22-51-12](https://user-images.githubusercontent.com/25006819/114573455-f8f34d00-9caa-11eb-8288-57c193ca2d04.png)
 
 ## How to use
 
@@ -17,7 +17,7 @@ A MIDI to key player for Genshin Impact's Windsong Lyre made using C# and WPF us
 5. Automatically stops playing if you switch to a different window.
 
 ## Features
-![GenshinLyreMidiPlayer_2021-04-07_13-50-29](https://user-images.githubusercontent.com/25006819/113817035-40a83f00-97a8-11eb-901e-0752fd28aebe.png)
+![GenshinLyreMidiPlayer_2021-04-13_22-54-13](https://user-images.githubusercontent.com/25006819/114573746-38ba3480-9cab-11eb-8535-faa686a0ef09.png)
 * The ability to change the key. By default, it is keyed to C major.
 * You can play multiple tracks of a MIDI file at the same time.
 * You can enable transposing of notes, otherwise it will skip the notes entirely.
@@ -26,6 +26,10 @@ A MIDI to key player for Genshin Impact's Windsong Lyre made using C# and WPF us
 
 ### Play using your own MIDI Input Device
 If you have your own MIDI instrument, this will let you play directly to the Genshin Lyre. This lets you play directly without using a MIDI file.
+
+### [![](https://img.shields.io/badge/v1.6.2-New!-yellow)](https://github.com/sabihoshi/GenshinLyreMidiPlayer/releases/tag/v1.6.2) Playlist Controls & History
+A playlist allows you to play songs continuously without having to open a new file after a song has finished.
+![GenshinLyreMidiPlayer_2021-04-13_22-27-05](https://user-images.githubusercontent.com/25006819/114570421-6651ae80-9ca8-11eb-9cb2-c9e322df14f0.png)
 
 ### [![](https://img.shields.io/badge/v1.5.0-New!-yellow)](https://github.com/sabihoshi/GenshinLyreMidiPlayer/releases/tag/v1.5.0) Hold notes & Merge nearby notes
   - You can set the player to hold sustained notes (does not really make a difference. Off by default.)
@@ -37,14 +41,11 @@ You can set the player to light mode/dark mode (uses your system's theme by defa
 
 ### Mini Mode
 You can resize the player as small as you want and it should close the panels accordingly.
-![GenshinLyreMidiPlayer_2021-04-05_08-55-34](https://user-images.githubusercontent.com/25006819/113526479-c67f8b00-95ec-11eb-9da4-bdf087488f5b.png)
-
+![GenshinLyreMidiPlayer_2021-04-13_22-28-11](https://user-images.githubusercontent.com/25006819/114570320-4e7a2a80-9ca8-11eb-8907-a47025a0539a.png)
 
 ## Upcoming
 * Output into a "Piano Sheet" in a text file.
-* History of opened MIDI files.
 * Preview songs by playing to your speakers.
-* Playlist controls such as shuffle, repeat.
 * Pause without having to switch windows.
 
 ## About
