@@ -1,8 +1,11 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Threading.Tasks;
 using System.Windows.Media;
+using GenshinLyreMidiPlayer.Core.Errors;
 using GenshinLyreMidiPlayer.Models;
+using Melanchall.DryWetMidi.Core;
 using Microsoft.Win32;
 using ModernWpf;
 using Stylet;
@@ -91,7 +94,7 @@ namespace GenshinLyreMidiPlayer.ViewModels
 
         public BindableCollection<MidiFileModel> GetPlaylist() => (Shuffle ? ShuffledTracks : Tracks)!;
 
-        public void AddFiles()
+        public async Task AddFiles()
         {
             var openFileDialog = new OpenFileDialog
             {
@@ -104,15 +107,7 @@ namespace GenshinLyreMidiPlayer.ViewModels
 
             foreach (var fileName in openFileDialog.FileNames)
             {
-                try
-                {
-                    var file = new MidiFileModel(fileName);
-                    Tracks.Add(file);
-                }
-                catch
-                {
-                    // Skipped
-                }
+                await AddFile(fileName);
             }
 
             ShuffledTracks = new BindableCollection<MidiFileModel>(Tracks.OrderBy(_ => Guid.NewGuid()));
@@ -120,6 +115,20 @@ namespace GenshinLyreMidiPlayer.ViewModels
 
             if (OpenedFile is null && Tracks.Count > 0)
                 Next();
+        }
+
+        private async Task AddFile(string fileName, ReadingSettings? settings = null)
+        {
+            try
+            {
+                var file = new MidiFileModel(fileName, settings);
+                Tracks.Add(file);
+            }
+            catch (Exception e)
+            {
+                if (await ExceptionHandler.TryHandleException(e, settings))
+                    await AddFile(fileName, settings);
+            }
         }
 
         public void RemoveTrack()

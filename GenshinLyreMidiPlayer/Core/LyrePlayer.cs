@@ -7,7 +7,7 @@ using static GenshinLyreMidiPlayer.Core.Keyboard;
 
 namespace GenshinLyreMidiPlayer.Core
 {
-    public class LyrePlayer
+    public static class LyrePlayer
     {
         private static readonly IInputSimulator Input = new InputSimulator();
 

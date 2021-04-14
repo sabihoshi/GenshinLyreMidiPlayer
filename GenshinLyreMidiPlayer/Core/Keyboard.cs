@@ -1,8 +1,12 @@
 ﻿using System.Collections.Generic;
+using System.Diagnostics.CodeAnalysis;
 using WindowsInput.Native;
 
 namespace GenshinLyreMidiPlayer.Core
 {
+    [SuppressMessage("ReSharper", "InconsistentNaming")]
+    [SuppressMessage("ReSharper", "StringLiteralTypo")]
+    [SuppressMessage("ReSharper", "IdentifierTypo")]
     public static class Keyboard
     {
         public enum Layout

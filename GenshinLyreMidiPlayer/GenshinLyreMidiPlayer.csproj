@@ -6,7 +6,7 @@
     <UseWPF>true</UseWPF>
     <StartupObject>GenshinLyreMidiPlayer.App</StartupObject>
     <ApplicationManifest>app.manifest</ApplicationManifest>
-    <Version>1.6.3</Version>
+    <Version>1.6.4</Version>
     <ApplicationIcon>item_windsong_lyre.ico</ApplicationIcon>
     <Nullable>enable</Nullable>
     <RepositoryUrl>https://github.com/sabihoshi/GenshinLyreMidiPlayer</RepositoryUrl>
@@ -19,6 +19,7 @@
   </PropertyGroup>
 
   <ItemGroup>
+    <PackageReference Include="Humanizer.Core" Version="2.8.26" />
     <PackageReference Include="InputSimulator" Version="1.0.4" />
     <PackageReference Include="Melanchall.DryWetMidi" Version="5.2.0" />
     <PackageReference Include="ModernWpfUI" Version="0.9.4" />
