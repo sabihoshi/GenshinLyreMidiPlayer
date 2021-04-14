@@ -77,7 +77,7 @@ namespace GenshinLyreMidiPlayer.Core.Errors
         /// <returns>A <see cref="bool" /> whether reading can continue or not.</returns>
         [SuppressMessage("ReSharper", "PossibleNullReferenceException")]
         [SuppressMessage("ReSharper", "CheckForReferenceEqualityInstead.1")]
-        public static async Task<bool> TryHandleException(Exception e, ReadingSettings? settings = null)
+        public static async Task<bool> TryHandleException(Exception e, ReadingSettings settings)
         {
             var command = ExceptionOptions
                 .FirstOrDefault(type =>
@@ -95,7 +95,6 @@ namespace GenshinLyreMidiPlayer.Core.Errors
                 ContentDialogResult.Secondary => command?.ElementAtOrDefault(1)
             };
 
-            settings ??= new ReadingSettings();
             switch (e)
             {
                 // User selectable policy

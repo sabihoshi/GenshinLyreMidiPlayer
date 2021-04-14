@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
@@ -126,6 +126,7 @@ namespace GenshinLyreMidiPlayer.ViewModels
             }
             catch (Exception e)
             {
+                settings ??= new ReadingSettings();
                 if (await ExceptionHandler.TryHandleException(e, settings))
                     await AddFile(fileName, settings);
             }
