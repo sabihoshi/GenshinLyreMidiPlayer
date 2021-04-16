@@ -23,6 +23,7 @@ namespace GenshinLyreMidiPlayer.ViewModels
         private uint _mergeMilliseconds;
         private bool _mergeNotes;
         private MidiSpeedModel _selectedSpeed;
+        private bool _useSpeakers;
 
         public SettingsPageViewModel(IEventAggregator events)
         {
@@ -32,6 +33,16 @@ namespace GenshinLyreMidiPlayer.ViewModels
 
             SelectedLayout = Keyboard.LayoutNames.First();
             SelectedSpeed  = MidiSpeeds[3];
+        }
+
+        public bool UseSpeakers
+        {
+            get => _useSpeakers;
+            set
+            {
+                SetAndNotify(ref _useSpeakers, value);
+                _events.Publish(this);
+            }
         }
 
         public bool HoldNotes { get; set; }

@@ -27,7 +27,8 @@
                 <ColumnDefinition Width="*" />
             </Grid.ColumnDefinitions>
 
-            <Button Command="{s:Action OpenFile}" Background="Transparent">
+            <Button s:View.ActionTarget="{Binding Playlist}" Command="{s:Action AddFiles}" 
+                    Background="Transparent">
                 <ui:FontIcon Glyph="&#xE8E5;" />
             </Button>
 
@@ -74,7 +75,10 @@
                        Text="{Binding CurrentTime, StringFormat=m\\:ss}" />
             <Slider
                 Grid.Column="1" Padding="5, 0"
+
+                IsMoveToPointEnabled="True"
                 IsEnabled="{Binding CanHitPlayPause}"
+
                 Value="{Binding SongSlider}"
                 Maximum="{Binding Path=MaximumTime.TotalSeconds}" />
             <TextBlock Grid.Column="2" VerticalAlignment="Center"

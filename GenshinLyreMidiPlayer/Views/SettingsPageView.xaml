@@ -20,6 +20,10 @@
         <ui:SimpleStackPanel>
             <ui:SimpleStackPanel Orientation="Horizontal">
                 <ui:ToggleSwitch
+                    Header="Test Mode"
+                    IsOn="{Binding UseSpeakers}" />
+
+                <ui:ToggleSwitch
                     Header="Transpose"
                     IsOn="{Binding TransposeNotes}" />
 
