@@ -17,12 +17,13 @@ A MIDI to key player for Genshin Impact's Windsong Lyre made using C# and WPF us
 5. Automatically stops playing if you switch to a different window.
 
 ## Features
-![GenshinLyreMidiPlayer_2021-04-13_22-54-13](https://user-images.githubusercontent.com/25006819/114573746-38ba3480-9cab-11eb-8535-faa686a0ef09.png)
+![GenshinLyreMidiPlayer_2021-04-17_16-02-30](https://user-images.githubusercontent.com/25006819/115106288-7a422c80-9f96-11eb-991c-641a8a8db42c.png)
 * The ability to change the key. By default, it is keyed to C major.
 * You can play multiple tracks of a MIDI file at the same time.
 * You can enable transposing of notes, otherwise it will skip the notes entirely.
 * Written in C# WPF with modern fluent design.
 * Change the keyboard layout (QWERTZ, AZERTY, DVORAK, etc.)
+* [![](https://img.shields.io/badge/v1.7.5-New!-yellow)](https://github.com/sabihoshi/GenshinLyreMidiPlayer/releases/tag/v1.7.5) You can test out MIDI files by playing through the speakers.
 
 ### Play using your own MIDI Input Device
 If you have your own MIDI instrument, this will let you play directly to the Genshin Lyre. This lets you play directly without using a MIDI file.
@@ -31,7 +32,7 @@ If you have your own MIDI instrument, this will let you play directly to the Gen
 A playlist allows you to play songs continuously without having to open a new file after a song has finished.
 ![GenshinLyreMidiPlayer_2021-04-13_22-27-05](https://user-images.githubusercontent.com/25006819/114570421-6651ae80-9ca8-11eb-9cb2-c9e322df14f0.png)
 
-### [![](https://img.shields.io/badge/v1.5.0-New!-yellow)](https://github.com/sabihoshi/GenshinLyreMidiPlayer/releases/tag/v1.5.0) Hold notes & Merge nearby notes
+### Hold notes & Merge nearby notes
   - You can set the player to hold sustained notes (does not really make a difference. Off by default.)
   - Some songs sound better when nearby notes are merged see [#4](https://github.com/sabihoshi/GenshinLyreMidiPlayer/issues/4) for an example
 
@@ -45,8 +46,8 @@ You can resize the player as small as you want and it should close the panels ac
 
 ## Upcoming
 * Output into a "Piano Sheet" in a text file.
-* Preview songs by playing to your speakers.
 * Pause without having to switch windows.
+* Drag and drop MIDI files into the player.
 
 ## About
 
