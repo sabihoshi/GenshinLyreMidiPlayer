@@ -1,4 +1,4 @@
-using System;
+﻿using System;
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.Linq;
@@ -198,9 +198,6 @@ namespace GenshinLyreMidiPlayer.ViewModels
 
                 NotifyOfPropertyChange(() => PlayPauseIcon);
             };
-
-            if (_settings.UseSpeakers)
-                Playback.OutputDevice = _speakers;
         }
 
         public void Previous()
@@ -296,7 +293,10 @@ namespace GenshinLyreMidiPlayer.ViewModels
         private void PlayNote(NoteEvent noteEvent)
         {
             if (_settings.UseSpeakers)
+            {
+                _speakers.SendEvent(noteEvent);
                 return;
+            }
 
             if (!WindowHelper.IsGameFocused())
             {
