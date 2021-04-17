@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.Linq;
@@ -158,6 +158,8 @@ namespace GenshinLyreMidiPlayer.ViewModels
 
         private void InitializePlayback()
         {
+            Playback?.Stop();
+
             if (Playlist.OpenedFile is null)
                 return;
 
@@ -173,10 +175,10 @@ namespace GenshinLyreMidiPlayer.ViewModels
                     Tolerance = new MetricTimeSpan(0, 0, 0, (int) _settings.MergeMilliseconds)
                 });
 
-            var oldPlayback = Playback;
-
             Playback       = midi.GetPlayback();
             Playback.Speed = _settings.SelectedSpeed.Speed;
+
+            Playback.InterruptNotesOnStop = true;
 
             Playback.Finished    += (_, _) => { Next(); };
             Playback.EventPlayed += OnNoteEvent;
