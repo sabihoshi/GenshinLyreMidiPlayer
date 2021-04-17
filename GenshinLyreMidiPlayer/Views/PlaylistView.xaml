@@ -58,14 +58,14 @@
                     Margin="12,6,0,0"
 
                     Text="{Binding Title, Mode=OneTime}"
-                    Style="{DynamicResource BaseTextBlockStyle}" />
+                    Style="{StaticResource BaseTextBlockStyle}" />
 
                 <TextBlock
                     Grid.Column="1" Grid.Row="1"
                     Margin="12,0,0,6"
 
                     Text="{Binding Duration, Mode=OneTime, StringFormat=m\\:ss}"
-                    Style="{DynamicResource BodyTextBlockStyle}" />
+                    Style="{StaticResource BodyTextBlockStyle}" />
             </Grid>
         </DataTemplate>
     </UserControl.Resources>

@@ -6,7 +6,7 @@ namespace GenshinLyreMidiPlayer.ModernWPF
 {
     public class AnimatedContentControl : ContentControl
     {
-        private static Transition Transition => SettingsPageViewModel.Transition.Object;
+        private static Transition Transition => SettingsPageViewModel.Transition!.Object;
 
         protected override void OnContentChanged(object? oldContent, object? newContent)
         {

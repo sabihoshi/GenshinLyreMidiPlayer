@@ -1,5 +1,6 @@
 ﻿using System.Collections.Generic;
 using System.Linq;
+using System.Threading.Tasks;
 using GenshinLyreMidiPlayer.Views;
 using ModernWpf.Controls;
 using Stylet;
@@ -9,6 +10,7 @@ namespace GenshinLyreMidiPlayer.ViewModels
     public class MainWindowViewModel : Conductor<IScreen>.StackNavigation
     {
         private readonly Stack<NavigationViewItem> _history = new();
+        private NavigationView _navView;
 
         public MainWindowViewModel(IEventAggregator events)
         {
@@ -17,8 +19,14 @@ namespace GenshinLyreMidiPlayer.ViewModels
             PlayerView   = new LyrePlayerViewModel(events, SettingsView, PlaylistView);
 
             if (SettingsView.AutoCheckUpdates)
-                _ = SettingsView.CheckForUpdate();
+                Task.Run(async () =>
+                {
+                    await SettingsView.CheckForUpdate();
+                    NotifyOfPropertyChange(() => ShowUpdate);
+                });
         }
+
+        public bool ShowUpdate => SettingsView.NeedsUpdate && ActiveItem != SettingsView;
 
         public LyrePlayerViewModel PlayerView { get; }
 
@@ -31,12 +39,13 @@ namespace GenshinLyreMidiPlayer.ViewModels
         protected override void OnViewLoaded()
         {
             // Work around because events do not conform to the signatures Stylet supports
-            var navView = ((MainWindowView) View).NavView;
-            navView.SelectionChanged += Navigate;
-            navView.BackRequested    += NavigateBack;
+            _navView = ((MainWindowView) View).NavView;
 
-            var menuItems = navView.MenuItems.Cast<NavigationViewItemBase>();
-            navView.SelectedItem = menuItems.FirstOrDefault(item => item is NavigationViewItem);
+            _navView.SelectionChanged += Navigate;
+            _navView.BackRequested    += NavigateBack;
+
+            var menuItems = _navView.MenuItems.Cast<NavigationViewItemBase>();
+            _navView.SelectedItem = menuItems.FirstOrDefault(item => item is NavigationViewItem);
         }
 
         private void NavigateBack(NavigationView sender, NavigationViewBackRequestedEventArgs args)
@@ -53,8 +62,7 @@ namespace GenshinLyreMidiPlayer.ViewModels
         {
             if (args.IsSettingsSelected)
             {
-                ActivateItem(SettingsView);
-                _history.Push((NavigationViewItem) sender.SettingsItem);
+                NavigateToSettings();
             }
             else if ((args.SelectedItem as NavigationViewItem)?.Tag is IScreen viewModel)
             {
@@ -63,6 +71,14 @@ namespace GenshinLyreMidiPlayer.ViewModels
             }
 
             sender.IsBackEnabled = _history.Count > 1;
+            NotifyOfPropertyChange(() => ShowUpdate);
+        }
+
+        public void NavigateToSettings()
+        {
+            ActivateItem(SettingsView);
+            _history.Push((NavigationViewItem) _navView.SettingsItem);
+            _navView.SelectedItem = _navView.SettingsItem;
         }
     }
 }

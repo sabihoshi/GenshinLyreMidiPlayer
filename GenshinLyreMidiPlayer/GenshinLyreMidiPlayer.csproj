@@ -1,4 +1,4 @@
-<Project Sdk="Microsoft.NET.Sdk">
+﻿<Project Sdk="Microsoft.NET.Sdk">
 
   <PropertyGroup>
     <OutputType>WinExe</OutputType>
@@ -6,7 +6,7 @@
     <UseWPF>true</UseWPF>
     <StartupObject>GenshinLyreMidiPlayer.App</StartupObject>
     <ApplicationManifest>app.manifest</ApplicationManifest>
-    <Version>1.7.0</Version>
+    <Version>1.7.1</Version>
     <ApplicationIcon>item_windsong_lyre.ico</ApplicationIcon>
     <Nullable>enable</Nullable>
     <RepositoryUrl>https://github.com/sabihoshi/GenshinLyreMidiPlayer</RepositoryUrl>

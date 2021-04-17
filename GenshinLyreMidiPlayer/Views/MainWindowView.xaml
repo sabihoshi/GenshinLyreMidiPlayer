@@ -7,9 +7,10 @@
 
     xmlns:ui="http://schemas.modernwpf.com/2019"
     xmlns:s="https://github.com/canton7/Stylet"
-    xmlns:viewModels="clr-namespace:GenshinLyreMidiPlayer.ViewModels"
 
+    xmlns:viewModels="clr-namespace:GenshinLyreMidiPlayer.ViewModels"
     xmlns:modernWpf="clr-namespace:GenshinLyreMidiPlayer.ModernWPF"
+
     d:DataContext="{d:DesignInstance Type=viewModels:MainWindowViewModel}"
 
     Title="{Binding Title}"
@@ -17,22 +18,8 @@
     ui:WindowHelper.UseModernWindowStyle="True"
     ui:TitleBar.ExtendViewIntoTitleBar="True">
     <Grid>
-        <ui:SimpleStackPanel 
-              Orientation="Horizontal" VerticalAlignment="Top" Canvas.ZIndex="1"
-              Height="{Binding ElementName=NavView, Path=CompactPaneLength}">
-            <TextBlock
-                Margin="50,0,0,0"
-                VerticalAlignment="Center"
-
-                Style="{DynamicResource CaptionTextBlockStyle}">
-                <Run Text="{Binding Title}" />
-                <Run Text="{x:Static viewModels:SettingsPageViewModel.VersionString}" />
-                <Run Text="{Binding SettingsView.UpdateString}" />
-            </TextBlock>
-            <ui:ProgressRing IsActive="{Binding SettingsView.IsCheckingUpdate}" />
-        </ui:SimpleStackPanel>
-
         <ui:NavigationView
+            Grid.Row="0" Grid.RowSpan="2"
             x:Name="NavView" AlwaysShowHeader="True"
             Header="{Binding SelectedItem.(ui:NavigationViewItem.Content), RelativeSource={RelativeSource Self}, FallbackValue=' '}">
             <ui:NavigationView.AutoSuggestBox>
@@ -45,7 +32,33 @@
                 <ui:NavigationViewItem Content="Playlist" Icon="57666" Tag="{Binding PlaylistView}" />
             </ui:NavigationView.MenuItems>
 
-            <modernWpf:AnimatedContentControl Margin="10" s:View.Model="{Binding ActiveItem}" />
+            <Grid>
+                <ui:HyperlinkButton
+                    Command="{s:Action NavigateToSettings}"
+                    Margin="20,-35,20,0"
+                    HorizontalAlignment="Right" VerticalAlignment="Top"
+                    Visibility="{Binding ShowUpdate, Converter={x:Static s:BoolToVisibilityConverter.Instance}}">
+                    New update!
+                </ui:HyperlinkButton>
+
+                <modernWpf:AnimatedContentControl Margin="10" s:View.Model="{Binding ActiveItem}" />
+            </Grid>
+
         </ui:NavigationView>
+
+        <ui:SimpleStackPanel
+            Margin="50,0,0,0"
+            VerticalAlignment="Top" Orientation="Horizontal"
+            Height="{Binding ElementName=NavView, Path=CompactPaneLength}">
+            <TextBlock
+                VerticalAlignment="Center"
+                Style="{DynamicResource CaptionTextBlockStyle}">
+                <Run Text="{Binding Title}" />
+                v<Run Text="{Binding SettingsView.ProgramVersion, Mode=OneTime}" />
+            </TextBlock>
+
+            <ui:ProgressRing IsActive="{Binding SettingsView.IsCheckingUpdate}" />
+        </ui:SimpleStackPanel>
     </Grid>
+
 </Window>

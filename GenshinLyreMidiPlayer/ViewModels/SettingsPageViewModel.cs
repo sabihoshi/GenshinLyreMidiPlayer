@@ -84,6 +84,8 @@ namespace GenshinLyreMidiPlayer.ViewModels
             }
         }
 
+        public bool NeedsUpdate => ProgramVersion < LatestVersion?.Version;
+
         public static CaptionedObject<Transition>? Transition { get; set; }
 
         public Dictionary<int, string> KeyOffsets { get; set; } = new()
@@ -142,6 +144,8 @@ namespace GenshinLyreMidiPlayer.ViewModels
             [24]  = "C5"
         };
 
+        public GitVersion? LatestVersion { get; set; }
+
         public IEnumerable<CaptionedObject<Transition>> Transitions { get; }
 
         public int MinOffset => KeyOffsets.Keys.Min();
@@ -180,8 +184,6 @@ namespace GenshinLyreMidiPlayer.ViewModels
 
         public string Key => $"Key: {KeyOffsets[KeyOffset]}";
 
-        public static string VersionString { get; } = $"{ProgramVersion()?.ToString(3)}";
-
         public string UpdateString { get; set; } = string.Empty;
 
         public uint MergeMilliseconds
@@ -194,36 +196,37 @@ namespace GenshinLyreMidiPlayer.ViewModels
             }
         }
 
+        public static Version ProgramVersion => Assembly.GetExecutingAssembly().GetName().Version!;
+
         protected override void OnActivate()
         {
             if (AutoCheckUpdates)
                 _ = CheckForUpdate();
         }
 
-        public static Version? ProgramVersion() => Assembly.GetExecutingAssembly().GetName().Version;
-
         public async Task CheckForUpdate()
         {
             if (IsCheckingUpdate)
                 return;
 
-            UpdateString     = "(Checking for updates)";
+            UpdateString     = "Checking for updates...";
             IsCheckingUpdate = true;
 
             try
             {
-                var version = await GetLatestVersion();
-                UpdateString = version.Version > ProgramVersion()
-                    ? $"(Update available! {version.TagName})"
+                LatestVersion = await GetLatestVersion();
+                UpdateString = LatestVersion.Version > ProgramVersion
+                    ? "(Update available!)"
                     : string.Empty;
             }
             catch (Exception)
             {
-                UpdateString = "(Failed to check updates)";
+                UpdateString = "Failed to check updates";
             }
             finally
             {
                 IsCheckingUpdate = false;
+                NotifyOfPropertyChange(() => NeedsUpdate);
             }
         }
 
@@ -233,7 +236,7 @@ namespace GenshinLyreMidiPlayer.ViewModels
             var request = new HttpRequestMessage(HttpMethod.Get,
                 "https://api.github.com/repos/sabihoshi/GenshinLyreMidiPlayer/releases");
 
-            var productInfo = new ProductInfoHeaderValue("GenshinLyreMidiPlayer", ProgramVersion()?.ToString());
+            var productInfo = new ProductInfoHeaderValue("GenshinLyreMidiPlayer", ProgramVersion.ToString());
 
             request.Headers.UserAgent.Add(productInfo);
 
