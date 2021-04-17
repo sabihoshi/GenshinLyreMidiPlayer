@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.Linq;
 using System.Threading.Tasks;
 using GenshinLyreMidiPlayer.Core;
@@ -66,15 +67,10 @@ namespace GenshinLyreMidiPlayer.ViewModels
             get => _songSlider;
             set
             {
+                if (!_ignoreSliderChange && Playback is { IsRunning: true })
+                    Playback.Stop();
+
                 SetAndNotify(ref _songSlider, value);
-
-                if (!_ignoreSliderChange && Playback != null)
-                {
-                    if (Playback.IsRunning) Playback.Stop();
-
-                    var time = TimeSpan.FromSeconds(_songSlider);
-                    Playback.MoveToTime((MetricTimeSpan) time);
-                }
 
                 _ignoreSliderChange = false;
             }
@@ -187,27 +183,19 @@ namespace GenshinLyreMidiPlayer.ViewModels
 
             Playback.Started += (_, _) =>
             {
-                Playback.Loop = Playlist.Loop == LoopState.Single;
-
                 _timeWatcher.RemoveAllPlaybacks();
                 _timeWatcher.AddPlayback(Playback, TimeSpanType.Metric);
                 _timeWatcher.Start();
 
                 NotifyOfPropertyChange(() => PlayPauseIcon);
             };
+
             Playback.Stopped += (_, _) =>
             {
                 _timeWatcher.Stop();
+
                 NotifyOfPropertyChange(() => PlayPauseIcon);
             };
-
-            if (oldPlayback is not null)
-            {
-                Playback.MoveToTime(oldPlayback.GetCurrentTime(TimeSpanType.Midi));
-
-                oldPlayback.Stop();
-                oldPlayback.Dispose();
-            }
 
             if (_settings.UseSpeakers)
                 Playback.OutputDevice = _speakers;
@@ -252,6 +240,12 @@ namespace GenshinLyreMidiPlayer.ViewModels
             }
             else
             {
+                Playback.Loop = Playlist.Loop == LoopState.Single;
+
+                var time = (MetricTimeSpan) TimeSpan.FromSeconds(SongSlider);
+                Playback.PlaybackStart = time;
+                Playback.MoveToTime(time);
+
                 if (_settings.UseSpeakers)
                     Playback.Start();
                 else
@@ -274,6 +268,7 @@ namespace GenshinLyreMidiPlayer.ViewModels
             foreach (var playbackTime in e.Times)
             {
                 TimeSpan time = (MetricTimeSpan) playbackTime.Time;
+                Debug.WriteLine(time);
                 MoveSlider(time.TotalSeconds);
             }
 
