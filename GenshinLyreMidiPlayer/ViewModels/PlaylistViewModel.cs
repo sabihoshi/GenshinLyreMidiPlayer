@@ -73,23 +73,26 @@ namespace GenshinLyreMidiPlayer.ViewModels
             Loop = (LoopState) newState;
         }
 
-        public void Next()
+        public MidiFileModel? Next()
         {
             var playlist = GetPlaylist().ToList();
+
+            if (Loop == LoopState.Single)
+                return OpenedFile ?? playlist.FirstOrDefault();
+
             var next = playlist.FirstOrDefault();
 
-            if (SelectedFile is not null)
+            if (OpenedFile is not null)
             {
-                var current = playlist.IndexOf(SelectedFile);
+                var current = playlist.IndexOf(OpenedFile) + 1;
 
-                if (Loop is LoopState.All or LoopState.None)
-                    current += 1 % playlist.Count;
+                if (Loop is LoopState.All)
+                    current %= playlist.Count;
 
                 next = playlist.ElementAtOrDefault(current);
             }
 
-            if (next is not null)
-                _events.Publish(next);
+            return next;
         }
 
         public BindableCollection<MidiFileModel> GetPlaylist() => (Shuffle ? ShuffledTracks : Tracks)!;
@@ -114,7 +117,7 @@ namespace GenshinLyreMidiPlayer.ViewModels
             RefreshPlaylist();
 
             if (OpenedFile is null && Tracks.Count > 0)
-                Next();
+                _events.Publish(Next());
         }
 
         private async Task AddFile(string fileName, ReadingSettings? settings = null)

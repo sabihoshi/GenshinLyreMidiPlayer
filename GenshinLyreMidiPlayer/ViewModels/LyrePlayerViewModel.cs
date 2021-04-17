@@ -53,7 +53,8 @@ namespace GenshinLyreMidiPlayer.ViewModels
         {
             get
             {
-                if (Playlist.Loop == LoopState.All) return true;
+                if (Playlist.Loop is LoopState.All or LoopState.Single)
+                    return true;
 
                 var last = Playlist.GetPlaylist().LastOrDefault();
                 return Playlist.OpenedFile != last;
@@ -186,6 +187,8 @@ namespace GenshinLyreMidiPlayer.ViewModels
 
             Playback.Started += (_, _) =>
             {
+                Playback.Loop = Playlist.Loop == LoopState.Single;
+
                 _timeWatcher.RemoveAllPlaybacks();
                 _timeWatcher.AddPlayback(Playback, TimeSpanType.Metric);
                 _timeWatcher.Start();
@@ -225,9 +228,16 @@ namespace GenshinLyreMidiPlayer.ViewModels
 
         public void Next()
         {
-            Playlist.Next();
+            var next = Playlist.Next();
+            if (next is null)
+                CloseFile();
+            else if (next == Playlist.OpenedFile && Playlist.Loop == LoopState.Single)
+                Handle(next);
+            else if (next != Playlist.OpenedFile)
+                Handle(next);
 
-            if (Playback is not null) PlayPause();
+            if (Playback is not null)
+                PlayPause();
 
             NotifyOfPropertyChange(() => PlayPauseIcon);
         }
