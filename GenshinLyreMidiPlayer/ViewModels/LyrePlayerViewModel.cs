@@ -1,5 +1,4 @@
 ﻿using System;
-using System.Collections.Generic;
 using System.Diagnostics;
 using System.Linq;
 using System.Threading.Tasks;
@@ -30,23 +29,28 @@ namespace GenshinLyreMidiPlayer.ViewModels
         public LyrePlayerViewModel(IEventAggregator events,
             SettingsPageViewModel settings, PlaylistViewModel playlist)
         {
-            SelectedMidiInput = MidiInputs[0];
+            _events = events;
+            _events.Subscribe(this);
 
             _settings = settings;
             Playlist  = playlist;
 
-            _events = events;
-            _events.Subscribe(this);
+            SelectedMidiInput = MidiInputs[0];
 
             _timeWatcher.CurrentTimeChanged += OnSongTick;
         }
 
-        public BindableCollection<MidiInputModel> MidiInputs { get; set; } = new()
+        public BindableCollection<MidiInputModel> MidiInputs { get; } = new()
         {
             new MidiInputModel("None")
         };
 
-        public bool CanHitPlayPause => Playback is not null && Playlist.OpenedFile?.Midi.Chunks.Count > 0;
+        public BindableCollection<MidiTrackModel> MidiTracks { get; } = new();
+
+        public bool CanHitPlayPause =>
+            Playback is not null
+            && Playlist.OpenedFile?.Midi.Chunks.Count > 0
+            && MaximumTime > TimeSpan.Zero;
 
         public bool CanHitPrevious => CurrentTime > TimeSpan.FromSeconds(3) || Playlist.History.Count > 1;
 
@@ -75,8 +79,6 @@ namespace GenshinLyreMidiPlayer.ViewModels
                 _ignoreSliderChange = false;
             }
         }
-
-        public List<MidiTrackModel> MidiTracks { get; set; } = new();
 
         public MidiInputModel? SelectedMidiInput
         {
@@ -117,14 +119,11 @@ namespace GenshinLyreMidiPlayer.ViewModels
             Playlist.OpenedFile = file;
             Playlist.History.Push(file);
 
-            MidiTracks = file.Midi
-                .GetTrackChunks()
-                .Select(t => new MidiTrackModel(_events, t))
-                .ToList();
+            MidiTracks.AddRange(file.Tracks
+                .Select(t => new MidiTrackModel(_events, t)));
 
             InitializePlayback();
 
-            NotifyOfPropertyChange(() => MaximumTime);
             NotifyOfPropertyChange(() => CanHitNext);
             NotifyOfPropertyChange(() => CanHitPrevious);
         }
@@ -137,6 +136,12 @@ namespace GenshinLyreMidiPlayer.ViewModels
         public void Handle(SettingsPageViewModel message)
         {
             InitializePlayback();
+        }
+
+        public async Task AddFiles()
+        {
+            await Playlist.AddFiles();
+            NotifyOfPropertyChange(() => CanHitNext);
         }
 
         public void CloseFile()
@@ -199,6 +204,8 @@ namespace GenshinLyreMidiPlayer.ViewModels
 
                 NotifyOfPropertyChange(() => PlayPauseIcon);
             };
+
+            NotifyOfPropertyChange(() => MaximumTime);
         }
 
         public void Previous()
@@ -218,16 +225,15 @@ namespace GenshinLyreMidiPlayer.ViewModels
         {
             var next = Playlist.Next();
             if (next is null)
-                CloseFile();
-            else if (next == Playlist.OpenedFile && Playlist.Loop == LoopState.Single)
+                return;
+
+            if (next == Playlist.OpenedFile && Playlist.Loop == LoopState.Single)
                 Handle(next);
             else if (next != Playlist.OpenedFile)
                 Handle(next);
 
             if (Playback is not null)
                 PlayPause();
-
-            NotifyOfPropertyChange(() => PlayPauseIcon);
         }
 
         public void PlayPause()

@@ -1,4 +1,4 @@
-<UserControl
+﻿<UserControl
     x:Class="GenshinLyreMidiPlayer.Views.LyrePlayerView"
     xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
     xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
@@ -27,7 +27,7 @@
                 <ColumnDefinition Width="*" />
             </Grid.ColumnDefinitions>
 
-            <Button s:View.ActionTarget="{Binding Playlist}" Command="{s:Action AddFiles}" 
+            <Button Command="{s:Action AddFiles}" 
                     Background="Transparent">
                 <ui:FontIcon Glyph="&#xE8E5;" />
             </Button>

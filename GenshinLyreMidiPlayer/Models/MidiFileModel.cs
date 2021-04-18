@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections.Generic;
 using Melanchall.DryWetMidi.Core;
 using Melanchall.DryWetMidi.Interaction;
 using Stylet;
@@ -14,7 +15,11 @@ namespace GenshinLyreMidiPlayer.Models
         {
             Path = path;
             Midi = MidiFile.Read(path, settings);
+
+            Tracks = Midi.GetTrackChunks();
         }
+
+        public IEnumerable<TrackChunk> Tracks { get; set; }
 
         public int Position
         {
