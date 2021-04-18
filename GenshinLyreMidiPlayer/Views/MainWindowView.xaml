@@ -1,4 +1,4 @@
-﻿<Window
+<Window
     x:Class="GenshinLyreMidiPlayer.Views.MainWindowView"
     xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
     xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
@@ -19,7 +19,6 @@
     ui:TitleBar.ExtendViewIntoTitleBar="True">
     <Grid>
         <ui:NavigationView
-            Grid.Row="0" Grid.RowSpan="2"
             x:Name="NavView" AlwaysShowHeader="True"
             Header="{Binding SelectedItem.(ui:NavigationViewItem.Content), RelativeSource={RelativeSource Self}, FallbackValue=' '}">
             <ui:NavigationView.AutoSuggestBox>

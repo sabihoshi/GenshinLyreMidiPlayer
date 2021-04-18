@@ -159,6 +159,7 @@ namespace GenshinLyreMidiPlayer.ViewModels
         private void InitializePlayback()
         {
             Playback?.Stop();
+            Playback?.Dispose();
 
             if (Playlist.OpenedFile is null)
                 return;

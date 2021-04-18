@@ -160,7 +160,8 @@ namespace GenshinLyreMidiPlayer.ViewModels
 
         public void OnFileChanged(object sender, EventArgs e)
         {
-            _events.Publish(SelectedFile);
+            if (SelectedFile is not null)
+                _events.Publish(SelectedFile);
         }
 
         public void Previous()
