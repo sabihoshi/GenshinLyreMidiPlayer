@@ -28,6 +28,8 @@ namespace GenshinLyreMidiPlayer.Models
             }
         }
 
+        public bool CanBePlayed => Track.Events.Count(e => e is NoteEvent) > 0;
+
         public string? TrackName { get; }
 
         public TrackChunk Track { get; }

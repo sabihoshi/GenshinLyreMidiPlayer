@@ -97,7 +97,7 @@
                         <ItemsControl.ItemTemplate>
                             <DataTemplate>
                                 <ui:ToggleSwitch
-                                    IsOn="{Binding IsChecked}"
+                                    IsOn="{Binding IsChecked}" IsEnabled="{Binding CanBePlayed}"
                                     OffContent="{Binding TrackName, TargetNullValue=Unknown}"
                                     OnContent="{Binding TrackName, TargetNullValue=Unknown}" />
                             </DataTemplate>
