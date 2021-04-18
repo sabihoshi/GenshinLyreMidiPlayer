@@ -31,18 +31,7 @@
                 <ui:NavigationViewItem Content="Playlist" Icon="57666" Tag="{Binding PlaylistView}" />
             </ui:NavigationView.MenuItems>
 
-            <Grid>
-                <ui:HyperlinkButton
-                    Command="{s:Action NavigateToSettings}"
-                    Margin="20,-35,20,0"
-                    HorizontalAlignment="Right" VerticalAlignment="Top"
-                    Visibility="{Binding ShowUpdate, Converter={x:Static s:BoolToVisibilityConverter.Instance}}">
-                    New update!
-                </ui:HyperlinkButton>
-
-                <modernWpf:AnimatedContentControl Margin="10" s:View.Model="{Binding ActiveItem}" />
-            </Grid>
-
+            <modernWpf:AnimatedContentControl Margin="10" s:View.Model="{Binding ActiveItem}" />
         </ui:NavigationView>
 
         <ui:SimpleStackPanel
@@ -58,6 +47,14 @@
 
             <ui:ProgressRing IsActive="{Binding SettingsView.IsCheckingUpdate}" />
         </ui:SimpleStackPanel>
+
+        <ui:HyperlinkButton 
+            Margin="10" 
+            VerticalAlignment="Bottom" HorizontalAlignment="Right"
+            Command="{s:Action NavigateToSettings}"
+            Visibility="{Binding ShowUpdate, Converter={x:Static s:BoolToVisibilityConverter.Instance}}">
+            New update!
+        </ui:HyperlinkButton>
     </Grid>
 
 </Window>
