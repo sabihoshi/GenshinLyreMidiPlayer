@@ -9,13 +9,13 @@
     xmlns:ui="http://schemas.modernwpf.com/2019"
     xmlns:s="https://github.com/canton7/Stylet"
 
-    xmlns:modernWpf="clr-namespace:GenshinLyreMidiPlayer.ModernWPF"
     xmlns:core="clr-namespace:GenshinLyreMidiPlayer.Core"
     xmlns:viewModels="clr-namespace:GenshinLyreMidiPlayer.ViewModels"
-    
+    xmlns:theme="clr-namespace:GenshinLyreMidiPlayer.ModernWPF.Theme"
+
     d:DataContext="{d:DesignInstance Type=viewModels:SettingsPageViewModel}">
     <UserControl.Resources>
-        <modernWpf:AppThemeConverter x:Key="AppThemeConverter" />
+        <theme:AppThemeConverter x:Key="AppThemeConverter" />
     </UserControl.Resources>
 
     <ScrollViewer>
@@ -72,7 +72,7 @@
                         Source={x:Static ui:ThemeManager.Current}, Path=ApplicationTheme, 
                         Converter={StaticResource AppThemeConverter}}">
                     <ui:RadioButtons.ItemsSource>
-                        <modernWpf:AppThemes />
+                        <theme:AppThemes />
                     </ui:RadioButtons.ItemsSource>
                 </ui:RadioButtons>
             </GroupBox>

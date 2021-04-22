@@ -1,5 +1,4 @@
 ﻿using System;
-using System.Collections.Generic;
 using Melanchall.DryWetMidi.Core;
 using Melanchall.DryWetMidi.Interaction;
 using Stylet;
@@ -9,17 +8,15 @@ namespace GenshinLyreMidiPlayer.Models
 {
     public class MidiFileModel : Screen
     {
+        private readonly ReadingSettings? _settings;
         private int _position;
 
         public MidiFileModel(string path, ReadingSettings? settings = null)
         {
+            _settings = settings;
+
             Path = path;
-            Midi = MidiFile.Read(path, settings);
-
-            Tracks = Midi.GetTrackChunks();
         }
-
-        public IEnumerable<TrackChunk> Tracks { get; set; }
 
         public int Position
         {
@@ -27,12 +24,14 @@ namespace GenshinLyreMidiPlayer.Models
             set => SetAndNotify(ref _position, value);
         }
 
-        public MidiFile Midi { get; }
+        public MidiFile Midi => MidiFile.Read(Path, _settings);
 
         private string Path { get; }
 
         public string Title => GetFileNameWithoutExtension(Path);
 
         public TimeSpan Duration => Midi.GetDuration<MetricTimeSpan>();
+
+        public MidiFile GetMidi() => MidiFile.Read(Path, _settings);
     }
 }

@@ -42,7 +42,7 @@ namespace GenshinLyreMidiPlayer.ViewModels
 
         public BindableCollection<MidiInputModel> MidiInputs { get; } = new()
         {
-            new MidiInputModel("None")
+            new("None")
         };
 
         public BindableCollection<MidiTrackModel> MidiTracks { get; } = new();
@@ -119,9 +119,6 @@ namespace GenshinLyreMidiPlayer.ViewModels
             Playlist.OpenedFile = file;
             Playlist.History.Push(file);
 
-            MidiTracks.AddRange(file.Tracks
-                .Select(t => new MidiTrackModel(_events, t)));
-
             InitializePlayback();
 
             NotifyOfPropertyChange(() => CanHitNext);
@@ -170,13 +167,18 @@ namespace GenshinLyreMidiPlayer.ViewModels
                 return;
 
             var midi = Playlist.OpenedFile.Midi;
+
+            MidiTracks.Clear();
+            MidiTracks.AddRange(midi.GetTrackChunks()
+               .Select(t => new MidiTrackModel(_events, t)));
+
             midi.Chunks.Clear();
             midi.Chunks.AddRange(MidiTracks
-                .Where(t => t.IsChecked)
-                .Select(t => t.Track));
+               .Where(t => t.IsChecked)
+               .Select(t => t.Track));
 
             if (_settings.MergeNotes)
-                midi.MergeNotes(new NotesMergingSettings
+                midi.MergeNotes(new()
                 {
                     Tolerance = new MetricTimeSpan(0, 0, 0, (int) _settings.MergeMilliseconds)
                 });
@@ -341,11 +343,11 @@ namespace GenshinLyreMidiPlayer.ViewModels
         public void RefreshDevices()
         {
             MidiInputs.Clear();
-            MidiInputs.Add(new MidiInputModel("None"));
+            MidiInputs.Add(new("None"));
 
             foreach (var device in InputDevice.GetAll())
             {
-                MidiInputs.Add(new MidiInputModel(device.Name));
+                MidiInputs.Add(new(device.Name));
             }
 
             SelectedMidiInput = MidiInputs[0];

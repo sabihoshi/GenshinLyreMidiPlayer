@@ -162,14 +162,14 @@ namespace GenshinLyreMidiPlayer.ViewModels
 
         public List<MidiSpeedModel> MidiSpeeds { get; } = new()
         {
-            new MidiSpeedModel("0.25x", 0.25),
-            new MidiSpeedModel("0.5x", 0.5),
-            new MidiSpeedModel("0.75x", 0.75),
-            new MidiSpeedModel("Normal", 1),
-            new MidiSpeedModel("1.25x", 1.25),
-            new MidiSpeedModel("1.5x", 1.5),
-            new MidiSpeedModel("1.75x", 1.75),
-            new MidiSpeedModel("2x", 2)
+            new("0.25x", 0.25),
+            new("0.5x", 0.5),
+            new("0.75x", 0.75),
+            new("Normal", 1),
+            new("1.25x", 1.25),
+            new("1.5x", 1.5),
+            new("1.75x", 1.75),
+            new("2x", 2)
         };
 
         public MidiSpeedModel SelectedSpeed

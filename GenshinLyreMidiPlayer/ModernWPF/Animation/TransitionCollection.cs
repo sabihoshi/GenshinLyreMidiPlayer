@@ -7,12 +7,14 @@ namespace GenshinLyreMidiPlayer.ModernWPF.Animation
     {
         public TransitionCollection()
         {
-            Add(new CaptionedObject<Transition>(new EntranceTransition(), "Entrance"));
-            Add(new CaptionedObject<Transition>(new DrillInTransition(), "Drill in"));
-            Add(new CaptionedObject<Transition>(new SlideTransition(Direction.FromLeft), "Slide from Left"));
-            Add(new CaptionedObject<Transition>(new SlideTransition(Direction.FromRight), "Slide from Right"));
-            Add(new CaptionedObject<Transition>(new SlideTransition(Direction.FromBottom), "Slide from Bottom"));
-            Add(new CaptionedObject<Transition>(new SuppressTransition(), "Suppress"));
+            With(new EntranceTransition(), "Entrance");
+            With(new DrillInTransition(), "Drill in");
+            With(new SlideTransition(Direction.FromLeft), "Slide from Left");
+            With(new SlideTransition(Direction.FromRight), "Slide from Right");
+            With(new SlideTransition(Direction.FromBottom), "Slide from Bottom");
+            With(new SuppressTransition(), "Suppress");
+
+            void With(Transition transition, string caption) => Add(new(transition, caption));
         }
     }
 }
