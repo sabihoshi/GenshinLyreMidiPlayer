@@ -1,7 +1,7 @@
 ﻿using System;
 using System.Text.Json.Serialization;
 
-namespace GenshinLyreMidiPlayer.Data.Models
+namespace GenshinLyreMidiPlayer.Data.Git
 {
     public class GitVersion
     {

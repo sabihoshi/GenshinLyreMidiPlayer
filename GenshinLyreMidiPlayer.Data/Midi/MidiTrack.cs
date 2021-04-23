@@ -2,14 +2,14 @@
 using Melanchall.DryWetMidi.Core;
 using Stylet;
 
-namespace GenshinLyreMidiPlayer.Data.Models
+namespace GenshinLyreMidiPlayer.Data.Midi
 {
-    public class MidiTrackModel
+    public class MidiTrack
     {
         private readonly IEventAggregator _events;
         private bool _isChecked;
 
-        public MidiTrackModel(IEventAggregator events, TrackChunk track)
+        public MidiTrack(IEventAggregator events, TrackChunk track)
         {
             _events    = events;
             _isChecked = true;

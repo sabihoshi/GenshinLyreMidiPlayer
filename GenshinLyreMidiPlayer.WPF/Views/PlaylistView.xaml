@@ -13,7 +13,7 @@
     xmlns:modernWpf="clr-namespace:GenshinLyreMidiPlayer.WPF.ModernWPF"
 
     xmlns:viewModels="clr-namespace:GenshinLyreMidiPlayer.WPF.ViewModels"
-    xmlns:models="clr-namespace:GenshinLyreMidiPlayer.Data.Models;assembly=GenshinLyreMidiPlayer.Data"
+    xmlns:midi="clr-namespace:GenshinLyreMidiPlayer.Data.Midi;assembly=GenshinLyreMidiPlayer.Data"
 
     d:DataContext="{d:DesignInstance viewModels:PlaylistViewModel}">
     <UserControl.Resources>
@@ -30,7 +30,7 @@
             </CollectionViewSource.SortDescriptions>
         </CollectionViewSource>
 
-        <DataTemplate x:Key="ListViewTemplate" DataType="models:MidiFileModel">
+        <DataTemplate x:Key="ListViewTemplate" DataType="midi:MidiFile">
             <Grid>
                 <Grid.RowDefinitions>
                     <RowDefinition Height="*" />

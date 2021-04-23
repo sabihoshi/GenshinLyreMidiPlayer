@@ -1,8 +1,8 @@
-﻿namespace GenshinLyreMidiPlayer.Data.Models
+﻿namespace GenshinLyreMidiPlayer.Data.Midi
 {
-    public class MidiSpeedModel
+    public class MidiSpeed
     {
-        public MidiSpeedModel(string speedName, double speed)
+        public MidiSpeed(string speedName, double speed)
         {
             SpeedName = speedName;
             Speed     = speed;

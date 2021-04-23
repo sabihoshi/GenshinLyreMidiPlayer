@@ -1,19 +1,17 @@
 ﻿using System;
-using System.ComponentModel;
-using System.Runtime.CompilerServices;
 using Melanchall.DryWetMidi.Core;
 using Melanchall.DryWetMidi.Interaction;
 using Stylet;
 using static System.IO.Path;
 
-namespace GenshinLyreMidiPlayer.Data.Models
+namespace GenshinLyreMidiPlayer.Data.Midi
 {
-    public class MidiFileModel : Screen
+    public class MidiFile : Screen
     {
         private readonly ReadingSettings? _settings;
         private int _position;
 
-        public MidiFileModel(string path, ReadingSettings? settings = null)
+        public MidiFile(string path, ReadingSettings? settings = null)
         {
             _settings = settings;
 
@@ -26,7 +24,7 @@ namespace GenshinLyreMidiPlayer.Data.Models
             set => SetAndNotify(ref _position, value);
         }
 
-        public MidiFile Midi => MidiFile.Read(Path, _settings);
+        public Melanchall.DryWetMidi.Core.MidiFile Midi => Melanchall.DryWetMidi.Core.MidiFile.Read(Path, _settings);
 
         private string Path { get; }
 
@@ -34,13 +32,7 @@ namespace GenshinLyreMidiPlayer.Data.Models
 
         public TimeSpan Duration => Midi.GetDuration<MetricTimeSpan>();
 
-        public event PropertyChangedEventHandler PropertyChanged;
-
-        public MidiFile GetMidi() => MidiFile.Read(Path, _settings);
-
-        protected virtual void OnPropertyChanged([CallerMemberName] string propertyName = null)
-        {
-            PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(propertyName));
-        }
+        public Melanchall.DryWetMidi.Core.MidiFile GetMidi() =>
+            Melanchall.DryWetMidi.Core.MidiFile.Read(Path, _settings);
     }
 }

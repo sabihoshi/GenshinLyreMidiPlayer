@@ -3,12 +3,12 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 using System.Windows.Media;
-using GenshinLyreMidiPlayer.Data.Models;
 using GenshinLyreMidiPlayer.WPF.Core.Errors;
 using Melanchall.DryWetMidi.Core;
 using Microsoft.Win32;
 using ModernWpf;
 using Stylet;
+using MidiFile = GenshinLyreMidiPlayer.Data.Midi.MidiFile;
 
 namespace GenshinLyreMidiPlayer.WPF.ViewModels
 {
@@ -23,28 +23,25 @@ namespace GenshinLyreMidiPlayer.WPF.ViewModels
 
         private readonly IEventAggregator _events;
 
-        public PlaylistViewModel(IEventAggregator events)
-        {
-            _events = events;
-        }
+        public PlaylistViewModel(IEventAggregator events) { _events = events; }
 
-        public BindableCollection<MidiFileModel> Tracks { get; set; } = new();
+        public BindableCollection<MidiFile> Tracks { get; set; } = new();
 
-        public BindableCollection<MidiFileModel>? ShuffledTracks { get; set; }
+        public BindableCollection<MidiFile>? ShuffledTracks { get; set; }
 
         public bool Shuffle { get; set; }
 
         public LoopState Loop { get; set; }
 
-        public MidiFileModel? SelectedFile { get; set; }
+        public MidiFile? SelectedFile { get; set; }
 
-        public MidiFileModel? OpenedFile { get; set; }
+        public MidiFile? OpenedFile { get; set; }
 
         public SolidColorBrush ShuffleStateColor => Shuffle
-            ? new SolidColorBrush(ThemeManager.Current.ActualAccentColor)
+            ? new(ThemeManager.Current.ActualAccentColor)
             : Brushes.Gray;
 
-        public Stack<MidiFileModel> History { get; } = new();
+        public Stack<MidiFile> History { get; } = new();
 
         public string LoopStateString =>
             Loop switch
@@ -59,7 +56,7 @@ namespace GenshinLyreMidiPlayer.WPF.ViewModels
             Shuffle = !Shuffle;
 
             if (Shuffle)
-                ShuffledTracks = new BindableCollection<MidiFileModel>(Tracks.OrderBy(_ => Guid.NewGuid()));
+                ShuffledTracks = new(Tracks.OrderBy(_ => Guid.NewGuid()));
 
             RefreshPlaylist();
         }
@@ -73,7 +70,7 @@ namespace GenshinLyreMidiPlayer.WPF.ViewModels
             Loop = (LoopState) newState;
         }
 
-        public MidiFileModel? Next()
+        public MidiFile? Next()
         {
             var playlist = GetPlaylist().ToList();
 
@@ -95,7 +92,7 @@ namespace GenshinLyreMidiPlayer.WPF.ViewModels
             return next;
         }
 
-        public BindableCollection<MidiFileModel> GetPlaylist() => (Shuffle ? ShuffledTracks : Tracks)!;
+        public BindableCollection<MidiFile> GetPlaylist() => (Shuffle ? ShuffledTracks : Tracks)!;
 
         public async Task AddFiles()
         {
@@ -113,7 +110,7 @@ namespace GenshinLyreMidiPlayer.WPF.ViewModels
                 await AddFile(fileName);
             }
 
-            ShuffledTracks = new BindableCollection<MidiFileModel>(Tracks.OrderBy(_ => Guid.NewGuid()));
+            ShuffledTracks = new(Tracks.OrderBy(_ => Guid.NewGuid()));
             RefreshPlaylist();
 
             if (OpenedFile is null && Tracks.Count > 0)
@@ -124,12 +121,12 @@ namespace GenshinLyreMidiPlayer.WPF.ViewModels
         {
             try
             {
-                var file = new MidiFileModel(fileName, settings);
+                var file = new MidiFile(fileName, settings);
                 Tracks.Add(file);
             }
             catch (Exception e)
             {
-                settings ??= new ReadingSettings();
+                settings ??= new();
                 if (await ExceptionHandler.TryHandleException(e, settings))
                     await AddFile(fileName, settings);
             }
@@ -144,10 +141,7 @@ namespace GenshinLyreMidiPlayer.WPF.ViewModels
             }
         }
 
-        public void ClearPlaylist()
-        {
-            Tracks.Clear();
-        }
+        public void ClearPlaylist() { Tracks.Clear(); }
 
         public void RefreshPlaylist()
         {

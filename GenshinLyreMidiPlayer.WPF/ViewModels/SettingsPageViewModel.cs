@@ -6,7 +6,8 @@ using System.Net.Http.Headers;
 using System.Reflection;
 using System.Text.Json;
 using System.Threading.Tasks;
-using GenshinLyreMidiPlayer.Data.Models;
+using GenshinLyreMidiPlayer.Data.Git;
+using GenshinLyreMidiPlayer.Data.Midi;
 using GenshinLyreMidiPlayer.WPF.Core;
 using GenshinLyreMidiPlayer.WPF.ModernWPF;
 using GenshinLyreMidiPlayer.WPF.ModernWPF.Animation;
@@ -22,7 +23,7 @@ namespace GenshinLyreMidiPlayer.WPF.ViewModels
         private int _keyOffset;
         private uint _mergeMilliseconds;
         private bool _mergeNotes;
-        private MidiSpeedModel _selectedSpeed;
+        private MidiSpeed _selectedSpeed;
         private bool _useSpeakers;
 
         public SettingsPageViewModel(IEventAggregator events)
@@ -160,7 +161,7 @@ namespace GenshinLyreMidiPlayer.WPF.ViewModels
 
         public KeyValuePair<Keyboard.Layout, string> SelectedLayout { get; set; }
 
-        public List<MidiSpeedModel> MidiSpeeds { get; } = new()
+        public List<MidiSpeed> MidiSpeeds { get; } = new()
         {
             new("0.25x", 0.25),
             new("0.5x", 0.5),
@@ -172,7 +173,7 @@ namespace GenshinLyreMidiPlayer.WPF.ViewModels
             new("2x", 2)
         };
 
-        public MidiSpeedModel SelectedSpeed
+        public MidiSpeed SelectedSpeed
         {
             get => _selectedSpeed;
             set

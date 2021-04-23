@@ -2,7 +2,7 @@
 using System.Diagnostics;
 using System.Linq;
 using System.Threading.Tasks;
-using GenshinLyreMidiPlayer.Data.Models;
+using GenshinLyreMidiPlayer.Data.Midi;
 using GenshinLyreMidiPlayer.WPF.Core;
 using Melanchall.DryWetMidi.Core;
 using Melanchall.DryWetMidi.Devices;
@@ -10,11 +10,12 @@ using Melanchall.DryWetMidi.Interaction;
 using Melanchall.DryWetMidi.Tools;
 using Stylet;
 using static GenshinLyreMidiPlayer.WPF.ViewModels.PlaylistViewModel;
+using MidiFile = GenshinLyreMidiPlayer.Data.Midi.MidiFile;
 
 namespace GenshinLyreMidiPlayer.WPF.ViewModels
 {
     public class LyrePlayerViewModel : Screen,
-        IHandle<MidiFileModel>, IHandle<MidiTrackModel>,
+        IHandle<MidiFile>, IHandle<MidiTrack>,
         IHandle<SettingsPageViewModel>
     {
         private readonly IEventAggregator _events;
@@ -23,7 +24,7 @@ namespace GenshinLyreMidiPlayer.WPF.ViewModels
         private readonly PlaybackCurrentTimeWatcher _timeWatcher = PlaybackCurrentTimeWatcher.Instance;
         private bool _ignoreSliderChange;
         private InputDevice? _inputDevice;
-        private MidiInputModel? _selectedMidiInput;
+        private MidiInput? _selectedMidiInput;
         private double _songSlider;
 
         public LyrePlayerViewModel(IEventAggregator events,
@@ -40,12 +41,12 @@ namespace GenshinLyreMidiPlayer.WPF.ViewModels
             _timeWatcher.CurrentTimeChanged += OnSongTick;
         }
 
-        public BindableCollection<MidiInputModel> MidiInputs { get; } = new()
+        public BindableCollection<MidiInput> MidiInputs { get; } = new()
         {
             new("None")
         };
 
-        public BindableCollection<MidiTrackModel> MidiTracks { get; } = new();
+        public BindableCollection<MidiTrack> MidiTracks { get; } = new();
 
         public bool CanHitPlayPause =>
             Playback is not null
@@ -80,7 +81,7 @@ namespace GenshinLyreMidiPlayer.WPF.ViewModels
             }
         }
 
-        public MidiInputModel? SelectedMidiInput
+        public MidiInput? SelectedMidiInput
         {
             get => _selectedMidiInput;
             set
@@ -113,7 +114,7 @@ namespace GenshinLyreMidiPlayer.WPF.ViewModels
 
         public TimeSpan CurrentTime => TimeSpan.FromSeconds(SongSlider);
 
-        public void Handle(MidiFileModel file)
+        public void Handle(MidiFile file)
         {
             CloseFile();
             Playlist.OpenedFile = file;
@@ -125,15 +126,9 @@ namespace GenshinLyreMidiPlayer.WPF.ViewModels
             NotifyOfPropertyChange(() => CanHitPrevious);
         }
 
-        public void Handle(MidiTrackModel track)
-        {
-            InitializePlayback();
-        }
+        public void Handle(MidiTrack track) { InitializePlayback(); }
 
-        public void Handle(SettingsPageViewModel message)
-        {
-            InitializePlayback();
-        }
+        public void Handle(SettingsPageViewModel message) { InitializePlayback(); }
 
         public async Task AddFiles()
         {
@@ -170,7 +165,7 @@ namespace GenshinLyreMidiPlayer.WPF.ViewModels
 
             MidiTracks.Clear();
             MidiTracks.AddRange(midi.GetTrackChunks()
-                .Select(t => new MidiTrackModel(_events, t)));
+                .Select(t => new MidiTrack(_events, t)));
 
             midi.Chunks.Clear();
             midi.Chunks.AddRange(MidiTracks
