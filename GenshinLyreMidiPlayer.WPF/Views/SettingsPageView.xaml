@@ -1,0 +1,139 @@
+﻿<UserControl
+    x:Class="GenshinLyreMidiPlayer.WPF.Views.SettingsPageView"
+    xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+
+    xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+    xmlns:d="http://schemas.microsoft.com/expression/blend/2008" mc:Ignorable="d"
+
+    xmlns:ui="http://schemas.modernwpf.com/2019"
+    xmlns:s="https://github.com/canton7/Stylet"
+    xmlns:theme="clr-namespace:GenshinLyreMidiPlayer.WPF.ModernWPF.Theme"
+    xmlns:core="clr-namespace:GenshinLyreMidiPlayer.WPF.Core"
+    xmlns:viewModels="clr-namespace:GenshinLyreMidiPlayer.WPF.ViewModels"
+
+    d:DataContext="{d:DesignInstance Type=viewModels:SettingsPageViewModel}">
+    <UserControl.Resources>
+        <theme:AppThemeConverter x:Key="AppThemeConverter" />
+    </UserControl.Resources>
+
+    <ScrollViewer>
+        <ui:SimpleStackPanel>
+            <ui:SimpleStackPanel Orientation="Horizontal">
+                <ui:ToggleSwitch
+                    Header="Test Mode (Speakers)"
+                    IsOn="{Binding UseSpeakers}" />
+
+                <ui:ToggleSwitch
+                    Header="Transpose"
+                    IsOn="{Binding TransposeNotes}" />
+
+                <ui:NumberBox
+                    Header="{Binding Key}" SpinButtonPlacementMode="Compact"
+                    Minimum="{Binding MinOffset}" Maximum="{Binding MaxOffset}"
+                    Value="{Binding KeyOffset}" />
+            </ui:SimpleStackPanel>
+
+            <ui:SimpleStackPanel Orientation="Horizontal">
+                <ui:ToggleSwitch
+                    Header="Hold notes"
+                    IsOn="{Binding HoldNotes}" />
+
+                <ui:ToggleSwitch
+                    Header="Merge nearby notes"
+                    IsOn="{Binding MergeNotes}" />
+
+                <ui:NumberBox
+                    Header="Tolerance (ms)" IsEnabled="{Binding MergeNotes}"
+                    Minimum="0" SpinButtonPlacementMode="Compact"
+                    Value="{Binding MergeMilliseconds}" />
+            </ui:SimpleStackPanel>
+
+            <ui:SimpleStackPanel Orientation="Horizontal">
+                <GroupBox Header="Speed">
+                    <ComboBox
+                        ItemsSource="{Binding MidiSpeeds}"
+                        SelectedItem="{Binding SelectedSpeed}"
+                        DisplayMemberPath="SpeedName" />
+                </GroupBox>
+
+                <GroupBox Header="Layout">
+                    <ComboBox
+                        ItemsSource="{x:Static core:Keyboard.LayoutNames}"
+                        SelectedItem="{Binding SelectedLayout}"
+                        DisplayMemberPath="Value" />
+                </GroupBox>
+            </ui:SimpleStackPanel>
+
+            <GroupBox Header="Theme Mode">
+                <ui:RadioButtons
+                    SelectedItem="{Binding 
+                        Source={x:Static ui:ThemeManager.Current}, Path=ApplicationTheme, 
+                        Converter={StaticResource AppThemeConverter}}">
+                    <ui:RadioButtons.ItemsSource>
+                        <theme:AppThemes />
+                    </ui:RadioButtons.ItemsSource>
+                </ui:RadioButtons>
+            </GroupBox>
+
+            <Expander Header="Transition style">
+                <ui:RadioButtons
+                    ItemsSource="{Binding Transitions}"
+                    SelectedItem="{Binding Transition}" />
+            </Expander>
+
+            <GroupBox Header="License">
+                <ui:SimpleStackPanel Margin="10">
+                    <TextBlock>
+                        Created by © 2021 sabihoshi under the
+                        <Hyperlink NavigateUri="https://github.com/sabihoshi/GenshinLyreMidiPlayer/blob/main/LICENSE.md">
+                            MIT License
+                        </Hyperlink>.
+                    </TextBlock>
+                    <TextBlock TextWrapping="Wrap">
+                        This project uses third-party libraries or other resources that may be distributed under different
+                        <Hyperlink NavigateUri="https://github.com/sabihoshi/GenshinLyreMidiPlayer/blob/main/THIRD-PARTY-NOTICES.md">
+                            different licenses
+                        </Hyperlink>.
+                    </TextBlock>
+                    <TextBlock Style="{StaticResource BaseTextBlockStyle}">
+                        All rights reserved by © miHoYo Co., Ltd.
+                        This project is not affiliated nor endorsed by miHoYo.
+                        Genshin Impact™ and other properties belong to their respective owners.
+                    </TextBlock>
+                </ui:SimpleStackPanel>
+            </GroupBox>
+
+            <GroupBox Header="Version">
+                <ui:SimpleStackPanel>
+                    <ui:SimpleStackPanel Orientation="Horizontal">
+                        <TextBlock x:Name="VersionText" Style="{StaticResource SubtitleTextBlockStyle}">
+                            You are running version
+                            v<Run Text="{Binding ProgramVersion, Mode=OneTime}" />
+                        </TextBlock>
+                        <Button Command="{s:Action CheckForUpdate}" Margin="-3"
+                                Visibility="{Binding IsCheckingUpdate, Converter={x:Static s:BoolToVisibilityConverter.InverseInstance}}">
+                            <ui:FontIcon
+                                Glyph="&#xE72C;"
+                                FontSize="{Binding ElementName=VersionText, Path=FontSize}" />
+                        </Button>
+                        <ui:ProgressRing IsActive="{Binding IsCheckingUpdate}" />
+                    </ui:SimpleStackPanel>
+
+                    <TextBlock
+                        Visibility="{Binding NeedsUpdate, Converter={x:Static s:BoolToVisibilityConverter.Instance}}">
+                        Click to download update:
+                        <Hyperlink
+                            NavigateUri="{Binding LatestVersion.Url}">
+                            <Run Text="{Binding LatestVersion.TagName}" /> -
+                            <Run Text="{Binding LatestVersion.Name}" />
+                        </Hyperlink>
+                    </TextBlock>
+
+                    <ui:ToggleSwitch Header="Automatically check updates" IsOn="{Binding AutoCheckUpdates}" />
+                    <ui:ToggleSwitch Header="Include beta updates" IsOn="{Binding IncludeBetaUpdates}" />
+                </ui:SimpleStackPanel>
+            </GroupBox>
+        </ui:SimpleStackPanel>
+    </ScrollViewer>
+</UserControl>

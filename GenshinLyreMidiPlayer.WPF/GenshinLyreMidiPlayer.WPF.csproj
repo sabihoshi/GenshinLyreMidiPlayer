@@ -1,0 +1,42 @@
+﻿<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <OutputType>WinExe</OutputType>
+    <TargetFramework>netcoreapp3.1</TargetFramework>
+    <UseWPF>true</UseWPF>
+    <StartupObject>GenshinLyreMidiPlayer.WPF.App</StartupObject>
+    <ApplicationManifest>app.manifest</ApplicationManifest>
+    <Version>1.7.8</Version>
+    <ApplicationIcon>item_windsong_lyre.ico</ApplicationIcon>
+    <Nullable>enable</Nullable>
+    <RepositoryUrl>https://github.com/sabihoshi/GenshinLyreMidiPlayer</RepositoryUrl>
+    <Authors>sabihoshi</Authors>
+    <Product>Genshin Lyre MIDI Player</Product>
+    <Company />
+    <Copyright>sabihoshi</Copyright>
+    <Description>A music player that plays MIDI files into Genshin Impact's Windsong Lyre.</Description>
+    <LangVersion>latest</LangVersion>
+    <PackageLicenseFile>LICENSE.md</PackageLicenseFile>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <PackageReference Include="Humanizer.Core" Version="2.8.26" />
+    <PackageReference Include="InputSimulator" Version="1.0.4" />
+    <PackageReference Include="Melanchall.DryWetMidi" Version="5.2.1-prerelease5" />
+    <PackageReference Include="ModernWpfUI" Version="0.9.4" />
+    <PackageReference Include="PropertyChanged.Fody" Version="3.3.3" />
+    <PackageReference Include="Stylet" Version="1.3.6" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <None Include="..\LICENSE.md">
+      <Pack>True</Pack>
+      <PackagePath></PackagePath>
+    </None>
+  </ItemGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\GenshinLyreMidiPlayer.Data\GenshinLyreMidiPlayer.Data.csproj" />
+  </ItemGroup>
+
+</Project>
