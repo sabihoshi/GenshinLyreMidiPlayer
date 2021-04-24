@@ -41,6 +41,8 @@ namespace GenshinLyreMidiPlayer.WPF
                 var path = Path.GetDirectoryName(config.FilePath);
                 var source = Path.Combine(path!, Settings.Default.SqliteConnection);
 
+                if (!Directory.Exists(path)) Directory.CreateDirectory(path);
+
                 var options = new DbContextOptionsBuilder<LyreContext>()
                     .UseSqlite($"Data Source={source}")
                     .Options;
