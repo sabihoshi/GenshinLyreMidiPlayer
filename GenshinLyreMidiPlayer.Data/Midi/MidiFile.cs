@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using Melanchall.DryWetMidi.Core;
 using Melanchall.DryWetMidi.Interaction;
 using Stylet;
@@ -31,8 +31,5 @@ namespace GenshinLyreMidiPlayer.Data.Midi
         public string Title => GetFileNameWithoutExtension(Path);
 
         public TimeSpan Duration => Midi.GetDuration<MetricTimeSpan>();
-
-        public Melanchall.DryWetMidi.Core.MidiFile GetMidi() =>
-            Melanchall.DryWetMidi.Core.MidiFile.Read(Path, _settings);
     }
 }
