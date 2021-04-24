@@ -5,7 +5,7 @@ using System.Windows;
 using System.Windows.Documents;
 using System.Windows.Navigation;
 using GenshinLyreMidiPlayer.Data;
-using GenshinLyreMidiPlayer.WPF.Properties;
+using GenshinLyreMidiPlayer.Data.Properties;
 using GenshinLyreMidiPlayer.WPF.ViewModels;
 using Microsoft.EntityFrameworkCore;
 using Stylet;
@@ -30,8 +30,6 @@ namespace GenshinLyreMidiPlayer.WPF
                 })
             );
         }
-
-        //protected override void OnExit(ExitEventArgs e) { Settings.Default.Save(); }
 
         protected override void ConfigureIoC(IStyletIoCBuilder builder)
         {

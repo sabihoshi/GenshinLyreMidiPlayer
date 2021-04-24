@@ -6,7 +6,7 @@
     <UseWPF>true</UseWPF>
     <StartupObject>GenshinLyreMidiPlayer.WPF.App</StartupObject>
     <ApplicationManifest>app.manifest</ApplicationManifest>
-    <Version>1.8.0</Version>
+    <Version>1.8.1</Version>
     <ApplicationIcon>item_windsong_lyre.ico</ApplicationIcon>
     <Nullable>enable</Nullable>
     <RepositoryUrl>https://github.com/sabihoshi/GenshinLyreMidiPlayer</RepositoryUrl>
@@ -37,21 +37,6 @@
 
   <ItemGroup>
     <ProjectReference Include="..\GenshinLyreMidiPlayer.Data\GenshinLyreMidiPlayer.Data.csproj" />
-  </ItemGroup>
-
-  <ItemGroup>
-    <Compile Update="Properties\Settings.Designer.cs">
-      <DesignTimeSharedInput>True</DesignTimeSharedInput>
-      <AutoGen>True</AutoGen>
-      <DependentUpon>Settings.settings</DependentUpon>
-    </Compile>
-  </ItemGroup>
-
-  <ItemGroup>
-    <None Update="Properties\Settings.settings">
-      <Generator>SettingsSingleFileGenerator</Generator>
-      <LastGenOutput>Settings.Designer.cs</LastGenOutput>
-    </None>
   </ItemGroup>
 
 </Project>

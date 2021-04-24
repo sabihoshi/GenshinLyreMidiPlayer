@@ -11,8 +11,8 @@
     xmlns:theme="clr-namespace:GenshinLyreMidiPlayer.WPF.ModernWPF.Theme"
     xmlns:core="clr-namespace:GenshinLyreMidiPlayer.WPF.Core"
     xmlns:viewModels="clr-namespace:GenshinLyreMidiPlayer.WPF.ViewModels"
-    xmlns:properties="clr-namespace:GenshinLyreMidiPlayer.WPF.Properties"
     xmlns:transitions="clr-namespace:GenshinLyreMidiPlayer.WPF.ModernWPF.Animation.Transitions"
+    xmlns:properties="clr-namespace:GenshinLyreMidiPlayer.Data.Properties;assembly=GenshinLyreMidiPlayer.Data"
 
     d:DataContext="{d:DesignInstance Type=viewModels:SettingsPageViewModel}">
     <UserControl.Resources>

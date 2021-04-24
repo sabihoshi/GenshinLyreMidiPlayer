@@ -8,11 +8,11 @@ using System.Text.Json;
 using System.Threading.Tasks;
 using GenshinLyreMidiPlayer.Data.Git;
 using GenshinLyreMidiPlayer.Data.Midi;
+using GenshinLyreMidiPlayer.Data.Properties;
 using GenshinLyreMidiPlayer.WPF.Core;
 using GenshinLyreMidiPlayer.WPF.ModernWPF;
 using GenshinLyreMidiPlayer.WPF.ModernWPF.Animation;
 using GenshinLyreMidiPlayer.WPF.ModernWPF.Animation.Transitions;
-using GenshinLyreMidiPlayer.WPF.Properties;
 using ModernWpf;
 using Stylet;
 using StyletIoC;
@@ -29,7 +29,7 @@ namespace GenshinLyreMidiPlayer.WPF.ViewModels
         {
             _events = ioc.Get<IEventAggregator>();
 
-            ThemeManager.Current.ApplicationTheme = Settings.Default.AppTheme switch
+            ThemeManager.Current.ApplicationTheme = Settings.AppTheme switch
             {
                 0 => ApplicationTheme.Light,
                 1 => ApplicationTheme.Dark,
@@ -39,7 +39,7 @@ namespace GenshinLyreMidiPlayer.WPF.ViewModels
 
         public bool AutoCheckUpdates { get; set; } = Settings.AutoCheckUpdates;
 
-        public bool IncludeBetaUpdates { get; set; }
+        public bool IncludeBetaUpdates { get; set; } = Settings.IncludeBetaUpdates;
 
         public bool IsCheckingUpdate { get; set; }
 

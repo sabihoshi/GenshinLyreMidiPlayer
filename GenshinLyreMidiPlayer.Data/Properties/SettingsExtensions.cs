@@ -1,8 +1,8 @@
 ﻿using System;
 
-namespace GenshinLyreMidiPlayer.WPF.Properties
+namespace GenshinLyreMidiPlayer.Data.Properties
 {
-    internal static class SettingsExtensions
+    public static class SettingsExtensions
     {
         public static void Modify(this Settings settings, Action<Settings> action)
         {
