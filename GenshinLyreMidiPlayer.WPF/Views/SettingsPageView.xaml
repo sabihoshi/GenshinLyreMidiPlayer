@@ -98,7 +98,7 @@
                         </Hyperlink>.
                     </TextBlock>
                     <TextBlock TextWrapping="Wrap">
-                        This project uses third-party libraries or other resources that may be distributed under different
+                        This project uses third-party libraries or other resources that may be distributed under
                         <Hyperlink NavigateUri="{Binding Default.ThirdPartyLicenseUri, Source={StaticResource Settings}}">
                             different licenses
                         </Hyperlink>.

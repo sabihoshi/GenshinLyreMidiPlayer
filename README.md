@@ -24,6 +24,7 @@ A MIDI to key player for Genshin Impact's Windsong Lyre made using C# and WPF us
 * Written in C# WPF with modern fluent design.
 * Change the keyboard layout (QWERTZ, AZERTY, DVORAK, etc.)
 * [![](https://img.shields.io/badge/v1.7.5-New!-yellow)](https://github.com/sabihoshi/GenshinLyreMidiPlayer/releases/tag/v1.7.5) You can test out MIDI files by playing through the speakers.
+* [![](https://img.shields.io/badge/v1.8.2.1-New!-yellow)](https://github.com/sabihoshi/GenshinLyreMidiPlayer/releases/tag/v1.8.2.1) History and Settings are now persisted even if you close the app.
 
 ### Play using your own MIDI Input Device
 If you have your own MIDI instrument, this will let you play directly to the Genshin Lyre. This lets you play directly without using a MIDI file.
@@ -74,7 +75,7 @@ This project has a [Code of Conduct](CONTRIBUTING.md), please follow it in all y
 If you just want to run the program, there are precompiled releases that can be found in [here](https://github.com/sabihoshi/GenshinLyreMidiPlayer/releases).
 ### Requirements
 * [Git](https://git-scm.com) for cloning the project
-* [.NET Core 3.1](https://dotnet.microsoft.com/download/dotnet/3.1) SDK
+* [.NET 5.0](https://dotnet.microsoft.com/download/dotnet/5.0) SDK
 
 #### Publish a single binary for Windows
 ```bat
