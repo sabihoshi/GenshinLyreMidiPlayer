@@ -83,7 +83,7 @@
                 <ColumnDefinition Width="Auto" />
             </Grid.ColumnDefinitions>
 
-            <Button Command="{s:Action AddFiles}" Background="Transparent">
+            <Button Command="{s:Action OpenFile}" Background="Transparent">
                 <ui:FontIcon Glyph="&#xE8E5;" />
             </Button>
 

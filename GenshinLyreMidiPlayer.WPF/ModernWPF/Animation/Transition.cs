@@ -32,10 +32,10 @@ namespace GenshinLyreMidiPlayer.WPF.ModernWPF.Animation
 
         static Transition()
         {
-            AccelerateKeySpline = new KeySpline(0.7, 0, 1, 0.5);
+            AccelerateKeySpline = new(0.7, 0, 1, 0.5);
             AccelerateKeySpline.Freeze();
 
-            DecelerateKeySpline = new KeySpline(0.1, 0.9, 0.2, 1);
+            DecelerateKeySpline = new(0.1, 0.9, 0.2, 1);
             DecelerateKeySpline.Freeze();
         }
 

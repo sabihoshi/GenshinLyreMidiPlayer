@@ -4,11 +4,13 @@ using System.Linq;
 using System.Threading.Tasks;
 using GenshinLyreMidiPlayer.Data.Midi;
 using GenshinLyreMidiPlayer.WPF.Core;
+using GenshinLyreMidiPlayer.WPF.Properties;
 using Melanchall.DryWetMidi.Core;
 using Melanchall.DryWetMidi.Devices;
 using Melanchall.DryWetMidi.Interaction;
 using Melanchall.DryWetMidi.Tools;
 using Stylet;
+using StyletIoC;
 using static GenshinLyreMidiPlayer.WPF.ViewModels.PlaylistViewModel;
 using MidiFile = GenshinLyreMidiPlayer.Data.Midi.MidiFile;
 
@@ -18,6 +20,7 @@ namespace GenshinLyreMidiPlayer.WPF.ViewModels
         IHandle<MidiFile>, IHandle<MidiTrack>,
         IHandle<SettingsPageViewModel>
     {
+        private static readonly Settings Settings = Settings.Default;
         private readonly IEventAggregator _events;
         private readonly SettingsPageViewModel _settings;
         private readonly OutputDevice _speakers = OutputDevice.GetByName("Microsoft GS Wavetable Synth");
@@ -27,10 +30,10 @@ namespace GenshinLyreMidiPlayer.WPF.ViewModels
         private MidiInput? _selectedMidiInput;
         private double _songSlider;
 
-        public LyrePlayerViewModel(IEventAggregator events,
+        public LyrePlayerViewModel(IContainer ioc,
             SettingsPageViewModel settings, PlaylistViewModel playlist)
         {
-            _events = events;
+            _events = ioc.Get<IEventAggregator>();
             _events.Subscribe(this);
 
             _settings = settings;
@@ -48,13 +51,6 @@ namespace GenshinLyreMidiPlayer.WPF.ViewModels
 
         public BindableCollection<MidiTrack> MidiTracks { get; } = new();
 
-        public bool CanHitPlayPause =>
-            Playback is not null
-            && Playlist.OpenedFile?.Midi.Chunks.Count > 0
-            && MaximumTime > TimeSpan.Zero;
-
-        public bool CanHitPrevious => CurrentTime > TimeSpan.FromSeconds(3) || Playlist.History.Count > 1;
-
         public bool CanHitNext
         {
             get
@@ -66,6 +62,13 @@ namespace GenshinLyreMidiPlayer.WPF.ViewModels
                 return Playlist.OpenedFile != last;
             }
         }
+
+        public bool CanHitPlayPause =>
+            Playback is not null
+            && Playlist.OpenedFile?.Midi.Chunks.Count > 0
+            && MaximumTime > TimeSpan.Zero;
+
+        public bool CanHitPrevious => CurrentTime > TimeSpan.FromSeconds(3) || Playlist.History.Count > 1;
 
         public double SongSlider
         {
@@ -104,15 +107,15 @@ namespace GenshinLyreMidiPlayer.WPF.ViewModels
 
         public PlaylistViewModel Playlist { get; }
 
-        private static string PlayIcon => "\xF5B0";
-
         private static string PauseIcon => "\xEDB4";
+
+        private static string PlayIcon => "\xF5B0";
 
         public string PlayPauseIcon => Playback?.IsRunning ?? false ? PauseIcon : PlayIcon;
 
-        public TimeSpan MaximumTime => Playlist.OpenedFile?.Duration ?? TimeSpan.Zero;
-
         public TimeSpan CurrentTime => TimeSpan.FromSeconds(SongSlider);
+
+        public TimeSpan MaximumTime => Playlist.OpenedFile?.Duration ?? TimeSpan.Zero;
 
         public void Handle(MidiFile file)
         {
@@ -130,9 +133,9 @@ namespace GenshinLyreMidiPlayer.WPF.ViewModels
 
         public void Handle(SettingsPageViewModel message) { InitializePlayback(); }
 
-        public async Task AddFiles()
+        public async Task OpenFile()
         {
-            await Playlist.AddFiles();
+            await Playlist.OpenFile();
             NotifyOfPropertyChange(() => CanHitNext);
         }
 
@@ -172,11 +175,13 @@ namespace GenshinLyreMidiPlayer.WPF.ViewModels
                 .Where(t => t.IsChecked)
                 .Select(t => t.Track));
 
-            if (_settings.MergeNotes)
+            if (Settings.MergeNotes)
+            {
                 midi.MergeNotes(new()
                 {
-                    Tolerance = new MetricTimeSpan(0, 0, 0, (int) _settings.MergeMilliseconds)
+                    Tolerance = new MetricTimeSpan(0, 0, 0, (int) Settings.MergeMilliseconds)
                 });
+            }
 
             Playback       = midi.GetPlayback();
             Playback.Speed = _settings.SelectedSpeed.Speed;
@@ -213,9 +218,7 @@ namespace GenshinLyreMidiPlayer.WPF.ViewModels
                 MoveSlider(0);
             }
             else
-            {
                 Playlist.Previous();
-            }
         }
 
         public void Next()
@@ -238,9 +241,7 @@ namespace GenshinLyreMidiPlayer.WPF.ViewModels
             if (Playback is null) InitializePlayback();
 
             if (Playback!.IsRunning)
-            {
                 Playback.Stop();
-            }
             else
             {
                 Playback.Loop = Playlist.Loop == LoopState.Single;
@@ -249,9 +250,10 @@ namespace GenshinLyreMidiPlayer.WPF.ViewModels
                 Playback.PlaybackStart = time;
                 Playback.MoveToTime(time);
 
-                if (_settings.UseSpeakers)
+                if (Settings.UseSpeakers)
                     Playback.Start();
                 else
+                {
                     Task.Run(async () =>
                     {
                         WindowHelper.EnsureGameOnTop();
@@ -263,6 +265,7 @@ namespace GenshinLyreMidiPlayer.WPF.ViewModels
                             Playback.Start();
                         }
                     });
+                }
             }
         }
 
@@ -296,7 +299,7 @@ namespace GenshinLyreMidiPlayer.WPF.ViewModels
 
         private void PlayNote(NoteEvent noteEvent)
         {
-            if (_settings.UseSpeakers)
+            if (Settings.UseSpeakers)
             {
                 _speakers.SendEvent(noteEvent);
                 return;
@@ -309,8 +312,8 @@ namespace GenshinLyreMidiPlayer.WPF.ViewModels
             }
 
             var layout = _settings.SelectedLayout.Key;
-            var note = noteEvent.NoteNumber - _settings.KeyOffset;
-            if (_settings.TransposeNotes)
+            var note = noteEvent.NoteNumber - Settings.KeyOffset;
+            if (Settings.TransposeNotes)
                 note = LyrePlayer.TransposeNote(note);
 
             switch (noteEvent.EventType)
@@ -320,7 +323,7 @@ namespace GenshinLyreMidiPlayer.WPF.ViewModels
                     break;
                 case MidiEventType.NoteOn when noteEvent.Velocity <= 0:
                     return;
-                case MidiEventType.NoteOn when _settings.HoldNotes:
+                case MidiEventType.NoteOn when Settings.HoldNotes:
                     LyrePlayer.NoteDown(note, layout);
                     break;
                 case MidiEventType.NoteOn:

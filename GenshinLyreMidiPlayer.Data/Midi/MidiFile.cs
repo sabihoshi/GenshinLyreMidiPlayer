@@ -1,4 +1,4 @@
-using System;
+﻿using System;
 using Melanchall.DryWetMidi.Core;
 using Melanchall.DryWetMidi.Interaction;
 using Stylet;
@@ -26,7 +26,7 @@ namespace GenshinLyreMidiPlayer.Data.Midi
 
         public Melanchall.DryWetMidi.Core.MidiFile Midi => Melanchall.DryWetMidi.Core.MidiFile.Read(Path, _settings);
 
-        private string Path { get; }
+        public string Path { get; }
 
         public string Title => GetFileNameWithoutExtension(Path);
 

@@ -12,50 +12,50 @@ namespace GenshinLyreMidiPlayer.WPF.Core.Errors
     {
         private static readonly Dictionary<Type, List<Enum>> ExceptionOptions = new()
         {
-            [typeof(InvalidChannelEventParameterValueException)] = new List<Enum>
+            [typeof(InvalidChannelEventParameterValueException)] = new()
             {
                 InvalidChannelEventParameterValuePolicy.SnapToLimits,
                 InvalidChannelEventParameterValuePolicy.ReadValid
             },
-            [typeof(InvalidMetaEventParameterValueException)] = new List<Enum>
+            [typeof(InvalidMetaEventParameterValueException)] = new()
             {
                 InvalidMetaEventParameterValuePolicy.SnapToLimits
             },
-            [typeof(InvalidSystemCommonEventParameterValueException)] = new List<Enum>
+            [typeof(InvalidSystemCommonEventParameterValueException)] = new()
             {
                 InvalidSystemCommonEventParameterValuePolicy.SnapToLimits
             },
-            [typeof(UnknownChunkException)] = new List<Enum>
+            [typeof(UnknownChunkException)] = new()
             {
                 UnknownChunkIdPolicy.ReadAsUnknownChunk,
                 UnknownChunkIdPolicy.Skip
             },
 
-            [typeof(InvalidChunkSizeException)] = new List<Enum>
+            [typeof(InvalidChunkSizeException)] = new()
             {
                 InvalidChunkSizePolicy.Ignore
             },
-            [typeof(MissedEndOfTrackEventException)] = new List<Enum>
+            [typeof(MissedEndOfTrackEventException)] = new()
             {
                 MissedEndOfTrackPolicy.Ignore
             },
-            [typeof(NoHeaderChunkException)] = new List<Enum>
+            [typeof(NoHeaderChunkException)] = new()
             {
                 NoHeaderChunkPolicy.Ignore
             },
-            [typeof(NotEnoughBytesException)] = new List<Enum>
+            [typeof(NotEnoughBytesException)] = new()
             {
                 NotEnoughBytesPolicy.Ignore
             },
-            [typeof(UnexpectedTrackChunksCountException)] = new List<Enum>
+            [typeof(UnexpectedTrackChunksCountException)] = new()
             {
                 UnexpectedTrackChunksCountPolicy.Ignore
             },
-            [typeof(UnknownChannelEventException)] = new List<Enum>
+            [typeof(UnknownChannelEventException)] = new()
             {
                 UnknownChannelEventPolicy.SkipStatusByte
             },
-            [typeof(UnknownFileFormatException)] = new List<Enum>
+            [typeof(UnknownFileFormatException)] = new()
             {
                 UnknownFileFormatPolicy.Ignore
             }
@@ -100,23 +100,23 @@ namespace GenshinLyreMidiPlayer.WPF.Core.Errors
                 // User selectable policy
                 case InvalidChannelEventParameterValueException:
                     settings.InvalidChannelEventParameterValuePolicy =
-                        (InvalidChannelEventParameterValuePolicy) option;
+                        (InvalidChannelEventParameterValuePolicy) option!;
                     break;
                 case InvalidMetaEventParameterValueException:
                     settings.InvalidMetaEventParameterValuePolicy =
-                        (InvalidMetaEventParameterValuePolicy) option;
+                        (InvalidMetaEventParameterValuePolicy) option!;
                     break;
                 case InvalidSystemCommonEventParameterValueException:
                     settings.InvalidSystemCommonEventParameterValuePolicy =
-                        (InvalidSystemCommonEventParameterValuePolicy) option;
+                        (InvalidSystemCommonEventParameterValuePolicy) option!;
                     break;
                 case UnknownChannelEventException:
                     settings.UnknownChannelEventPolicy =
-                        (UnknownChannelEventPolicy) option;
+                        (UnknownChannelEventPolicy) option!;
                     break;
                 case UnknownChunkException:
                     settings.UnknownChunkIdPolicy =
-                        (UnknownChunkIdPolicy) option;
+                        (UnknownChunkIdPolicy) option!;
                     break;
 
                 // Ignorable policies

@@ -11,83 +11,44 @@ using GenshinLyreMidiPlayer.Data.Midi;
 using GenshinLyreMidiPlayer.WPF.Core;
 using GenshinLyreMidiPlayer.WPF.ModernWPF;
 using GenshinLyreMidiPlayer.WPF.ModernWPF.Animation;
+using GenshinLyreMidiPlayer.WPF.ModernWPF.Animation.Transitions;
+using GenshinLyreMidiPlayer.WPF.Properties;
+using ModernWpf;
 using Stylet;
+using StyletIoC;
 
 namespace GenshinLyreMidiPlayer.WPF.ViewModels
 {
     public class SettingsPageViewModel : Screen
     {
+        private static readonly Settings Settings = Settings.Default;
         private readonly IEventAggregator _events;
-        private bool _autoCheckUpdates = true;
-        private bool _includeBetaUpdates = true;
-        private int _keyOffset;
-        private uint _mergeMilliseconds;
-        private bool _mergeNotes;
-        private MidiSpeed _selectedSpeed;
-        private bool _useSpeakers;
+        private int _keyOffset = Settings.KeyOffset;
 
-        public SettingsPageViewModel(IEventAggregator events)
+        public SettingsPageViewModel(IContainer ioc)
         {
-            _events     = events;
-            Transitions = new TransitionCollection();
-            Transition  = Transitions.First();
+            _events = ioc.Get<IEventAggregator>();
 
-            SelectedLayout = Keyboard.LayoutNames.First();
-            SelectedSpeed  = MidiSpeeds[3];
-        }
-
-        public bool UseSpeakers
-        {
-            get => _useSpeakers;
-            set
+            ThemeManager.Current.ApplicationTheme = Settings.Default.AppTheme switch
             {
-                SetAndNotify(ref _useSpeakers, value);
-                _events.Publish(this);
-            }
+                0 => ApplicationTheme.Light,
+                1 => ApplicationTheme.Dark,
+                _ => null
+            };
         }
 
-        public bool HoldNotes { get; set; }
+        public bool AutoCheckUpdates { get; set; } = Settings.AutoCheckUpdates;
 
-        public bool TransposeNotes { get; set; } = true;
-
-        public bool MergeNotes
-        {
-            get => _mergeNotes;
-            set
-            {
-                SetAndNotify(ref _mergeNotes, value);
-                _events.Publish(this);
-            }
-        }
-
-        public bool IncludeBetaUpdates
-        {
-            get => _includeBetaUpdates;
-            set
-            {
-                SetAndNotify(ref _includeBetaUpdates, value);
-
-                _ = CheckForUpdate();
-            }
-        }
+        public bool IncludeBetaUpdates { get; set; }
 
         public bool IsCheckingUpdate { get; set; }
 
-        public bool AutoCheckUpdates
-        {
-            get => _autoCheckUpdates;
-            set
-            {
-                SetAndNotify(ref _autoCheckUpdates, value);
-
-                if (_autoCheckUpdates)
-                    _ = CheckForUpdate();
-            }
-        }
+        public bool MergeNotes { get; set; } = Settings.MergeNotes;
 
         public bool NeedsUpdate => ProgramVersion < LatestVersion?.Version;
 
-        public static CaptionedObject<Transition>? Transition { get; set; }
+        public static CaptionedObject<Transition>? Transition { get; set; } =
+            TransitionCollection.Transitions[Settings.SelectedTransition];
 
         public Dictionary<int, string> KeyOffsets { get; set; } = new()
         {
@@ -147,21 +108,19 @@ namespace GenshinLyreMidiPlayer.WPF.ViewModels
 
         public GitVersion? LatestVersion { get; set; }
 
-        public IEnumerable<CaptionedObject<Transition>> Transitions { get; }
-
-        public int MinOffset => KeyOffsets.Keys.Min();
-
-        public int MaxOffset => KeyOffsets.Keys.Max();
-
         public int KeyOffset
         {
             get => _keyOffset;
             set => SetAndNotify(ref _keyOffset, Math.Clamp(value, MinOffset, MaxOffset));
         }
 
+        public int MaxOffset => KeyOffsets.Keys.Max();
+
+        public int MinOffset => KeyOffsets.Keys.Min();
+
         public KeyValuePair<Keyboard.Layout, string> SelectedLayout { get; set; }
 
-        public List<MidiSpeed> MidiSpeeds { get; } = new()
+        public static List<MidiSpeed> MidiSpeeds { get; } = new()
         {
             new("0.25x", 0.25),
             new("0.5x", 0.5),
@@ -173,37 +132,25 @@ namespace GenshinLyreMidiPlayer.WPF.ViewModels
             new("2x", 2)
         };
 
-        public MidiSpeed SelectedSpeed
-        {
-            get => _selectedSpeed;
-            set
-            {
-                SetAndNotify(ref _selectedSpeed, value);
-                _events.Publish(this);
-            }
-        }
+        public MidiSpeed SelectedSpeed { get; set; } = MidiSpeeds[Settings.SelectedSpeed];
 
         public string Key => $"Key: {KeyOffsets[KeyOffset]}";
 
         public string UpdateString { get; set; } = string.Empty;
 
-        public uint MergeMilliseconds
-        {
-            get => _mergeMilliseconds;
-            set
-            {
-                SetAndNotify(ref _mergeMilliseconds, value);
-                _events.Publish(this);
-            }
-        }
+        public uint MergeMilliseconds { get; set; } = Settings.MergeMilliseconds;
 
         public static Version ProgramVersion => Assembly.GetExecutingAssembly().GetName().Version!;
 
-        protected override void OnActivate()
+        private void OnAutoCheckUpdatesChanged()
         {
             if (AutoCheckUpdates)
                 _ = CheckForUpdate();
         }
+
+        private void OnIncludeBetaUpdatesChanged() => _ = CheckForUpdate();
+
+        private void OnKeyOffsetChanged() => Settings.Modify(s => s.KeyOffset = KeyOffset);
 
         public async Task CheckForUpdate()
         {
@@ -247,6 +194,38 @@ namespace GenshinLyreMidiPlayer.WPF.ViewModels
             return versions
                 .OrderByDescending(v => v.Version)
                 .First(v => !v.Draft && !v.Prerelease || IncludeBetaUpdates);
+        }
+
+        private void OnSelectedLayoutIndexChanged()
+        {
+            var layout = (int) SelectedLayout.Key;
+            Settings.Modify(s => s.SelectedLayout = layout);
+        }
+
+        private void OnMergeMillisecondsChanged()
+        {
+            _events.Publish(this);
+            Settings.Modify(s => s.MergeMilliseconds = MergeMilliseconds);
+        }
+
+        private void OnMergeNotesChanged()
+        {
+            _events.Publish(this);
+            Settings.Modify(s => s.MergeNotes = MergeNotes);
+        }
+
+        private void OnSelectedSpeedChanged() { _events.Publish(this); }
+
+        public void OnThemeChanged()
+        {
+            var theme = (int?) ThemeManager.Current.ApplicationTheme ?? -1;
+            Settings.Modify(s => s.AppTheme = theme);
+        }
+
+        protected override void OnActivate()
+        {
+            if (AutoCheckUpdates)
+                _ = CheckForUpdate();
         }
     }
 }

@@ -11,10 +11,13 @@
     xmlns:theme="clr-namespace:GenshinLyreMidiPlayer.WPF.ModernWPF.Theme"
     xmlns:core="clr-namespace:GenshinLyreMidiPlayer.WPF.Core"
     xmlns:viewModels="clr-namespace:GenshinLyreMidiPlayer.WPF.ViewModels"
+    xmlns:properties="clr-namespace:GenshinLyreMidiPlayer.WPF.Properties"
+    xmlns:transitions="clr-namespace:GenshinLyreMidiPlayer.WPF.ModernWPF.Animation.Transitions"
 
     d:DataContext="{d:DesignInstance Type=viewModels:SettingsPageViewModel}">
     <UserControl.Resources>
         <theme:AppThemeConverter x:Key="AppThemeConverter" />
+        <properties:Settings x:Key="Settings" />
     </UserControl.Resources>
 
     <ScrollViewer>
@@ -22,11 +25,11 @@
             <ui:SimpleStackPanel Orientation="Horizontal">
                 <ui:ToggleSwitch
                     Header="Test Mode (Speakers)"
-                    IsOn="{Binding UseSpeakers}" />
+                    IsOn="{Binding Default.UseSpeakers, Source={StaticResource Settings}}" />
 
                 <ui:ToggleSwitch
                     Header="Transpose"
-                    IsOn="{Binding TransposeNotes}" />
+                    IsOn="{Binding Default.TransposeNotes, Source={StaticResource Settings}}" />
 
                 <ui:NumberBox
                     Header="{Binding Key}" SpinButtonPlacementMode="Compact"
@@ -37,7 +40,7 @@
             <ui:SimpleStackPanel Orientation="Horizontal">
                 <ui:ToggleSwitch
                     Header="Hold notes"
-                    IsOn="{Binding HoldNotes}" />
+                    IsOn="{Binding Default.HoldNotes, Source={StaticResource Settings}}" />
 
                 <ui:ToggleSwitch
                     Header="Merge nearby notes"
@@ -54,6 +57,7 @@
                     <ComboBox
                         ItemsSource="{Binding MidiSpeeds}"
                         SelectedItem="{Binding SelectedSpeed}"
+                        SelectedIndex="{Binding Default.SelectedSpeed, Source={StaticResource Settings}}"
                         DisplayMemberPath="SpeedName" />
                 </GroupBox>
 
@@ -61,6 +65,7 @@
                     <ComboBox
                         ItemsSource="{x:Static core:Keyboard.LayoutNames}"
                         SelectedItem="{Binding SelectedLayout}"
+                        SelectedIndex="{Binding Default.SelectedLayout, Source={StaticResource Settings}}"
                         DisplayMemberPath="Value" />
                 </GroupBox>
             </ui:SimpleStackPanel>
@@ -69,7 +74,8 @@
                 <ui:RadioButtons
                     SelectedItem="{Binding 
                         Source={x:Static ui:ThemeManager.Current}, Path=ApplicationTheme, 
-                        Converter={StaticResource AppThemeConverter}}">
+                        Converter={StaticResource AppThemeConverter}}"
+                    SelectedIndex="{Binding Default.AppTheme, Source={StaticResource Settings}}">
                     <ui:RadioButtons.ItemsSource>
                         <theme:AppThemes />
                     </ui:RadioButtons.ItemsSource>
@@ -78,21 +84,22 @@
 
             <Expander Header="Transition style">
                 <ui:RadioButtons
-                    ItemsSource="{Binding Transitions}"
-                    SelectedItem="{Binding Transition}" />
+                    SelectedItem="{Binding Transition}"
+                    SelectedIndex="{Binding Default.SelectedTransition, Source={StaticResource Settings}}"
+                    ItemsSource="{x:Static transitions:TransitionCollection.Transitions}"/>
             </Expander>
 
             <GroupBox Header="License">
                 <ui:SimpleStackPanel Margin="10">
                     <TextBlock>
                         Created by © 2021 sabihoshi under the
-                        <Hyperlink NavigateUri="https://github.com/sabihoshi/GenshinLyreMidiPlayer/blob/main/LICENSE.md">
+                        <Hyperlink NavigateUri="{Binding Default.LicenseUri, Source={StaticResource Settings}}">
                             MIT License
                         </Hyperlink>.
                     </TextBlock>
                     <TextBlock TextWrapping="Wrap">
                         This project uses third-party libraries or other resources that may be distributed under different
-                        <Hyperlink NavigateUri="https://github.com/sabihoshi/GenshinLyreMidiPlayer/blob/main/THIRD-PARTY-NOTICES.md">
+                        <Hyperlink NavigateUri="{Binding Default.ThirdPartyLicenseUri, Source={StaticResource Settings}}">
                             different licenses
                         </Hyperlink>.
                     </TextBlock>

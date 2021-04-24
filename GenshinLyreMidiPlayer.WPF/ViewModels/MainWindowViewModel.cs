@@ -1,29 +1,26 @@
 ﻿using System.Collections.Generic;
 using System.Linq;
-using System.Threading.Tasks;
+using GenshinLyreMidiPlayer.Data;
 using GenshinLyreMidiPlayer.WPF.Views;
 using ModernWpf.Controls;
 using Stylet;
+using StyletIoC;
 
 namespace GenshinLyreMidiPlayer.WPF.ViewModels
 {
     public class MainWindowViewModel : Conductor<IScreen>.StackNavigation
     {
         private readonly Stack<NavigationViewItem> _history = new();
+        private readonly IContainer _ioc;
         private NavigationView _navView;
 
-        public MainWindowViewModel(IEventAggregator events)
+        public MainWindowViewModel(IContainer ioc, IEventAggregator events)
         {
-            SettingsView = new SettingsPageViewModel(events);
-            PlaylistView = new PlaylistViewModel(events);
-            PlayerView   = new LyrePlayerViewModel(events, SettingsView, PlaylistView);
+            _ioc = ioc;
 
-            if (SettingsView.AutoCheckUpdates)
-                Task.Run(async () =>
-                {
-                    await SettingsView.CheckForUpdate();
-                    NotifyOfPropertyChange(() => ShowUpdate);
-                });
+            SettingsView = ioc.Get<SettingsPageViewModel>();
+            PlaylistView = ioc.Get<PlaylistViewModel>();
+            PlayerView   = new(ioc, SettingsView, PlaylistView);
         }
 
         public bool ShowUpdate => SettingsView.NeedsUpdate && ActiveItem != SettingsView;
@@ -36,7 +33,7 @@ namespace GenshinLyreMidiPlayer.WPF.ViewModels
 
         public string Title { get; set; } = "Genshin Lyre MIDI Player";
 
-        protected override void OnViewLoaded()
+        protected override async void OnViewLoaded()
         {
             // Work around because events do not conform to the signatures Stylet supports
             _navView = ((MainWindowView) View).NavView;
@@ -46,6 +43,15 @@ namespace GenshinLyreMidiPlayer.WPF.ViewModels
 
             var menuItems = _navView.MenuItems.Cast<NavigationViewItemBase>();
             _navView.SelectedItem = menuItems.FirstOrDefault(item => item is NavigationViewItem);
+
+            if (SettingsView.AutoCheckUpdates)
+            {
+                _ = SettingsView.CheckForUpdate()
+                    .ContinueWith(_ => NotifyOfPropertyChange(() => ShowUpdate));
+            }
+
+            await using var db = _ioc.Get<LyreContext>();
+            await PlaylistView.AddFiles(db.History.Select(midi => midi.Path));
         }
 
         private void NavigateBack(NavigationView sender, NavigationViewBackRequestedEventArgs args)
@@ -61,9 +67,7 @@ namespace GenshinLyreMidiPlayer.WPF.ViewModels
         private void Navigate(NavigationView sender, NavigationViewSelectionChangedEventArgs args)
         {
             if (args.IsSettingsSelected)
-            {
                 NavigateToSettings();
-            }
             else if ((args.SelectedItem as NavigationViewItem)?.Tag is IScreen viewModel)
             {
                 ActivateItem(viewModel);
