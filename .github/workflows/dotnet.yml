@@ -1,4 +1,4 @@
-name: Release on tag 
+name: Release on tag
 
 on:
   push:
@@ -14,17 +14,17 @@ jobs:
 
     steps:
     - uses: actions/checkout@v2.3.4
-    
+
     - name: Setup .NET Core SDK
       uses: actions/setup-dotnet@v1.7.2
       with:
         dotnet-version: 5.0.x
-        
+
     - name: Publish with dotnet
-      run: dotnet publish GenshinLyreMidiPlayer.WPF -r ${{ matrix.runtime }} -c Release -o ./output/ --self-contained false -p:PublishSingleFile=true
+      run: dotnet publish GenshinLyreMidiPlayer.WPF -r ${{ matrix.runtime }} -c Release -o .\output --self-contained false -p:PublishSingleFile=true
 
     - name: Zip artifacts
-      run: 7z a -tzip ${{ matrix.runtime }}.zip ./output
+      run: 7z a ${{ matrix.runtime }}.zip .\output\*
 
     - name: Create Release
       uses: ncipollo/release-action@v1.8.4

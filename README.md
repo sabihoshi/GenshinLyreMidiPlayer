@@ -16,6 +16,9 @@ A MIDI to key player for Genshin Impact's Windsong Lyre made using C# and WPF us
 4. Press play it should automatically switch to Genshin Impact.
 5. Automatically stops playing if you switch to a different window.
 
+> If you get a [SmartScreen](https://user-images.githubusercontent.com/25006819/115977864-555d4300-a5ae-11eb-948b-c0139f606a2d.png) popup, click on "More info" and then "Run anyway"
+> The reason this appears is because the application is not signed. Signing costs money which can get very expensive.
+
 ## Features
 ![GenshinLyreMidiPlayer_2021-04-17_16-02-30](https://user-images.githubusercontent.com/25006819/115106288-7a422c80-9f96-11eb-991c-641a8a8db42c.png)
 * The ability to change the key. By default, it is keyed to C major.
@@ -61,7 +64,7 @@ The short answer is that it's uncertain. I have used this in development with my
 # Contributing
 When contributing to this repository, please first discuss the change you wish to make via issue, email (sabihoshi.dev@gmail.com), or any other method with me or the maintainers of this repository before making a change.
 
-This project has a [Code of Conduct](CONTRIBUTING.md), please follow it in all your interactions with the project.
+This project has a [Code of Conduct](CODE_OF_CONDUCT.md), please follow it in all your interactions with the project.
 
 ## Pull Request Process
 
@@ -75,14 +78,14 @@ This project has a [Code of Conduct](CONTRIBUTING.md), please follow it in all y
 If you just want to run the program, there are precompiled releases that can be found in [here](https://github.com/sabihoshi/GenshinLyreMidiPlayer/releases).
 ### Requirements
 * [Git](https://git-scm.com) for cloning the project
-* [.NET 5.0](https://dotnet.microsoft.com/download/dotnet/5.0) SDK
+* [.NET 5.0](https://dotnet.microsoft.com/download) SDK
 
 #### Publish a single binary for Windows
 ```bat
 git clone https://github.com/sabihoshi/GenshinLyreMidiPlayer.git
 cd GenshinLyreMidiPlayer\GenshinLyreMidiPlayer
 
-dotnet publish -r win-x86 --framework netcoreapp3.1 -o bin\publish --no-self-contained -p:PublishSingleFile=true
+dotnet publish -r win-x86 -c Release -o bin\publish --self-contained false -p:PublishSingleFile=true
 ```
 > For other runtimes, visit the [RID Catalog](https://docs.microsoft.com/en-us/dotnet/core/rid-catalog) and change the runtime value.
 
@@ -100,6 +103,23 @@ git clone https://github.com/sabihoshi/GenshinLyreMidiPlayer.git
 cd GenshinLyreMidiPlayer
 
 dotnet publish
+```
+
+### Notes
+If you want to build using the [.Net Core 3.1 SDK](https://dotnet.microsoft.com/download), you need to make a few changes to the project files.
+
+#### Project SDK
+Change the Project SDK of `GenshinLyreMidiPlayer.WPF.csproj` into `Microsoft.NET.Sdk.WindowsDesktop`.
+```diff
+- <Project Sdk="Microsoft.NET.Sdk">
++ <Project Sdk="Microsoft.NET.Sdk.WindowsDesktop">
+```
+
+### Language Version
+Change the `LangVersion` of both projects into `preview`.
+```diff
+- <LangVersion>latest</LangVersion>
++ <LangVersion>preview</LangVersion>
 ```
 
 # Special Thanks
