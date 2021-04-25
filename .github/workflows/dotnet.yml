@@ -30,7 +30,9 @@ jobs:
       uses: ncipollo/release-action@v1.8.4
       with:
           allowUpdates: true
+          omitBodyDuringUpdate: true
+          omitNameDuringUpdate: true
+          replaceArtifacts: false
           artifacts: ./${{ matrix.runtime }}.zip
           artifactContentType: application/zip
-          replaceArtifacts: false
           token: ${{ secrets.GITHUB_TOKEN }}
