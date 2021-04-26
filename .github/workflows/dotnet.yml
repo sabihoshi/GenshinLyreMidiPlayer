@@ -32,7 +32,6 @@ jobs:
           allowUpdates: true
           omitBodyDuringUpdate: true
           omitNameDuringUpdate: true
-          replaceArtifacts: false
           artifacts: ./${{ matrix.runtime }}.zip
           artifactContentType: application/zip
           token: ${{ secrets.GITHUB_TOKEN }}
