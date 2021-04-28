@@ -1,5 +1,4 @@
-﻿using System;
-using System.Diagnostics;
+using System;
 using System.Linq;
 using System.Threading.Tasks;
 using GenshinLyreMidiPlayer.Data.Midi;
@@ -65,10 +64,19 @@ namespace GenshinLyreMidiPlayer.WPF.ViewModels
             }
         }
 
-        public bool CanHitPlayPause =>
-            Playback is not null
-            && Playlist.OpenedFile?.Midi.Chunks.Count > 0
-            && MaximumTime > TimeSpan.Zero;
+        public bool CanHitPlayPause
+        {
+            get
+            {
+                var hasNotes = MidiTracks?
+                    .Where(t => t.IsChecked)
+                    .Any(t => t.CanBePlayed) ?? false;
+
+                return Playback is not null
+                       && hasNotes
+                       && MaximumTime > TimeSpan.Zero;
+            }
+        }
 
         public bool CanHitPrevious => CurrentTime > TimeSpan.FromSeconds(3) || Playlist.History.Count > 1;
 
@@ -289,11 +297,8 @@ namespace GenshinLyreMidiPlayer.WPF.ViewModels
             foreach (var playbackTime in e.Times)
             {
                 TimeSpan time = (MetricTimeSpan) playbackTime.Time;
-                Debug.WriteLine(time);
                 MoveSlider(time.TotalSeconds);
             }
-
-            NotifyOfPropertyChange(() => CanHitPrevious);
         }
 
         private void OnNoteEvent(object? sender, MidiEventPlayedEventArgs e)
