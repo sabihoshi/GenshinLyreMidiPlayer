@@ -8,6 +8,7 @@ using System.Text.Json;
 using System.Threading.Tasks;
 using GenshinLyreMidiPlayer.Data.Git;
 using GenshinLyreMidiPlayer.Data.Midi;
+using GenshinLyreMidiPlayer.Data.Notification;
 using GenshinLyreMidiPlayer.Data.Properties;
 using GenshinLyreMidiPlayer.WPF.Core;
 using GenshinLyreMidiPlayer.WPF.ModernWPF;
@@ -204,14 +205,14 @@ namespace GenshinLyreMidiPlayer.WPF.ViewModels
 
         private void OnMergeMillisecondsChanged()
         {
-            _events.Publish(this);
             Settings.Modify(s => s.MergeMilliseconds = MergeMilliseconds);
+            _events.Publish(this);
         }
 
         private void OnMergeNotesChanged()
         {
-            _events.Publish(this);
             Settings.Modify(s => s.MergeNotes = MergeNotes);
+            _events.Publish(new MergeNotesNotification(MergeNotes));
         }
 
         private void OnSelectedSpeedChanged() { _events.Publish(this); }

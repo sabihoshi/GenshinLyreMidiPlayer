@@ -3,6 +3,7 @@ using System.Diagnostics;
 using System.Linq;
 using System.Threading.Tasks;
 using GenshinLyreMidiPlayer.Data.Midi;
+using GenshinLyreMidiPlayer.Data.Notification;
 using GenshinLyreMidiPlayer.Data.Properties;
 using GenshinLyreMidiPlayer.WPF.Core;
 using Melanchall.DryWetMidi.Core;
@@ -18,7 +19,8 @@ namespace GenshinLyreMidiPlayer.WPF.ViewModels
 {
     public class LyrePlayerViewModel : Screen,
         IHandle<MidiFile>, IHandle<MidiTrack>,
-        IHandle<SettingsPageViewModel>
+        IHandle<SettingsPageViewModel>,
+        IHandle<MergeNotesNotification>
     {
         private static readonly Settings Settings = Settings.Default;
         private readonly IEventAggregator _events;
@@ -117,12 +119,21 @@ namespace GenshinLyreMidiPlayer.WPF.ViewModels
 
         public TimeSpan MaximumTime => Playlist.OpenedFile?.Duration ?? TimeSpan.Zero;
 
+        public void Handle(MergeNotesNotification message)
+        {
+            if (!message.Merge)
+                InitializeTracks();
+
+            InitializePlayback();
+        }
+
         public void Handle(MidiFile file)
         {
             CloseFile();
             Playlist.OpenedFile = file;
             Playlist.History.Push(file);
 
+            InitializeTracks();
             InitializePlayback();
 
             NotifyOfPropertyChange(() => CanHitNext);
@@ -132,6 +143,14 @@ namespace GenshinLyreMidiPlayer.WPF.ViewModels
         public void Handle(MidiTrack track) { InitializePlayback(); }
 
         public void Handle(SettingsPageViewModel message) { InitializePlayback(); }
+
+        private void InitializeTracks()
+        {
+            MidiTracks.Clear();
+            MidiTracks.AddRange(Playlist.OpenedFile?
+                .Midi.GetTrackChunks()
+                .Select(t => new MidiTrack(_events, t)));
+        }
 
         public async Task OpenFile()
         {
@@ -165,10 +184,6 @@ namespace GenshinLyreMidiPlayer.WPF.ViewModels
                 return;
 
             var midi = Playlist.OpenedFile.Midi;
-
-            MidiTracks.Clear();
-            MidiTracks.AddRange(midi.GetTrackChunks()
-                .Select(t => new MidiTrack(_events, t)));
 
             midi.Chunks.Clear();
             midi.Chunks.AddRange(MidiTracks

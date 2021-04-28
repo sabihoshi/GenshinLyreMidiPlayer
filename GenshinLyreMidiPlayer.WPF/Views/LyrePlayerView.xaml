@@ -1,4 +1,4 @@
-﻿<UserControl
+<UserControl
     x:Class="GenshinLyreMidiPlayer.WPF.Views.LyrePlayerView"
     xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
     xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
@@ -98,8 +98,8 @@
                             <Style x:Key="TracksSwitch" TargetType="ui:ToggleSwitch">
                                 <Style.Triggers>
                                     <Trigger Property="IsEnabled" Value="False">
-                                        <Setter Property="ToolTip"
-                                                Value="Cannot disable track containing tempo settings." />
+                                        <Setter Property="ToolTip" Value="Cannot disable track containing tempo settings." />
+                                        <Setter Property="ToolTipService.ShowOnDisabled" Value="True" />
                                     </Trigger>
                                 </Style.Triggers>
                             </Style>
@@ -108,7 +108,7 @@
                         <ItemsControl.ItemTemplate>
                             <DataTemplate>
                                 <ui:ToggleSwitch
-                                    ToolTipService.ShowOnDisabled="True" Style="{StaticResource TracksSwitch}"
+                                    Style="{StaticResource TracksSwitch}"
                                     IsOn="{Binding IsChecked}" IsEnabled="{Binding CanBePlayed}"
                                     OffContent="{Binding TrackName, TargetNullValue=Unknown}"
                                     OnContent="{Binding TrackName, TargetNullValue=Unknown}" />
