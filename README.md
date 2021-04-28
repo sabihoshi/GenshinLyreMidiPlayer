@@ -83,9 +83,10 @@ If you just want to run the program, there are precompiled releases that can be 
 #### Publish a single binary for Windows
 ```bat
 git clone https://github.com/sabihoshi/GenshinLyreMidiPlayer.git
-cd GenshinLyreMidiPlayer\GenshinLyreMidiPlayer
+cd GenshinLyreMidiPlayer
 
-dotnet publish -r win-x86 -c Release -o bin\publish --self-contained false -p:PublishSingleFile=true
+dotnet publish GenshinLyreMidiPlayer.WPF -r win-x86 ^
+               -c Release --self-contained false -p:PublishSingleFile=true
 ```
 > For other runtimes, visit the [RID Catalog](https://docs.microsoft.com/en-us/dotnet/core/rid-catalog) and change the runtime value.
 
