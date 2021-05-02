@@ -215,7 +215,7 @@ namespace GenshinLyreMidiPlayer.WPF.ViewModels
             _events.Publish(new MergeNotesNotification(MergeNotes));
         }
 
-        private void OnSelectedSpeedChanged() { _events.Publish(this); }
+        private void OnSelectedSpeedChanged() => _events.Publish(this);
 
         public void OnThemeChanged()
         {

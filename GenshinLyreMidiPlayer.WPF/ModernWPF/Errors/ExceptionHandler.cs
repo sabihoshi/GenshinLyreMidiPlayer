@@ -6,7 +6,7 @@ using System.Threading.Tasks;
 using Melanchall.DryWetMidi.Core;
 using ModernWpf.Controls;
 
-namespace GenshinLyreMidiPlayer.WPF.Core.Errors
+namespace GenshinLyreMidiPlayer.WPF.ModernWPF.Errors
 {
     internal static class ExceptionHandler
     {

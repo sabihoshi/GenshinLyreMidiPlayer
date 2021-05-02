@@ -4,11 +4,11 @@ using System.Linq;
 using Humanizer;
 using ModernWpf.Controls;
 
-namespace GenshinLyreMidiPlayer.WPF.Core.Errors
+namespace GenshinLyreMidiPlayer.WPF.ModernWPF.Errors
 {
     public class ErrorContentDialog : ContentDialog
     {
-        public ErrorContentDialog(Exception e, IReadOnlyCollection<Enum> options = null)
+        public ErrorContentDialog(Exception e, IReadOnlyCollection<Enum>? options = null)
         {
             Title   = e.Message;
             Content = e;

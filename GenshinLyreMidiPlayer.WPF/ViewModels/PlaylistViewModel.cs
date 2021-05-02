@@ -5,7 +5,7 @@ using System.Threading.Tasks;
 using System.Windows.Media;
 using GenshinLyreMidiPlayer.Data;
 using GenshinLyreMidiPlayer.Data.Entities;
-using GenshinLyreMidiPlayer.WPF.Core.Errors;
+using GenshinLyreMidiPlayer.WPF.ModernWPF.Errors;
 using Melanchall.DryWetMidi.Core;
 using Microsoft.Win32;
 using ModernWpf;
