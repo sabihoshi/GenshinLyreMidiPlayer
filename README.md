@@ -1,16 +1,16 @@
-# Genshin 原神 Windsong Lyre MIDI Auto Player [![GitHub release (latest by date)](https://img.shields.io/github/v/release/sabihoshi/GenshinLyreMidiPlayer)](https://github.com/sabihoshi/GenshinLyreMidiPlayer/releases/latest)
+# 【 Genshin 原神 Windsong Lyre MIDI Auto Player 】
 
 A MIDI to key player for Genshin Impact's Windsong Lyre made using C# and WPF using Windows Fluent design. If you enjoyed this project, consider [contributing](https://github.com/sabihoshi/GenshinLyreMidiPlayer#contributing) or 🌟 starring the repository. Thank you~
 
 > Check out [yoroshikun](https://github.com/yoroshikun)'s Flutter implementation of a **[Genshin Lyre Player](https://github.com/yoroshikun/flutter_genshin_lyre_player)** written in Dart!
 
-## **[Download latest version ![GitHub all releases](https://img.shields.io/github/downloads/sabihoshi/GenshinLyreMidiPlayer/total?style=social)](https://github.com/sabihoshi/GenshinLyreMidiPlayer/releases/latest)**
+## **[Download latest version](latest)** [![GitHub all releases](https://img.shields.io/github/downloads/sabihoshi/GenshinLyreMidiPlayer/total?style=social)](latest) [![GitHub release (latest by date)](https://img.shields.io/github/v/release/sabihoshi/GenshinLyreMidiPlayer)](latest)
 
 ![2021-04-13_22-51-12](https://user-images.githubusercontent.com/25006819/114573455-f8f34d00-9caa-11eb-8288-57c193ca2d04.png)
 
 ## How to use
 
-1. [Download the program](https://github.com/sabihoshi/GenshinLyreMidiPlayer/releases/latest) and then run, no need for installation.
+1. [Download the program](latest) and then run, no need for installation.
 2. Open a .mid file by pressing the open file button at the top left.
 3. Enable the tracks that you want to be played back.
 4. Press play it should automatically switch to Genshin Impact.
@@ -26,14 +26,20 @@ A MIDI to key player for Genshin Impact's Windsong Lyre made using C# and WPF us
 * You can enable transposing of notes, otherwise it will skip the notes entirely.
 * Written in C# WPF with modern fluent design.
 * Change the keyboard layout (QWERTZ, AZERTY, DVORAK, etc.)
-* [![](https://img.shields.io/badge/v1.7.5-New!-yellow)](https://github.com/sabihoshi/GenshinLyreMidiPlayer/releases/tag/v1.7.5) You can test out MIDI files by playing through the speakers.
-* [![](https://img.shields.io/badge/v1.8.2.1-New!-yellow)](https://github.com/sabihoshi/GenshinLyreMidiPlayer/releases/tag/v1.8.2.1) History and Settings are now persisted even if you close the app.
+* You can test out MIDI files by playing through the speakers.
+* History and Settings are now persisted even if you close the app.
+
+### [![](https://img.shields.io/badge/v1.9.0-New!-yellow)](https://github.com/sabihoshi/GenshinLyreMidiPlayer/releases/tag/v1.9.0) Media Controls
+You can now control the Lyre natively by using your media controls that some keyboards have as special function keys. This integrates with other music applications as well.
+
+![2021-05-04_13-25-52](https://user-images.githubusercontent.com/25006819/116963753-5132d300-acdc-11eb-85f8-e455928f8369.png)
 
 ### Play using your own MIDI Input Device
 If you have your own MIDI instrument, this will let you play directly to the Genshin Lyre. This lets you play directly without using a MIDI file.
 
-### [![](https://img.shields.io/badge/v1.6.2-New!-yellow)](https://github.com/sabihoshi/GenshinLyreMidiPlayer/releases/tag/v1.6.2) Playlist Controls & History
+### Playlist Controls & History
 A playlist allows you to play songs continuously without having to open a new file after a song has finished.
+
 ![GenshinLyreMidiPlayer_2021-04-13_22-27-05](https://user-images.githubusercontent.com/25006819/114570421-6651ae80-9ca8-11eb-9cb2-c9e322df14f0.png)
 
 ### Hold notes & Merge nearby notes
@@ -42,16 +48,18 @@ A playlist allows you to play songs continuously without having to open a new fi
 
 ### Light Mode
 You can set the player to light mode/dark mode (uses your system's theme by default.)
+
 ![GenshinLyreMidiPlayer_2021-04-05_08-58-35](https://user-images.githubusercontent.com/25006819/113526575-237b4100-95ed-11eb-813c-1e9c661624cf.png)
 
 ### Mini Mode
 You can resize the player as small as you want and it should close the panels accordingly.
+
 ![GenshinLyreMidiPlayer_2021-04-13_22-28-11](https://user-images.githubusercontent.com/25006819/114570320-4e7a2a80-9ca8-11eb-8907-a47025a0539a.png)
 
 ## Upcoming
 * Output into a "Piano Sheet" in a text file.
-* Pause without having to switch windows.
 * Drag and drop MIDI files into the player.
+* Filter MIDI files by searching.
 
 ## About
 
@@ -133,3 +141,5 @@ Change the `LangVersion` of both projects into `preview`.
 * All rights reserved by © miHoYo Co., Ltd. This project is not affiliated nor endorsed by miHoYo. Genshin Impact™ and other properties belong to their respective owners.
 * This project uses third-party libraries or other resources that may be
 distributed under [different licenses](/THIRD-PARTY-NOTICES.md).
+
+[latest]: https://github.com/sabihoshi/GenshinLyreMidiPlayer/releases/latest
