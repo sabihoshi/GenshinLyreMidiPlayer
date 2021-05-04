@@ -6,7 +6,7 @@
     <UseWPF>true</UseWPF>
     <StartupObject>GenshinLyreMidiPlayer.WPF.App</StartupObject>
     <ApplicationManifest>app.manifest</ApplicationManifest>
-    <Version>1.8.3.1</Version>
+    <Version>1.9.1</Version>
     <ApplicationIcon>item_windsong_lyre.ico</ApplicationIcon>
     <Nullable>enable</Nullable>
     <RepositoryUrl>https://github.com/sabihoshi/GenshinLyreMidiPlayer</RepositoryUrl>
@@ -37,6 +37,11 @@
 
   <ItemGroup>
     <ProjectReference Include="..\GenshinLyreMidiPlayer.Data\GenshinLyreMidiPlayer.Data.csproj" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <None Remove="item_windsong_lyre.png" />
+    <Resource Include="item_windsong_lyre.png" />
   </ItemGroup>
 
 </Project>

@@ -1,6 +1,8 @@
 using System;
 using System.Linq;
 using System.Threading.Tasks;
+using Windows.Media;
+using Windows.Media.Playback;
 using GenshinLyreMidiPlayer.Data.Midi;
 using GenshinLyreMidiPlayer.Data.Notification;
 using GenshinLyreMidiPlayer.Data.Properties;
@@ -11,7 +13,7 @@ using Melanchall.DryWetMidi.Interaction;
 using Melanchall.DryWetMidi.Tools;
 using Stylet;
 using StyletIoC;
-using static GenshinLyreMidiPlayer.WPF.ViewModels.PlaylistViewModel;
+using static Windows.Media.MediaPlaybackAutoRepeatMode;
 using MidiFile = GenshinLyreMidiPlayer.Data.Midi.MidiFile;
 
 namespace GenshinLyreMidiPlayer.WPF.ViewModels
@@ -23,9 +25,10 @@ namespace GenshinLyreMidiPlayer.WPF.ViewModels
     {
         private static readonly Settings Settings = Settings.Default;
         private readonly IEventAggregator _events;
+        private readonly MediaPlayer _player;
         private readonly SettingsPageViewModel _settings;
-        private readonly OutputDevice _speakers = OutputDevice.GetByName("Microsoft GS Wavetable Synth");
-        private readonly PlaybackCurrentTimeWatcher _timeWatcher = PlaybackCurrentTimeWatcher.Instance;
+        private readonly OutputDevice _speakers;
+        private readonly PlaybackCurrentTimeWatcher _timeWatcher;
         private bool _ignoreSliderChange;
         private InputDevice? _inputDevice;
         private MidiInput? _selectedMidiInput;
@@ -34,6 +37,9 @@ namespace GenshinLyreMidiPlayer.WPF.ViewModels
         public LyrePlayerViewModel(IContainer ioc,
             SettingsPageViewModel settings, PlaylistViewModel playlist)
         {
+            _speakers    = OutputDevice.GetByName("Microsoft GS Wavetable Synth");
+            _timeWatcher = PlaybackCurrentTimeWatcher.Instance;
+
             _events = ioc.Get<IEventAggregator>();
             _events.Subscribe(this);
 
@@ -43,6 +49,14 @@ namespace GenshinLyreMidiPlayer.WPF.ViewModels
             SelectedMidiInput = MidiInputs[0];
 
             _timeWatcher.CurrentTimeChanged += OnSongTick;
+
+            _player = ioc.Get<MediaPlayer>();
+
+            _player.CommandManager.NextReceived     += (_, _) => Next();
+            _player.CommandManager.PreviousReceived += (_, _) => Previous();
+
+            _player.CommandManager.PlayReceived  += (_, _) => PlayPause();
+            _player.CommandManager.PauseReceived += (_, _) => PlayPause();
         }
 
         public BindableCollection<MidiInput> MidiInputs { get; } = new()
@@ -56,7 +70,7 @@ namespace GenshinLyreMidiPlayer.WPF.ViewModels
         {
             get
             {
-                if (Playlist.Loop is LoopState.All or LoopState.Single)
+                if (Playlist.Loop is List or Track)
                     return true;
 
                 var last = Playlist.GetPlaylist().LastOrDefault();
@@ -113,6 +127,8 @@ namespace GenshinLyreMidiPlayer.WPF.ViewModels
             }
         }
 
+        private MusicDisplayProperties Display => _player.SystemMediaTransportControls.DisplayUpdater.MusicProperties;
+
         public Playback? Playback { get; private set; }
 
         public PlaylistViewModel Playlist { get; }
@@ -122,6 +138,8 @@ namespace GenshinLyreMidiPlayer.WPF.ViewModels
         private static string PlayIcon => "\xF5B0";
 
         public string PlayPauseIcon => Playback?.IsRunning ?? false ? PauseIcon : PlayIcon;
+
+        private SystemMediaTransportControls Controls => _player.SystemMediaTransportControls;
 
         public TimeSpan CurrentTime => TimeSpan.FromSeconds(SongSlider);
 
@@ -143,14 +161,46 @@ namespace GenshinLyreMidiPlayer.WPF.ViewModels
 
             InitializeTracks();
             InitializePlayback();
-
-            NotifyOfPropertyChange(() => CanHitNext);
-            NotifyOfPropertyChange(() => CanHitPrevious);
         }
 
         public void Handle(MidiTrack track) { InitializePlayback(); }
 
         public void Handle(SettingsPageViewModel message) { InitializePlayback(); }
+
+        public void UpdateButtons()
+        {
+            NotifyOfPropertyChange(() => CanHitNext);
+            NotifyOfPropertyChange(() => CanHitPrevious);
+            NotifyOfPropertyChange(() => CanHitPlayPause);
+
+            NotifyOfPropertyChange(() => PlayPauseIcon);
+            NotifyOfPropertyChange(() => MaximumTime);
+
+            var controls = Controls;
+
+            controls.IsPlayEnabled  = CanHitPlayPause;
+            controls.IsPauseEnabled = CanHitPlayPause;
+
+            controls.IsNextEnabled     = CanHitNext;
+            controls.IsPreviousEnabled = CanHitPrevious;
+
+            controls.PlaybackStatus =
+                Playlist.OpenedFile is null ? MediaPlaybackStatus.Closed :
+                Playback is null ? MediaPlaybackStatus.Stopped :
+                Playback.IsRunning ? MediaPlaybackStatus.Playing :
+                MediaPlaybackStatus.Paused;
+
+            var file = Playlist.OpenedFile;
+            if (file is not null)
+            {
+                var position = $"{file.Position}/{Playlist.GetPlaylist().Count}";
+
+                Display.Title  = file.Title;
+                Display.Artist = $"Playing {position} {CurrentTime:mm\\:ss}";
+            }
+
+            controls.DisplayUpdater.Update();
+        }
 
         private void InitializeTracks()
         {
@@ -163,7 +213,7 @@ namespace GenshinLyreMidiPlayer.WPF.ViewModels
         public async Task OpenFile()
         {
             await Playlist.OpenFile();
-            NotifyOfPropertyChange(() => CanHitNext);
+            UpdateButtons();
         }
 
         public void CloseFile()
@@ -220,17 +270,17 @@ namespace GenshinLyreMidiPlayer.WPF.ViewModels
                 _timeWatcher.AddPlayback(Playback, TimeSpanType.Metric);
                 _timeWatcher.Start();
 
-                NotifyOfPropertyChange(() => PlayPauseIcon);
+                UpdateButtons();
             };
 
             Playback.Stopped += (_, _) =>
             {
                 _timeWatcher.Stop();
 
-                NotifyOfPropertyChange(() => PlayPauseIcon);
+                UpdateButtons();
             };
 
-            NotifyOfPropertyChange(() => MaximumTime);
+            UpdateButtons();
         }
 
         public void Previous()
@@ -250,7 +300,7 @@ namespace GenshinLyreMidiPlayer.WPF.ViewModels
             if (next is null)
                 return;
 
-            if (next == Playlist.OpenedFile && Playlist.Loop == LoopState.Single)
+            if (next == Playlist.OpenedFile && Playlist.Loop == Track)
                 Handle(next);
             else if (next != Playlist.OpenedFile)
                 Handle(next);
@@ -267,7 +317,7 @@ namespace GenshinLyreMidiPlayer.WPF.ViewModels
                 Playback.Stop();
             else
             {
-                Playback.Loop = Playlist.Loop == LoopState.Single;
+                Playback.Loop = Playlist.Loop == Track;
 
                 var time = (MetricTimeSpan) TimeSpan.FromSeconds(SongSlider);
                 Playback.PlaybackStart = time;
@@ -298,6 +348,8 @@ namespace GenshinLyreMidiPlayer.WPF.ViewModels
             {
                 TimeSpan time = (MetricTimeSpan) playbackTime.Time;
                 MoveSlider(time.TotalSeconds);
+
+                UpdateButtons();
             }
         }
 

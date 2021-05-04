@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 using System.Windows.Media;
+using Windows.Media;
 using GenshinLyreMidiPlayer.Data;
 using GenshinLyreMidiPlayer.Data.Entities;
 using GenshinLyreMidiPlayer.WPF.ModernWPF.Errors;
@@ -11,19 +12,13 @@ using Microsoft.Win32;
 using ModernWpf;
 using Stylet;
 using StyletIoC;
+using static Windows.Media.MediaPlaybackAutoRepeatMode;
 using MidiFile = GenshinLyreMidiPlayer.Data.Midi.MidiFile;
 
 namespace GenshinLyreMidiPlayer.WPF.ViewModels
 {
     public class PlaylistViewModel : Screen
     {
-        public enum LoopState
-        {
-            None,
-            Single,
-            All
-        }
-
         private readonly IEventAggregator _events;
         private readonly IContainer _ioc;
 
@@ -39,7 +34,7 @@ namespace GenshinLyreMidiPlayer.WPF.ViewModels
 
         public bool Shuffle { get; set; }
 
-        public LoopState Loop { get; set; }
+        public MediaPlaybackAutoRepeatMode Loop { get; set; }
 
         public MidiFile? OpenedFile { get; set; }
 
@@ -54,9 +49,9 @@ namespace GenshinLyreMidiPlayer.WPF.ViewModels
         public string LoopStateString =>
             Loop switch
             {
-                LoopState.None   => "\xF5E7",
-                LoopState.Single => "\xE8ED",
-                LoopState.All    => "\xE8EE"
+                None  => "\xF5E7",
+                Track => "\xE8ED",
+                List  => "\xE8EE"
             };
 
         public void ToggleShuffle()
@@ -72,17 +67,17 @@ namespace GenshinLyreMidiPlayer.WPF.ViewModels
         public void ToggleLoop()
         {
             var loopState = (int) Loop;
-            var loopStates = Enum.GetValues(typeof(LoopState)).Length;
+            var loopStates = Enum.GetValues(typeof(MediaPlaybackAutoRepeatMode)).Length;
 
             var newState = (loopState + 1) % loopStates;
-            Loop = (LoopState) newState;
+            Loop = (MediaPlaybackAutoRepeatMode) newState;
         }
 
         public MidiFile? Next()
         {
             var playlist = GetPlaylist().ToList();
 
-            if (Loop == LoopState.Single)
+            if (Loop == Track)
                 return OpenedFile ?? playlist.FirstOrDefault();
 
             var next = playlist.FirstOrDefault();
@@ -91,7 +86,7 @@ namespace GenshinLyreMidiPlayer.WPF.ViewModels
             {
                 var current = playlist.IndexOf(OpenedFile) + 1;
 
-                if (Loop is LoopState.All)
+                if (Loop is List)
                     current %= playlist.Count;
 
                 next = playlist.ElementAtOrDefault(current);
