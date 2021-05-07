@@ -87,7 +87,7 @@ namespace GenshinLyreMidiPlayer.WPF.Core
 
         private static readonly IReadOnlyList<VirtualKeyCode> AZERTY = new List<VirtualKeyCode>
         {
-            VirtualKeyCode.VK_Z,
+            VirtualKeyCode.VK_W,
             VirtualKeyCode.VK_X,
             VirtualKeyCode.VK_C,
             VirtualKeyCode.VK_V,
