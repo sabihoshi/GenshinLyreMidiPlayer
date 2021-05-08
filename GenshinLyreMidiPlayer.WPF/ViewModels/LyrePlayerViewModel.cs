@@ -25,7 +25,7 @@ namespace GenshinLyreMidiPlayer.WPF.ViewModels
     {
         private static readonly Settings Settings = Settings.Default;
         private readonly IEventAggregator _events;
-        private readonly MediaPlayer _player;
+        private readonly MediaPlayer? _player;
         private readonly SettingsPageViewModel _settings;
         private readonly OutputDevice _speakers;
         private readonly PlaybackCurrentTimeWatcher _timeWatcher;
@@ -50,13 +50,19 @@ namespace GenshinLyreMidiPlayer.WPF.ViewModels
 
             _timeWatcher.CurrentTimeChanged += OnSongTick;
 
-            _player = ioc.Get<MediaPlayer>();
+            // SystemMediaTransportControls is only supported on Windows 10 and later
+            // https://docs.microsoft.com/en-us/uwp/api/windows.media.systemmediatransportcontrols
+            if (Environment.OSVersion.Platform == PlatformID.Win32NT &&
+                Environment.OSVersion.Version.Major >= 10)
+            {
+                _player = ioc.Get<MediaPlayer>();
 
-            _player.CommandManager.NextReceived     += (_, _) => Next();
-            _player.CommandManager.PreviousReceived += (_, _) => Previous();
+                _player.CommandManager.NextReceived     += (_, _) => Next();
+                _player.CommandManager.PreviousReceived += (_, _) => Previous();
 
-            _player.CommandManager.PlayReceived  += (_, _) => PlayPause();
-            _player.CommandManager.PauseReceived += (_, _) => PlayPause();
+                _player.CommandManager.PlayReceived  += (_, _) => PlayPause();
+                _player.CommandManager.PauseReceived += (_, _) => PlayPause();
+            }
         }
 
         public BindableCollection<MidiInput> MidiInputs { get; } = new()
@@ -127,7 +133,8 @@ namespace GenshinLyreMidiPlayer.WPF.ViewModels
             }
         }
 
-        private MusicDisplayProperties Display => _player.SystemMediaTransportControls.DisplayUpdater.MusicProperties;
+        private MusicDisplayProperties? Display =>
+            _player?.SystemMediaTransportControls.DisplayUpdater.MusicProperties;
 
         public Playback? Playback { get; private set; }
 
@@ -139,7 +146,8 @@ namespace GenshinLyreMidiPlayer.WPF.ViewModels
 
         public string PlayPauseIcon => Playback?.IsRunning ?? false ? PauseIcon : PlayIcon;
 
-        private SystemMediaTransportControls Controls => _player.SystemMediaTransportControls;
+        private SystemMediaTransportControls? Controls =>
+            _player?.SystemMediaTransportControls;
 
         public TimeSpan CurrentTime => TimeSpan.FromSeconds(SongSlider);
 
@@ -176,30 +184,31 @@ namespace GenshinLyreMidiPlayer.WPF.ViewModels
             NotifyOfPropertyChange(() => PlayPauseIcon);
             NotifyOfPropertyChange(() => MaximumTime);
 
-            var controls = Controls;
-
-            controls.IsPlayEnabled  = CanHitPlayPause;
-            controls.IsPauseEnabled = CanHitPlayPause;
-
-            controls.IsNextEnabled     = CanHitNext;
-            controls.IsPreviousEnabled = CanHitPrevious;
-
-            controls.PlaybackStatus =
-                Playlist.OpenedFile is null ? MediaPlaybackStatus.Closed :
-                Playback is null ? MediaPlaybackStatus.Stopped :
-                Playback.IsRunning ? MediaPlaybackStatus.Playing :
-                MediaPlaybackStatus.Paused;
-
-            var file = Playlist.OpenedFile;
-            if (file is not null)
+            if (Controls is not null && Display is not null)
             {
-                var position = $"{file.Position}/{Playlist.GetPlaylist().Count}";
+                Controls.IsPlayEnabled  = CanHitPlayPause;
+                Controls.IsPauseEnabled = CanHitPlayPause;
 
-                Display.Title  = file.Title;
-                Display.Artist = $"Playing {position} {CurrentTime:mm\\:ss}";
+                Controls.IsNextEnabled     = CanHitNext;
+                Controls.IsPreviousEnabled = CanHitPrevious;
+
+                Controls.PlaybackStatus =
+                    Playlist.OpenedFile is null ? MediaPlaybackStatus.Closed :
+                    Playback is null ? MediaPlaybackStatus.Stopped :
+                    Playback.IsRunning ? MediaPlaybackStatus.Playing :
+                    MediaPlaybackStatus.Paused;
+
+                var file = Playlist.OpenedFile;
+                if (file is not null)
+                {
+                    var position = $"{file.Position}/{Playlist.GetPlaylist().Count}";
+
+                    Display.Title  = file.Title;
+                    Display.Artist = $"Playing {position} {CurrentTime:mm\\:ss}";
+                }
+
+                Controls.DisplayUpdater.Update();
             }
-
-            controls.DisplayUpdater.Update();
         }
 
         private void InitializeTracks()
