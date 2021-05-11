@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using Humanizer;
@@ -8,7 +8,7 @@ namespace GenshinLyreMidiPlayer.WPF.ModernWPF.Errors
 {
     public class ErrorContentDialog : ContentDialog
     {
-        public ErrorContentDialog(Exception e, IReadOnlyCollection<Enum>? options = null)
+        public ErrorContentDialog(Exception e, IReadOnlyCollection<Enum>? options = null, string? closeText = null)
         {
             Title   = e.Message;
             Content = e;
@@ -16,7 +16,7 @@ namespace GenshinLyreMidiPlayer.WPF.ModernWPF.Errors
             PrimaryButtonText   = options?.ElementAtOrDefault(0)?.Humanize();
             SecondaryButtonText = options?.ElementAtOrDefault(1)?.Humanize();
 
-            CloseButtonText = "Abort";
+            CloseButtonText = closeText ?? "Abort";
         }
     }
 }

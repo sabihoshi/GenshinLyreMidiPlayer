@@ -7,13 +7,16 @@ using GenshinLyreMidiPlayer.Data.Midi;
 using GenshinLyreMidiPlayer.Data.Notification;
 using GenshinLyreMidiPlayer.Data.Properties;
 using GenshinLyreMidiPlayer.WPF.Core;
+using GenshinLyreMidiPlayer.WPF.ModernWPF.Errors;
 using Melanchall.DryWetMidi.Core;
 using Melanchall.DryWetMidi.Devices;
 using Melanchall.DryWetMidi.Interaction;
 using Melanchall.DryWetMidi.Tools;
+using ModernWpf.Controls;
 using Stylet;
 using StyletIoC;
 using static Windows.Media.MediaPlaybackAutoRepeatMode;
+using static GenshinLyreMidiPlayer.WPF.Core.LyrePlayer.Tranpose;
 using MidiFile = GenshinLyreMidiPlayer.Data.Midi.MidiFile;
 
 namespace GenshinLyreMidiPlayer.WPF.ViewModels
@@ -60,8 +63,8 @@ namespace GenshinLyreMidiPlayer.WPF.ViewModels
                 _player.CommandManager.NextReceived     += (_, _) => Next();
                 _player.CommandManager.PreviousReceived += (_, _) => Previous();
 
-                _player.CommandManager.PlayReceived  += (_, _) => PlayPause();
-                _player.CommandManager.PauseReceived += (_, _) => PlayPause();
+                _player.CommandManager.PlayReceived  += async (_, _) => await PlayPause();
+                _player.CommandManager.PauseReceived += async (_, _) => await PlayPause();
             }
         }
 
@@ -153,27 +156,27 @@ namespace GenshinLyreMidiPlayer.WPF.ViewModels
 
         public TimeSpan MaximumTime => Playlist.OpenedFile?.Duration ?? TimeSpan.Zero;
 
-        public void Handle(MergeNotesNotification message)
+        public async void Handle(MergeNotesNotification message)
         {
             if (!message.Merge)
                 InitializeTracks();
 
-            InitializePlayback();
+            await InitializePlayback();
         }
 
-        public void Handle(MidiFile file)
+        public async void Handle(MidiFile file)
         {
             CloseFile();
             Playlist.OpenedFile = file;
             Playlist.History.Push(file);
 
             InitializeTracks();
-            InitializePlayback();
+            await InitializePlayback();
         }
 
-        public void Handle(MidiTrack track) { InitializePlayback(); }
+        public async void Handle(MidiTrack track) { await InitializePlayback(); }
 
-        public void Handle(SettingsPageViewModel message) { InitializePlayback(); }
+        public async void Handle(SettingsPageViewModel message) { await InitializePlayback(); }
 
         public void UpdateButtons()
         {
@@ -242,7 +245,7 @@ namespace GenshinLyreMidiPlayer.WPF.ViewModels
             Playlist.OpenedFile = null;
         }
 
-        private void InitializePlayback()
+        private async Task InitializePlayback()
         {
             Playback?.Stop();
             Playback?.Dispose();
@@ -263,6 +266,29 @@ namespace GenshinLyreMidiPlayer.WPF.ViewModels
                 {
                     Tolerance = new MetricTimeSpan(0, 0, 0, (int) Settings.MergeMilliseconds)
                 });
+            }
+
+            // Check for notes that cannot be played even after transposing.
+            var outOfRange = midi.GetNotes().Where(note =>
+                !_settings.SelectedLayout.Key.TryGetKey(ApplyNoteSettings(note.NoteNumber), out _));
+
+            if (outOfRange.Any())
+            {
+                var options = new Enum[] { Up, Down };
+                var exceptionDialog = new ErrorContentDialog(
+                    new IndexOutOfRangeException(
+                        "Some notes cannot be played by the Lyre because it is missing Sharps & Flats. " +
+                        "This can be solved by snapping to the nearest semitone."),
+                    options, "Ignore");
+
+                var result = await exceptionDialog.ShowAsync();
+
+                _settings.Transpose = result switch
+                {
+                    ContentDialogResult.None      => Ignore,
+                    ContentDialogResult.Primary   => Up,
+                    ContentDialogResult.Secondary => Down
+                };
             }
 
             Playback       = midi.GetPlayback();
@@ -292,6 +318,16 @@ namespace GenshinLyreMidiPlayer.WPF.ViewModels
             UpdateButtons();
         }
 
+        private int ApplyNoteSettings(int noteId)
+        {
+            noteId -= Settings.KeyOffset;
+
+            if (Settings.TransposeNotes)
+                noteId = LyrePlayer.TransposeNote(noteId, _settings.Transpose);
+
+            return noteId;
+        }
+
         public void Previous()
         {
             if (CurrentTime > TimeSpan.FromSeconds(3))
@@ -303,7 +339,7 @@ namespace GenshinLyreMidiPlayer.WPF.ViewModels
                 Playlist.Previous();
         }
 
-        public void Next()
+        public async void Next()
         {
             var next = Playlist.Next();
             if (next is null)
@@ -315,12 +351,13 @@ namespace GenshinLyreMidiPlayer.WPF.ViewModels
                 Handle(next);
 
             if (Playback is not null)
-                PlayPause();
+                await PlayPause();
         }
 
-        public void PlayPause()
+        public async Task PlayPause()
         {
-            if (Playback is null) InitializePlayback();
+            if (Playback is null)
+                await InitializePlayback();
 
             if (Playback!.IsRunning)
                 Playback.Stop();
@@ -336,17 +373,14 @@ namespace GenshinLyreMidiPlayer.WPF.ViewModels
                     Playback.Start();
                 else
                 {
-                    Task.Run(async () =>
-                    {
-                        WindowHelper.EnsureGameOnTop();
-                        await Task.Delay(100);
+                    WindowHelper.EnsureGameOnTop();
+                    await Task.Delay(100);
 
-                        if (WindowHelper.IsGameFocused())
-                        {
-                            Playback.PlaybackStart = Playback.GetCurrentTime(TimeSpanType.Midi);
-                            Playback.Start();
-                        }
-                    });
+                    if (WindowHelper.IsGameFocused())
+                    {
+                        Playback.PlaybackStart = Playback.GetCurrentTime(TimeSpanType.Midi);
+                        Playback.Start();
+                    }
                 }
             }
         }
@@ -393,9 +427,7 @@ namespace GenshinLyreMidiPlayer.WPF.ViewModels
             }
 
             var layout = _settings.SelectedLayout.Key;
-            var note = noteEvent.NoteNumber - Settings.KeyOffset;
-            if (Settings.TransposeNotes)
-                note = LyrePlayer.TransposeNote(note);
+            var note = ApplyNoteSettings(noteEvent.NoteNumber);
 
             switch (noteEvent.EventType)
             {
