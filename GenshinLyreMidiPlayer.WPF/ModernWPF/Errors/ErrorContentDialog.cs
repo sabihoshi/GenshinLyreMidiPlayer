@@ -1,4 +1,4 @@
-using System;
+﻿using System;
 using System.Collections.Generic;
 using System.Linq;
 using Humanizer;
@@ -10,7 +10,7 @@ namespace GenshinLyreMidiPlayer.WPF.ModernWPF.Errors
     {
         public ErrorContentDialog(Exception e, IReadOnlyCollection<Enum>? options = null, string? closeText = null)
         {
-            Title   = e.Message;
+            Title   = e.GetType();
             Content = e;
 
             PrimaryButtonText   = options?.ElementAtOrDefault(0)?.Humanize();
