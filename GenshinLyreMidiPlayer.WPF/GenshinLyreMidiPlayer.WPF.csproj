@@ -20,7 +20,7 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <PackageReference Include="Humanizer.Core" Version="2.8.26" />
+    <PackageReference Include="Humanizer.Core" Version="2.10.1" />
     <PackageReference Include="InputSimulator" Version="1.0.4" />
     <PackageReference Include="Melanchall.DryWetMidi" Version="5.2.1-prerelease5" />
     <PackageReference Include="ModernWpfUI" Version="0.9.4" />
