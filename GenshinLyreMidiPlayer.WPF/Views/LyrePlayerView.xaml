@@ -79,7 +79,7 @@
                 IsMoveToPointEnabled="True"
                 IsEnabled="{Binding CanHitPlayPause}"
 
-                Value="{Binding SongSlider}"
+                Value="{Binding SongPosition}"
                 Maximum="{Binding Path=MaximumTime.TotalSeconds}" />
             <TextBlock Grid.Column="2" VerticalAlignment="Center"
                        Text="{Binding MaximumTime, StringFormat=m\\:ss}" />

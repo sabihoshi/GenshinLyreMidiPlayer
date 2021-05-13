@@ -34,8 +34,7 @@ namespace GenshinLyreMidiPlayer.WPF.ViewModels
         private readonly PlaybackCurrentTimeWatcher _timeWatcher;
         private bool _ignoreSliderChange;
         private InputDevice? _inputDevice;
-        private MidiInput? _selectedMidiInput;
-        private double _songSlider;
+        private TimeSpan _songPosition;
 
         public LyrePlayerViewModel(IContainer ioc,
             SettingsPageViewModel settings, PlaylistViewModel playlist)
@@ -101,40 +100,15 @@ namespace GenshinLyreMidiPlayer.WPF.ViewModels
             }
         }
 
-        public bool CanHitPrevious => CurrentTime > TimeSpan.FromSeconds(3) || Playlist.History.Count > 1;
+        public bool CanHitPrevious => _songPosition > TimeSpan.FromSeconds(3) || Playlist.History.Count > 1;
 
-        public double SongSlider
+        public double SongPosition
         {
-            get => _songSlider;
-            set
-            {
-                if (!_ignoreSliderChange && Playback is { IsRunning: true })
-                    Playback.Stop();
-
-                SetAndNotify(ref _songSlider, value);
-
-                _ignoreSliderChange = false;
-            }
+            get => _songPosition.TotalSeconds;
+            set => SetAndNotify(ref _songPosition, TimeSpan.FromSeconds(value));
         }
 
-        public MidiInput? SelectedMidiInput
-        {
-            get => _selectedMidiInput;
-            set
-            {
-                SetAndNotify(ref _selectedMidiInput, value);
-
-                _inputDevice?.Dispose();
-
-                if (_selectedMidiInput?.DeviceName != null && _selectedMidiInput.DeviceName != "None")
-                {
-                    _inputDevice = InputDevice.GetByName(_selectedMidiInput.DeviceName);
-
-                    _inputDevice.EventReceived += OnNoteEvent;
-                    _inputDevice.StartEventsListening();
-                }
-            }
-        }
+        public MidiInput? SelectedMidiInput { get; set; }
 
         private MusicDisplayProperties? Display =>
             _player?.SystemMediaTransportControls.DisplayUpdater.MusicProperties;
@@ -152,7 +126,7 @@ namespace GenshinLyreMidiPlayer.WPF.ViewModels
         private SystemMediaTransportControls? Controls =>
             _player?.SystemMediaTransportControls;
 
-        public TimeSpan CurrentTime => TimeSpan.FromSeconds(SongSlider);
+        public TimeSpan CurrentTime => _songPosition;
 
         public TimeSpan MaximumTime => Playlist.OpenedFile?.Duration ?? TimeSpan.Zero;
 
@@ -178,6 +152,31 @@ namespace GenshinLyreMidiPlayer.WPF.ViewModels
 
         public async void Handle(SettingsPageViewModel message) { await InitializePlayback(); }
 
+        public void OnSongPositionChanged()
+        {
+            if (!_ignoreSliderChange && Playback is { IsRunning: true })
+            {
+                Playback.Stop();
+                Playback.MoveToTime(new MetricTimeSpan(_songPosition));
+
+                if (Settings.UseSpeakers)
+                    Playback.Start();
+            }
+        }
+
+        public void OnSelectedMidiInputChanged()
+        {
+            _inputDevice?.Dispose();
+
+            if (SelectedMidiInput?.DeviceName != null && SelectedMidiInput.DeviceName != "None")
+            {
+                _inputDevice = InputDevice.GetByName(SelectedMidiInput.DeviceName);
+
+                _inputDevice.EventReceived += OnNoteEvent;
+                _inputDevice.StartEventsListening();
+            }
+        }
+
         public void UpdateButtons()
         {
             NotifyOfPropertyChange(() => CanHitNext);
@@ -186,6 +185,7 @@ namespace GenshinLyreMidiPlayer.WPF.ViewModels
 
             NotifyOfPropertyChange(() => PlayPauseIcon);
             NotifyOfPropertyChange(() => MaximumTime);
+            NotifyOfPropertyChange(() => CurrentTime);
 
             if (Controls is not null && Display is not null)
             {
@@ -207,7 +207,7 @@ namespace GenshinLyreMidiPlayer.WPF.ViewModels
                     var position = $"{file.Position}/{Playlist.GetPlaylist().Count}";
 
                     Display.Title  = file.Title;
-                    Display.Artist = $"Playing {position} {CurrentTime:mm\\:ss}";
+                    Display.Artist = $"Playing {position} {SongPosition:mm\\:ss}";
                 }
 
                 Controls.DisplayUpdater.Update();
@@ -239,7 +239,7 @@ namespace GenshinLyreMidiPlayer.WPF.ViewModels
             }
 
             MidiTracks.Clear();
-            MoveSlider(0);
+            MoveSlider(TimeSpan.Zero);
 
             Playback            = null;
             Playlist.OpenedFile = null;
@@ -330,10 +330,10 @@ namespace GenshinLyreMidiPlayer.WPF.ViewModels
 
         public void Previous()
         {
-            if (CurrentTime > TimeSpan.FromSeconds(3))
+            if (_songPosition > TimeSpan.FromSeconds(3))
             {
                 Playback!.MoveToStart();
-                MoveSlider(0);
+                MoveSlider(TimeSpan.Zero);
             }
             else
                 Playlist.Previous();
@@ -365,7 +365,7 @@ namespace GenshinLyreMidiPlayer.WPF.ViewModels
             {
                 Playback.Loop = Playlist.Loop == Track;
 
-                var time = (MetricTimeSpan) TimeSpan.FromSeconds(SongSlider);
+                var time = new MetricTimeSpan(CurrentTime);
                 Playback.PlaybackStart = time;
                 Playback.MoveToTime(time);
 
@@ -390,7 +390,7 @@ namespace GenshinLyreMidiPlayer.WPF.ViewModels
             foreach (var playbackTime in e.Times)
             {
                 TimeSpan time = (MetricTimeSpan) playbackTime.Time;
-                MoveSlider(time.TotalSeconds);
+                MoveSlider(time);
 
                 UpdateButtons();
             }
@@ -445,10 +445,10 @@ namespace GenshinLyreMidiPlayer.WPF.ViewModels
             }
         }
 
-        private void MoveSlider(double value)
+        private void MoveSlider(TimeSpan value)
         {
             _ignoreSliderChange = true;
-            SongSlider          = value;
+            SongPosition        = value.TotalSeconds;
         }
 
         public void RefreshDevices()
