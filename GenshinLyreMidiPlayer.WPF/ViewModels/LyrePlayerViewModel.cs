@@ -24,7 +24,8 @@ namespace GenshinLyreMidiPlayer.WPF.ViewModels
     public class LyrePlayerViewModel : Screen,
         IHandle<MidiFile>, IHandle<MidiTrack>,
         IHandle<SettingsPageViewModel>,
-        IHandle<MergeNotesNotification>
+        IHandle<MergeNotesNotification>,
+        IHandle<PlayTimerNotification>
     {
         private static readonly Settings Settings = Settings.Default;
         private readonly IEventAggregator _events;
@@ -175,6 +176,11 @@ namespace GenshinLyreMidiPlayer.WPF.ViewModels
         }
 
         public async void Handle(MidiTrack track) { await InitializePlayback(); }
+
+        public async void Handle(PlayTimerNotification message)
+        {
+            if (!(Playback?.IsRunning ?? false) && CanHitPlayPause) await PlayPause();
+        }
 
         public async void Handle(SettingsPageViewModel message) { await InitializePlayback(); }
 

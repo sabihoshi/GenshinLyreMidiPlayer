@@ -70,6 +70,18 @@
                 </GroupBox>
             </ui:SimpleStackPanel>
 
+            <GroupBox Header="Timer">
+                <ui:SimpleStackPanel Orientation="Horizontal">
+                    <ui:SimpleStackPanel.Resources>
+                        <Style TargetType="Button" BasedOn="{StaticResource {x:Type Button}}" />
+                    </ui:SimpleStackPanel.Resources>
+
+                    <ui:SimpleTimePicker SelectedDateTime="{Binding DateTime}" IsEnabled="{Binding CanChangeTime}" />
+                    <Button Command="{s:Action SetTimeToNow}" IsEnabled="{Binding CanChangeTime}">Now</Button>
+                    <Button Command="{s:Action StartStopTimer}" Content="{Binding TimerText}" />
+                </ui:SimpleStackPanel>
+            </GroupBox>
+
             <GroupBox Header="Theme Mode">
                 <ui:RadioButtons
                     SelectedItem="{Binding 

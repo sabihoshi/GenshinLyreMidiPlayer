@@ -5,6 +5,7 @@ using System.Net.Http;
 using System.Net.Http.Headers;
 using System.Reflection;
 using System.Text.Json;
+using System.Threading;
 using System.Threading.Tasks;
 using GenshinLyreMidiPlayer.Data.Git;
 using GenshinLyreMidiPlayer.Data.Midi;
@@ -40,6 +41,10 @@ namespace GenshinLyreMidiPlayer.WPF.ViewModels
 
         public bool AutoCheckUpdates { get; set; } = Settings.AutoCheckUpdates;
 
+        public bool CanChangeTime => PlayTimerToken is null;
+
+        public bool CanStartStopTimer => DateTime - DateTime.Now > TimeSpan.Zero;
+
         public bool IncludeBetaUpdates { get; set; } = Settings.IncludeBetaUpdates;
 
         public bool IsCheckingUpdate { get; set; }
@@ -48,8 +53,12 @@ namespace GenshinLyreMidiPlayer.WPF.ViewModels
 
         public bool NeedsUpdate => ProgramVersion < LatestVersion?.Version;
 
+        public CancellationTokenSource? PlayTimerToken { get; private set; }
+
         public static CaptionedObject<Transition>? Transition { get; set; } =
             TransitionCollection.Transitions[Settings.SelectedTransition];
+
+        public DateTime DateTime { get; set; } = DateTime.Now;
 
         public Dictionary<int, string> KeyOffsets { get; set; } = new()
         {
@@ -137,6 +146,8 @@ namespace GenshinLyreMidiPlayer.WPF.ViewModels
 
         public string Key => $"Key: {KeyOffsets[KeyOffset]}";
 
+        public string TimerText => CanChangeTime ? "Start" : "Stop";
+
         public string UpdateString { get; set; } = string.Empty;
 
         public LyrePlayer.Tranpose Transpose { get; set; } = LyrePlayer.Tranpose.Ignore;
@@ -144,6 +155,28 @@ namespace GenshinLyreMidiPlayer.WPF.ViewModels
         public uint MergeMilliseconds { get; set; } = Settings.MergeMilliseconds;
 
         public static Version ProgramVersion => Assembly.GetExecutingAssembly().GetName().Version!;
+
+        public async Task StartStopTimer()
+        {
+            if (PlayTimerToken is not null)
+            {
+                PlayTimerToken.Cancel();
+                return;
+            }
+
+            PlayTimerToken = new();
+
+            var start = DateTime - DateTime.Now;
+            await Task.Delay(start, PlayTimerToken.Token)
+                .ContinueWith(_ => { });
+
+            if (!PlayTimerToken.IsCancellationRequested)
+                _events.Publish(new PlayTimerNotification());
+
+            PlayTimerToken = null;
+        }
+
+        public void SetTimeToNow() => DateTime = DateTime.Now;
 
         private void OnAutoCheckUpdatesChanged()
         {
