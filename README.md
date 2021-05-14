@@ -20,7 +20,7 @@ A MIDI to key player for Genshin Impact's Windsong Lyre made using C# and WPF us
 > The reason this appears is because the application is not signed. Signing costs money which can get very expensive.
 
 ## Features
-![GenshinLyreMidiPlayer_2021-04-17_16-02-30](https://user-images.githubusercontent.com/25006819/115106288-7a422c80-9f96-11eb-991c-641a8a8db42c.png)
+![GenshinLyreMidiPlayer WPF_2021-05-14_19-33-05](https://user-images.githubusercontent.com/25006819/118265668-1acf3200-b4ec-11eb-8b88-ded036563e18.png)
 * The ability to change the key. By default, it is keyed to C major.
 * You can play multiple tracks of a MIDI file at the same time.
 * You can enable transposing of notes, otherwise it will skip the notes entirely.
@@ -28,8 +28,10 @@ A MIDI to key player for Genshin Impact's Windsong Lyre made using C# and WPF us
 * Change the keyboard layout (QWERTZ, AZERTY, DVORAK, etc.)
 * You can test out MIDI files by playing through the speakers.
 * History and Settings are now persisted even if you close the app.
+* [![](https://img.shields.io/badge/v1.10.0-New!-yellow)](https://github.com/sabihoshi/GenshinLyreMidiPlayer/releases/tag/v1.10.0) You can have the lyre auto play at a specified time. This can be found inside the settings page.
+* [![](https://img.shields.io/badge/v1.10.2-New!-yellow)](https://github.com/sabihoshi/GenshinLyreMidiPlayer/releases/tag/v1.10.2) Filter tracks using the search box.
 
-### [![](https://img.shields.io/badge/v1.9.0-New!-yellow)](https://github.com/sabihoshi/GenshinLyreMidiPlayer/releases/tag/v1.9.0) Media Controls
+### Media Controls
 You can now control the Lyre natively by using your media controls that some keyboards have as special function keys. This integrates with other music applications as well.
 
 ![2021-05-04_13-25-52](https://user-images.githubusercontent.com/25006819/116963753-5132d300-acdc-11eb-85f8-e455928f8369.png)
