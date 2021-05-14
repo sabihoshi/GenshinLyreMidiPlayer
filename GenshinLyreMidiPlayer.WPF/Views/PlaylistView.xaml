@@ -17,13 +17,10 @@
 
     d:DataContext="{d:DesignInstance viewModels:PlaylistViewModel}">
     <UserControl.Resources>
-        <modernWpf:ProductGroupKeyConverter x:Key="ProductGroupKeyConverter" />
-        <CollectionViewSource
-            x:Key="Tracks" Source="{Binding Tracks}">
+        <modernWpf:TrackGroupKeyConverter x:Key="TrackGroupKeyConverter" />
+        <CollectionViewSource x:Key="Tracks" Source="{Binding FilteredTracks}">
             <CollectionViewSource.GroupDescriptions>
-                <PropertyGroupDescription
-                    PropertyName="Title"
-                    Converter="{StaticResource ProductGroupKeyConverter}" />
+                <PropertyGroupDescription PropertyName="Title" Converter="{StaticResource TrackGroupKeyConverter}" />
             </CollectionViewSource.GroupDescriptions>
             <CollectionViewSource.SortDescriptions>
                 <componentModel:SortDescription PropertyName="Title" />

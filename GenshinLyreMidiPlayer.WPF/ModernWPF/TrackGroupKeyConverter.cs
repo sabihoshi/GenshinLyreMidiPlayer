@@ -4,7 +4,7 @@ using System.Windows.Data;
 
 namespace GenshinLyreMidiPlayer.WPF.ModernWPF
 {
-    public class ProductGroupKeyConverter : IValueConverter
+    public class TrackGroupKeyConverter : IValueConverter
     {
         public object Convert(object value, Type targetType, object parameter, CultureInfo culture) =>
             ((string) value).Substring(0, 1).ToUpper();

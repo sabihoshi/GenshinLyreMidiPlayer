@@ -10,6 +10,7 @@ using GenshinLyreMidiPlayer.WPF.ModernWPF.Errors;
 using Melanchall.DryWetMidi.Core;
 using Microsoft.Win32;
 using ModernWpf;
+using ModernWpf.Controls;
 using Stylet;
 using StyletIoC;
 using static Windows.Media.MediaPlaybackAutoRepeatMode;
@@ -28,9 +29,13 @@ namespace GenshinLyreMidiPlayer.WPF.ViewModels
             _events = events;
         }
 
-        public BindableCollection<MidiFile> Tracks { get; set; } = new();
+        public BindableCollection<MidiFile> FilteredTracks => string.IsNullOrWhiteSpace(FilterText)
+            ? Tracks
+            : new(Tracks.Where(t => t.Title.Contains(FilterText, StringComparison.OrdinalIgnoreCase)));
 
-        public BindableCollection<MidiFile>? ShuffledTracks { get; set; }
+        private BindableCollection<MidiFile> ShuffledTracks { get; set; } = new();
+
+        public BindableCollection<MidiFile> Tracks { get; } = new();
 
         public bool Shuffle { get; set; }
 
@@ -46,6 +51,8 @@ namespace GenshinLyreMidiPlayer.WPF.ViewModels
 
         public Stack<MidiFile> History { get; } = new();
 
+        public string FilterText { get; set; }
+
         public string LoopStateString =>
             Loop switch
             {
@@ -53,6 +60,11 @@ namespace GenshinLyreMidiPlayer.WPF.ViewModels
                 Track => "\xE8ED",
                 List  => "\xE8EE"
             };
+
+        public void OnFilterTextChanged(AutoSuggestBox sender, AutoSuggestBoxTextChangedEventArgs e)
+        {
+            FilterText = sender.Text;
+        }
 
         public void ToggleShuffle()
         {
@@ -95,7 +107,7 @@ namespace GenshinLyreMidiPlayer.WPF.ViewModels
             return next;
         }
 
-        public BindableCollection<MidiFile> GetPlaylist() => (Shuffle ? ShuffledTracks : Tracks)!;
+        public BindableCollection<MidiFile> GetPlaylist() => Shuffle ? ShuffledTracks : Tracks;
 
         public async Task OpenFile()
         {
@@ -122,7 +134,8 @@ namespace GenshinLyreMidiPlayer.WPF.ViewModels
             RefreshPlaylist();
             await UpdateHistory();
 
-            if (OpenedFile is null && Tracks.Count > 0)
+            var next = Next();
+            if (OpenedFile is null && Tracks.Count > 0 && next is not null)
                 _events.Publish(Next());
         }
 

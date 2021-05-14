@@ -38,6 +38,8 @@ namespace GenshinLyreMidiPlayer.WPF.ViewModels
             // Work around because events do not conform to the signatures Stylet supports
             _navView = ((MainWindowView) View).NavView;
 
+            _navView.AutoSuggestBox.TextChanged += PlaylistView.OnFilterTextChanged;
+
             _navView.SelectionChanged += Navigate;
             _navView.BackRequested    += NavigateBack;
 
