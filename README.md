@@ -1,16 +1,16 @@
 # 【 Genshin 原神 Windsong Lyre MIDI Auto Player 】
 
-A MIDI to key player for Genshin Impact's Windsong Lyre made using C# and WPF using Windows Fluent design. If you enjoyed this project, consider [contributing](https://github.com/sabihoshi/GenshinLyreMidiPlayer#contributing) or 🌟 starring the repository. Thank you~
+A MIDI to key player for Genshin Impact's Windsong Lyre made using C# and WPF using Windows Fluent design. If you enjoyed this project, consider [contributing](#contributing) or 🌟 starring the repository. Thank you~
 
 > Check out [yoroshikun](https://github.com/yoroshikun)'s Flutter implementation of a **[Genshin Lyre Player](https://github.com/yoroshikun/flutter_genshin_lyre_player)** written in Dart!
 
-## **[Download latest version](latest)** [![GitHub all releases](https://img.shields.io/github/downloads/sabihoshi/GenshinLyreMidiPlayer/total?style=social)](latest) [![GitHub release (latest by date)](https://img.shields.io/github/v/release/sabihoshi/GenshinLyreMidiPlayer)](latest)
+## **[Download latest version][latest]** [![GitHub all releases](https://img.shields.io/github/downloads/sabihoshi/GenshinLyreMidiPlayer/total?style=social)][latest] [![GitHub release (latest by date)](https://img.shields.io/github/v/release/sabihoshi/GenshinLyreMidiPlayer)][latest]
 
 ![2021-04-13_22-51-12](https://user-images.githubusercontent.com/25006819/114573455-f8f34d00-9caa-11eb-8288-57c193ca2d04.png)
 
 ## How to use
 
-1. [Download the program](latest) and then run, no need for installation.
+1. [Download the program][latest] and then run, no need for installation.
 2. Open a .mid file by pressing the open file button at the top left.
 3. Enable the tracks that you want to be played back.
 4. Press play it should automatically switch to Genshin Impact.
@@ -142,6 +142,6 @@ Change the `LangVersion` of both projects into `preview`.
 * This project is under the [MIT](LICENSE.md) license.
 * All rights reserved by © miHoYo Co., Ltd. This project is not affiliated nor endorsed by miHoYo. Genshin Impact™ and other properties belong to their respective owners.
 * This project uses third-party libraries or other resources that may be
-distributed under [different licenses](/THIRD-PARTY-NOTICES.md).
+distributed under [different licenses](THIRD-PARTY-NOTICES.md).
 
 [latest]: https://github.com/sabihoshi/GenshinLyreMidiPlayer/releases/latest
