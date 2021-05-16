@@ -9,9 +9,9 @@ namespace GenshinLyreMidiPlayer.Data.Git
 
         [JsonPropertyName("prerelease")] public bool Prerelease { get; set; }
 
-        [JsonPropertyName("tag_name")] public string TagName { get; set; }
-
         [JsonPropertyName("name")] public string Name { get; set; }
+
+        [JsonPropertyName("tag_name")] public string TagName { get; set; }
 
         [JsonPropertyName("html_url")] public string Url { get; set; }
 

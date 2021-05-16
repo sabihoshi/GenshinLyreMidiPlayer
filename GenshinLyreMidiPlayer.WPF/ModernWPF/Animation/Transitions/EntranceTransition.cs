@@ -47,7 +47,7 @@ namespace GenshinLyreMidiPlayer.WPF.ModernWPF.Animation.Transitions
                 element.SetCurrentValue(UIElement.RenderTransformProperty, new TranslateTransform());
             }
 
-            return new Animation(element, storyboard);
+            return new(element, storyboard);
         }
 
         protected override Animation GetExitAnimation(FrameworkElement element, bool movingBackwards)
@@ -94,7 +94,7 @@ namespace GenshinLyreMidiPlayer.WPF.ModernWPF.Animation.Transitions
                 storyboard.Children.Add(opacityAnim);
             }
 
-            return new Animation(element, storyboard);
+            return new(element, storyboard);
         }
     }
 }

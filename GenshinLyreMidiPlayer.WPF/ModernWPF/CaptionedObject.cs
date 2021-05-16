@@ -20,10 +20,7 @@ namespace GenshinLyreMidiPlayer.WPF.ModernWPF
 
     public class CaptionedObject<T, TEnum> : CaptionedObject<T> where T : Enum
     {
-        public CaptionedObject(T o, TEnum type, string? caption = null) : base(o, caption)
-        {
-            Type = type;
-        }
+        public CaptionedObject(T o, TEnum type, string? caption = null) : base(o, caption) { Type = type; }
 
         public TEnum Type { get; }
 

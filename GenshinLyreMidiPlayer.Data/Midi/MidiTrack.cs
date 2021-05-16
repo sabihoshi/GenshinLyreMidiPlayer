@@ -18,6 +18,8 @@ namespace GenshinLyreMidiPlayer.Data.Midi
             TrackName = track.Events.OfType<SequenceTrackNameEvent>().FirstOrDefault()?.Text;
         }
 
+        public bool CanBePlayed => Track.Events.Count(e => e is NoteEvent) > 0;
+
         public bool IsChecked
         {
             get => _isChecked;
@@ -27,8 +29,6 @@ namespace GenshinLyreMidiPlayer.Data.Midi
                 _events.Publish(this);
             }
         }
-
-        public bool CanBePlayed => Track.Events.Count(e => e is NoteEvent) > 0;
 
         public string? TrackName { get; }
 

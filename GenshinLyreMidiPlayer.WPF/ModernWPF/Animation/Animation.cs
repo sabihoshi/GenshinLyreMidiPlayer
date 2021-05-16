@@ -47,15 +47,12 @@ namespace GenshinLyreMidiPlayer.WPF.ModernWPF.Animation
             if (sender is Clock clock) _currentState = clock.CurrentState;
         }
 
-        private void OnCompleted(object? sender, EventArgs e)
-        {
-            Completed?.Invoke(this, EventArgs.Empty);
-        }
+        private void OnCompleted(object? sender, EventArgs e) { Completed?.Invoke(this, EventArgs.Empty); }
 
         private BitmapCache GetBitmapCache()
         {
 #if NETCOREAPP || NET462
-            return new BitmapCache(VisualTreeHelper.GetDpi(_element).PixelsPerDip);
+            return new(VisualTreeHelper.GetDpi(_element).PixelsPerDip);
 #else
             return _defaultBitmapCache;
 #endif

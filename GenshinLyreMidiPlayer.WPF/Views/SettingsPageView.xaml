@@ -1,4 +1,4 @@
-﻿<UserControl
+<UserControl
     x:Class="GenshinLyreMidiPlayer.WPF.Views.SettingsPageView"
     xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
     xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
@@ -98,7 +98,7 @@
                 <ui:RadioButtons
                     SelectedItem="{Binding Transition}"
                     SelectedIndex="{Binding Default.SelectedTransition, Source={StaticResource Settings}}"
-                    ItemsSource="{x:Static transitions:TransitionCollection.Transitions}"/>
+                    ItemsSource="{x:Static transitions:TransitionCollection.Transitions}" />
             </Expander>
 
             <GroupBox Header="License">
