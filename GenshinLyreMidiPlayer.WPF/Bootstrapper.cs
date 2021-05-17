@@ -40,11 +40,10 @@ namespace GenshinLyreMidiPlayer.WPF
 
         protected override void ConfigureIoC(IStyletIoCBuilder builder)
         {
-            var level = ConfigurationUserLevel.PerUserRoamingAndLocal;
-            var config = ConfigurationManager.OpenExeConfiguration(level);
+            var config = ConfigurationManager
+                .OpenExeConfiguration(ConfigurationUserLevel.PerUserRoamingAndLocal);
 
             var path = Path.GetDirectoryName(config.FilePath);
-
             if (!Directory.Exists(path))
                 Directory.CreateDirectory(path);
 
@@ -72,18 +71,19 @@ namespace GenshinLyreMidiPlayer.WPF
 
                 Task.Run(async () =>
                 {
-                    var icon = Path.Combine(path!, "icon.png");
-                    var uri = new Uri("pack://application:,,,/item_windsong_lyre.png");
-                    var resource = Application.GetResourceStream(uri)!.Stream;
-                    Image.FromStream(resource)
-                        .Save(icon);
+                    const string name = "item_windsong_lyre.png";
+                    var location = Path.Combine(path!, name);
 
-                    var file = await StorageFile.GetFileFromPathAsync(icon);
+                    var uri = new Uri($"pack://application:,,,/{name}");
+                    var resource = Application.GetResourceStream(uri)!.Stream;
+                    Image.FromStream(resource).Save(location);
+
+                    var file = await StorageFile.GetFileFromPathAsync(location);
                     controls.DisplayUpdater.Thumbnail = RandomAccessStreamReference.CreateFromFile(file);
                 });
 
                 return player;
-            });
+            }).InSingletonScope();
         }
     }
 }
