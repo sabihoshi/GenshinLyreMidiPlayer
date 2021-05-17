@@ -101,7 +101,7 @@ namespace GenshinLyreMidiPlayer.WPF.ViewModels
             }
         }
 
-        public bool CanHitPrevious => _songPosition > TimeSpan.FromSeconds(3) || Playlist.History.Count > 1;
+        public bool CanHitPrevious => CurrentTime > TimeSpan.FromSeconds(3) || Playlist.History.Count > 1;
 
         public double SongPosition
         {
@@ -163,7 +163,7 @@ namespace GenshinLyreMidiPlayer.WPF.ViewModels
             if (!_ignoreSliderChange && Playback is { IsRunning: true })
             {
                 Playback.Stop();
-                Playback.MoveToTime(new MetricTimeSpan(_songPosition));
+                Playback.MoveToTime(new MetricTimeSpan(CurrentTime));
 
                 if (Settings.UseSpeakers)
                     Playback.Start();
@@ -213,7 +213,7 @@ namespace GenshinLyreMidiPlayer.WPF.ViewModels
                     var position = $"{file.Position}/{Playlist.GetPlaylist().Count}";
 
                     Display.Title  = file.Title;
-                    Display.Artist = $"Playing {position} {SongPosition:mm\\:ss}";
+                    Display.Artist = $"Playing {position} {CurrentTime:mm\\:ss}";
                 }
 
                 Controls.DisplayUpdater.Update();
@@ -336,7 +336,7 @@ namespace GenshinLyreMidiPlayer.WPF.ViewModels
 
         public void Previous()
         {
-            if (_songPosition > TimeSpan.FromSeconds(3))
+            if (CurrentTime > TimeSpan.FromSeconds(3))
             {
                 Playback!.MoveToStart();
                 MoveSlider(TimeSpan.Zero);
