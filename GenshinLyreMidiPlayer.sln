@@ -1,11 +1,10 @@
-
 Microsoft Visual Studio Solution File, Format Version 12.00
 # Visual Studio Version 16
 VisualStudioVersion = 16.0.31112.23
 MinimumVisualStudioVersion = 10.0.40219.1
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "GenshinLyreMidiPlayer.WPF", "GenshinLyreMidiPlayer.WPF\GenshinLyreMidiPlayer.WPF.csproj", "{32F5B26F-65DB-46EE-8CEA-E432EA9F8806}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "GenshinLyreMidiPlayer.WPF", "GenshinLyreMidiPlayer.WPF\GenshinLyreMidiPlayer.WPF.csproj", "{32F5B26F-65DB-46EE-8CEA-E432EA9F8806}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "GenshinLyreMidiPlayer.Data", "GenshinLyreMidiPlayer.Data\GenshinLyreMidiPlayer.Data.csproj", "{F1395E61-6B43-4502-9214-221CF1A88588}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "GenshinLyreMidiPlayer.Data", "GenshinLyreMidiPlayer.Data\GenshinLyreMidiPlayer.Data.csproj", "{F1395E61-6B43-4502-9214-221CF1A88588}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution

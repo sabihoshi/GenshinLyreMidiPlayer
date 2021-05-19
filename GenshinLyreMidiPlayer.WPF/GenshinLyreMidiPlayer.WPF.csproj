@@ -2,11 +2,11 @@
 
   <PropertyGroup>
     <OutputType>WinExe</OutputType>
-    <TargetFramework>netcoreapp3.1</TargetFramework>
+    <TargetFramework>net5.0-windows10.0.19041.0</TargetFramework>
     <UseWPF>true</UseWPF>
     <StartupObject>GenshinLyreMidiPlayer.WPF.App</StartupObject>
     <ApplicationManifest>app.manifest</ApplicationManifest>
-    <Version>1.10.4</Version>
+    <Version>2.0.0</Version>
     <ApplicationIcon>item_windsong_lyre.ico</ApplicationIcon>
     <Nullable>enable</Nullable>
     <RepositoryUrl>https://github.com/sabihoshi/GenshinLyreMidiPlayer</RepositoryUrl>
@@ -17,6 +17,7 @@
     <Description>A music player that plays MIDI files into Genshin Impact's Windsong Lyre.</Description>
     <LangVersion>latest</LangVersion>
     <PackageLicenseFile>LICENSE.md</PackageLicenseFile>
+    <IncludeNativeLibrariesForSelfExtract>true</IncludeNativeLibrariesForSelfExtract>
   </PropertyGroup>
 
   <ItemGroup>

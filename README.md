@@ -119,6 +119,13 @@ dotnet publish
 ### Notes
 If you want to build using the [.Net Core 3.1 SDK](https://dotnet.microsoft.com/download), you need to make a few changes to the project files.
 
+#### Target Framework
+Change the `TargetFramework` of both projects into `netcoreapp3.1`.
+```diff
+- <TargetFramework>net5.0-windows10.0.19041.0</TargetFramework>
++ <TargetFramework>netcoreapp3.1</TargetFramework>
+```
+
 #### Project SDK
 Change the Project SDK of `GenshinLyreMidiPlayer.WPF.csproj` into `Microsoft.NET.Sdk.WindowsDesktop`.
 ```diff
@@ -126,7 +133,7 @@ Change the Project SDK of `GenshinLyreMidiPlayer.WPF.csproj` into `Microsoft.NET
 + <Project Sdk="Microsoft.NET.Sdk.WindowsDesktop">
 ```
 
-### Language Version
+#### Language Version
 Change the `LangVersion` of both projects into `preview`.
 ```diff
 - <LangVersion>latest</LangVersion>
