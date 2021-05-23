@@ -25,10 +25,10 @@ jobs:
       run: dotnet publish GenshinLyreMidiPlayer.WPF -r win-x64 -c Release -o .\output --self-contained false -p:PublishSingleFile=true
 
     - name: Zip release
-      run: 7z a GenshinLyreMidiPlayer_${{ steps.tag.outputs.VERSION }}_win-x64.zip .\output\*
+      run: 7z a GenshinLyreMidiPlayer_${{ steps.tag.outputs.VERSION }}_win-x64.zip .\output\* -x!*.pdb
 
     - name: 7Zip release
-      run: 7z a GenshinLyreMidiPlayer_${{ steps.tag.outputs.VERSION }}_win-x64.7z .\output\*
+      run: 7z a GenshinLyreMidiPlayer_${{ steps.tag.outputs.VERSION }}_win-x64.7z .\output\* -x!*.pdb
 
     - name: Create Release
       uses: ncipollo/release-action@v1.8.4
