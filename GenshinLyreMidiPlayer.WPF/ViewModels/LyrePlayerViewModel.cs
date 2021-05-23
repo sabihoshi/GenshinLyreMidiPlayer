@@ -134,7 +134,10 @@ namespace GenshinLyreMidiPlayer.WPF.ViewModels
         public async void Handle(MergeNotesNotification message)
         {
             if (!message.Merge)
+            {
+                Playlist.OpenedFile?.InitializeMidi();
                 InitializeTracks();
+            }
 
             await InitializePlayback();
         }

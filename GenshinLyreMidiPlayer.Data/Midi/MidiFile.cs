@@ -16,6 +16,7 @@ namespace GenshinLyreMidiPlayer.Data.Midi
             _settings = settings;
 
             Path = path;
+            InitializeMidi();
         }
 
         public int Position
@@ -24,12 +25,14 @@ namespace GenshinLyreMidiPlayer.Data.Midi
             set => SetAndNotify(ref _position, value);
         }
 
-        public Melanchall.DryWetMidi.Core.MidiFile Midi => Melanchall.DryWetMidi.Core.MidiFile.Read(Path, _settings);
+        public Melanchall.DryWetMidi.Core.MidiFile Midi { get; private set; }
 
         public string Path { get; }
 
         public string Title => GetFileNameWithoutExtension(Path);
 
         public TimeSpan Duration => Midi.GetDuration<MetricTimeSpan>();
+
+        public void InitializeMidi() { Midi = Melanchall.DryWetMidi.Core.MidiFile.Read(Path, _settings); }
     }
 }
