@@ -45,6 +45,8 @@ namespace GenshinLyreMidiPlayer.WPF.ViewModels
 
         public bool CanStartStopTimer => DateTime - DateTime.Now > TimeSpan.Zero;
 
+        public bool CanUseSpeakers { get; set; } = true;
+
         public bool IncludeBetaUpdates { get; set; } = Settings.IncludeBetaUpdates;
 
         public bool IsCheckingUpdate { get; set; }

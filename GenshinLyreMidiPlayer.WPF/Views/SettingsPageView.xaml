@@ -25,6 +25,7 @@
             <ui:SimpleStackPanel Orientation="Horizontal">
                 <ui:ToggleSwitch
                     Header="Test Mode (Speakers)"
+                    IsEnabled="{Binding CanUseSpeakers}"
                     IsOn="{Binding Default.UseSpeakers, Source={StaticResource Settings}}" />
 
                 <ui:ToggleSwitch

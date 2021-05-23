@@ -31,7 +31,7 @@ namespace GenshinLyreMidiPlayer.WPF.ViewModels
         private readonly IEventAggregator _events;
         private readonly MediaPlayer? _player;
         private readonly SettingsPageViewModel _settings;
-        private readonly OutputDevice _speakers;
+        private readonly OutputDevice? _speakers;
         private readonly PlaybackCurrentTimeWatcher _timeWatcher;
         private bool _ignoreSliderChange;
         private InputDevice? _inputDevice;
@@ -40,7 +40,6 @@ namespace GenshinLyreMidiPlayer.WPF.ViewModels
         public LyrePlayerViewModel(IContainer ioc,
             SettingsPageViewModel settings, PlaylistViewModel playlist)
         {
-            _speakers    = OutputDevice.GetByName("Microsoft GS Wavetable Synth");
             _timeWatcher = PlaybackCurrentTimeWatcher.Instance;
 
             _events = ioc.Get<IEventAggregator>();
@@ -65,6 +64,18 @@ namespace GenshinLyreMidiPlayer.WPF.ViewModels
 
                 _player.CommandManager.PlayReceived  += async (_, _) => await PlayPause();
                 _player.CommandManager.PauseReceived += async (_, _) => await PlayPause();
+            }
+
+            try
+            {
+                _speakers = OutputDevice.GetByName("Microsoft GS Wavetable Synth");
+            }
+            catch (ArgumentException e)
+            {
+                new ErrorContentDialog(e, closeText: "Ignore").ShowAsync();
+
+                _settings.CanUseSpeakers = false;
+                Settings.UseSpeakers     = false;
             }
         }
 
@@ -225,8 +236,11 @@ namespace GenshinLyreMidiPlayer.WPF.ViewModels
 
         private void InitializeTracks()
         {
+            if (Playlist.OpenedFile?.Midi is null)
+                return;
+
             MidiTracks.Clear();
-            MidiTracks.AddRange(Playlist.OpenedFile?
+            MidiTracks.AddRange(Playlist.OpenedFile
                 .Midi.GetTrackChunks()
                 .Select(t => new MidiTrack(_events, t)));
         }
@@ -425,7 +439,7 @@ namespace GenshinLyreMidiPlayer.WPF.ViewModels
         {
             if (Settings.UseSpeakers)
             {
-                _speakers.SendEvent(noteEvent);
+                _speakers?.SendEvent(noteEvent);
                 return;
             }
 
