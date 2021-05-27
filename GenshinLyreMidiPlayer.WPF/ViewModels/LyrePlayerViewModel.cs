@@ -182,6 +182,8 @@ namespace GenshinLyreMidiPlayer.WPF.ViewModels
                 if (Settings.UseSpeakers)
                     Playback.Start();
             }
+
+            _ignoreSliderChange = false;
         }
 
         public void OnSelectedMidiInputChanged()
@@ -355,8 +357,11 @@ namespace GenshinLyreMidiPlayer.WPF.ViewModels
         {
             if (CurrentTime > TimeSpan.FromSeconds(3))
             {
-                Playback!.MoveToStart();
+                Playback?.Stop();
+                Playback?.MoveToStart();
+
                 MoveSlider(TimeSpan.Zero);
+                Playback?.Start();
             }
             else
                 Playlist.Previous();
