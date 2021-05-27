@@ -1,6 +1,7 @@
 using System;
 using System.Linq;
 using System.Threading.Tasks;
+using System.Windows;
 using Windows.Media;
 using Windows.Media.Playback;
 using GenshinLyreMidiPlayer.Data.Midi;
@@ -299,21 +300,24 @@ namespace GenshinLyreMidiPlayer.WPF.ViewModels
 
             if (outOfRange.Any())
             {
-                var options = new Enum[] { Up, Down };
-                var exceptionDialog = new ErrorContentDialog(
-                    new IndexOutOfRangeException(
-                        "Some notes cannot be played by the Lyre because it is missing Sharps & Flats. " +
-                        "This can be solved by snapping to the nearest semitone."),
-                    options, "Ignore");
-
-                var result = await exceptionDialog.ShowAsync();
-
-                _settings.Transpose = result switch
+                await Application.Current.Dispatcher.Invoke(async () =>
                 {
-                    ContentDialogResult.None      => Ignore,
-                    ContentDialogResult.Primary   => Up,
-                    ContentDialogResult.Secondary => Down
-                };
+                    var options = new Enum[] { Up, Down };
+                    var exceptionDialog = new ErrorContentDialog(
+                        new IndexOutOfRangeException(
+                            "Some notes cannot be played by the Lyre because it is missing Sharps & Flats. " +
+                            "This can be solved by snapping to the nearest semitone."),
+                        options, "Ignore");
+
+                    var result = await exceptionDialog.ShowAsync();
+
+                    _settings.Transpose = result switch
+                    {
+                        ContentDialogResult.None      => Ignore,
+                        ContentDialogResult.Primary   => Up,
+                        ContentDialogResult.Secondary => Down
+                    };
+                });
             }
 
             Playback       = midi.GetPlayback();
