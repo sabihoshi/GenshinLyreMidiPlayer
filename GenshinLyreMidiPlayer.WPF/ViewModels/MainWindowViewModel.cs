@@ -18,14 +18,17 @@ namespace GenshinLyreMidiPlayer.WPF.ViewModels
         {
             _ioc = ioc;
 
-            SettingsView = ioc.Get<SettingsPageViewModel>();
-            PlaylistView = ioc.Get<PlaylistViewModel>();
-            PlayerView   = new(ioc, SettingsView, PlaylistView);
+            SettingsView   = ioc.Get<SettingsPageViewModel>();
+            PlaylistView   = ioc.Get<PlaylistViewModel>();
+            PlayerView     = new(ioc, SettingsView, PlaylistView);
+            PianoSheetView = new(SettingsView, PlaylistView);
         }
 
         public bool ShowUpdate => SettingsView.NeedsUpdate && ActiveItem != SettingsView;
 
         public LyrePlayerViewModel PlayerView { get; }
+
+        public PianoSheetViewModel PianoSheetView { get; }
 
         public PlaylistViewModel PlaylistView { get; }
 

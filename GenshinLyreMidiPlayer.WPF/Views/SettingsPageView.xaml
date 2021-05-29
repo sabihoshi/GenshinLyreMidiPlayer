@@ -33,9 +33,8 @@
                     IsOn="{Binding Default.TransposeNotes, Source={StaticResource Settings}}" />
 
                 <ui:NumberBox
-                    Header="{Binding Key}" SpinButtonPlacementMode="Compact"
-                    Minimum="{Binding MinOffset}" Maximum="{Binding MaxOffset}"
-                    Value="{Binding KeyOffset}" />
+                    Header="{Binding Key}" Value="{Binding KeyOffset}"
+                    Minimum="{Binding MinOffset}" Maximum="{Binding MaxOffset}" />
             </ui:SimpleStackPanel>
 
             <ui:SimpleStackPanel Orientation="Horizontal">
@@ -49,7 +48,6 @@
 
                 <ui:NumberBox
                     Header="Tolerance (ms)" IsEnabled="{Binding MergeNotes}"
-                    Minimum="0" SpinButtonPlacementMode="Compact"
                     Value="{Binding MergeMilliseconds}" />
             </ui:SimpleStackPanel>
 

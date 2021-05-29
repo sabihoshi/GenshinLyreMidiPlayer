@@ -27,7 +27,8 @@
             <ui:NavigationView.MenuItems>
                 <ui:NavigationViewItemHeader Content="Player" />
                 <ui:NavigationViewItem Content="Windsong Lyre Player" Icon="60495" Tag="{Binding PlayerView}" />
-                <ui:NavigationViewItem Content="Playlist" Icon="57666" Tag="{Binding PlaylistView}" />
+                <ui:NavigationViewItem Content="Playlist" Icon="59708" Tag="{Binding PlaylistView}" />
+                <ui:NavigationViewItem Content="Piano Sheet" Icon="57666" Tag="{Binding PianoSheetView}" />
             </ui:NavigationView.MenuItems>
 
             <modernWpf:AnimatedContentControl Margin="10" s:View.Model="{Binding ActiveItem}" />

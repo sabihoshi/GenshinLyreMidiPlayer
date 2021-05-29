@@ -42,6 +42,10 @@
                 </Style.Resources>
             </Style>
 
+            <Style TargetType="ui:NumberBox">
+                <Setter Property="Minimum" Value="0" />
+                <Setter Property="SpinButtonPlacementMode" Value="Compact" />
+            </Style>
         </ResourceDictionary>
     </Application.Resources>
 </Application>
