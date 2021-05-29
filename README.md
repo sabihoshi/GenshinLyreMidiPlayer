@@ -28,8 +28,13 @@ A MIDI to key player for Genshin Impact's Windsong Lyre made using C# and WPF us
 * Change the keyboard layout (QWERTZ, AZERTY, DVORAK, etc.)
 * You can test out MIDI files by playing through the speakers.
 * History and Settings are now persisted even if you close the app.
-* [![](https://img.shields.io/badge/v1.10.0-New!-yellow)](https://github.com/sabihoshi/GenshinLyreMidiPlayer/releases/tag/v1.10.0) You can have the lyre auto play at a specified time. This can be found inside the settings page.
+* You can have the lyre auto play at a specified time. This can be found inside the settings page.
 * [![](https://img.shields.io/badge/v1.10.2-New!-yellow)](https://github.com/sabihoshi/GenshinLyreMidiPlayer/releases/tag/v1.10.2) Filter tracks using the search box.
+
+# Piano Sheet [![](https://img.shields.io/badge/v2.1.0.1-New!-yellow)](https://github.com/sabihoshi/GenshinLyreMidiPlayer/releases/tag/v2.1.0.1)
+The first version of the Piano Sheet has been added, this allows you to easily share songs to other people, or for yourself to try. You can change the delimiter as well as the split size, and spacing. This will use the current keyboard layout that you have chosen.
+
+![2021-05-29_21-54-52](https://user-images.githubusercontent.com/25006819/120073859-b5bf3300-c0cc-11eb-878d-73c3796254a9.gif)
 
 ### Media Controls
 You can now control the Lyre natively by using your media controls that some keyboards have as special function keys. This integrates with other music applications as well.
@@ -59,9 +64,7 @@ You can resize the player as small as you want and it should close the panels ac
 ![GenshinLyreMidiPlayer_2021-04-13_22-28-11](https://user-images.githubusercontent.com/25006819/114570320-4e7a2a80-9ca8-11eb-8907-a47025a0539a.png)
 
 ## Upcoming
-* Output into a "Piano Sheet" in a text file.
 * Drag and drop MIDI files into the player.
-* Filter MIDI files by searching.
 
 ## About
 
