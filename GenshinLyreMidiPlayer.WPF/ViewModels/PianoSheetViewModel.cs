@@ -21,7 +21,7 @@ namespace GenshinLyreMidiPlayer.WPF.ViewModels
             PlaylistView = playlistView;
         }
 
-        [OnChangedMethod(nameof(Update))] public char Delimeter { get; set; } = '.';
+        [OnChangedMethod(nameof(Update))] public char Delimiter { get; set; } = '.';
 
         public PlaylistViewModel PlaylistView { get; }
 
@@ -82,7 +82,7 @@ namespace GenshinLyreMidiPlayer.WPF.ViewModels
                         var difference = note.Time - last;
                         var dotCount = difference / Shorten;
 
-                        sb.Append(new string(Delimeter, (int) dotCount));
+                        sb.Append(new string(Delimiter, (int) dotCount));
                         sb.Append(key.ToString().Last());
 
                         last = (int) note.Time;

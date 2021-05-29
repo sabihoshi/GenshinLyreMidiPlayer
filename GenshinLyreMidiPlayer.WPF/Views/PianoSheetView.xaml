@@ -32,8 +32,8 @@
             </TextBlock>
 
             <ui:SimpleStackPanel Orientation="Horizontal">
-                <GroupBox Header="Delimeter">
-                    <TextBox Text="{Binding Delimeter, UpdateSourceTrigger=PropertyChanged}" />
+                <GroupBox Header="Delimiter">
+                    <TextBox Text="{Binding Delimiter, UpdateSourceTrigger=PropertyChanged}" />
                 </GroupBox>
 
                 <GroupBox Header="Layout">
