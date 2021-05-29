@@ -100,28 +100,6 @@
                     ItemsSource="{x:Static transitions:TransitionCollection.Transitions}" />
             </Expander>
 
-            <GroupBox Header="License">
-                <ui:SimpleStackPanel Margin="10">
-                    <TextBlock>
-                        Created by © 2021 sabihoshi under the
-                        <Hyperlink NavigateUri="{Binding Default.LicenseUri, Source={StaticResource Settings}}">
-                            MIT License
-                        </Hyperlink>.
-                    </TextBlock>
-                    <TextBlock TextWrapping="Wrap">
-                        This project uses third-party libraries or other resources that may be distributed under
-                        <Hyperlink NavigateUri="{Binding Default.ThirdPartyLicenseUri, Source={StaticResource Settings}}">
-                            different licenses
-                        </Hyperlink>.
-                    </TextBlock>
-                    <TextBlock Style="{StaticResource BaseTextBlockStyle}">
-                        All rights reserved by © miHoYo Co., Ltd.
-                        This project is not affiliated nor endorsed by miHoYo.
-                        Genshin Impact™ and other properties belong to their respective owners.
-                    </TextBlock>
-                </ui:SimpleStackPanel>
-            </GroupBox>
-
             <GroupBox Header="Version">
                 <ui:SimpleStackPanel>
                     <ui:SimpleStackPanel Orientation="Horizontal">
@@ -150,6 +128,28 @@
 
                     <ui:ToggleSwitch Header="Automatically check updates" IsOn="{Binding AutoCheckUpdates}" />
                     <ui:ToggleSwitch Header="Include beta updates" IsOn="{Binding IncludeBetaUpdates}" />
+                </ui:SimpleStackPanel>
+            </GroupBox>
+
+            <GroupBox Header="License">
+                <ui:SimpleStackPanel Margin="10">
+                    <TextBlock>
+                        Created by © 2021 sabihoshi under the
+                        <Hyperlink NavigateUri="{Binding Default.LicenseUri, Source={StaticResource Settings}}">
+                            MIT License
+                        </Hyperlink>.
+                    </TextBlock>
+                    <TextBlock TextWrapping="Wrap">
+                        This project uses third-party libraries or other resources that may be distributed under
+                        <Hyperlink NavigateUri="{Binding Default.ThirdPartyLicenseUri, Source={StaticResource Settings}}">
+                            different licenses
+                        </Hyperlink>.
+                    </TextBlock>
+                    <TextBlock Style="{StaticResource BaseTextBlockStyle}">
+                        All rights reserved by © miHoYo Co., Ltd.
+                        This project is not affiliated nor endorsed by miHoYo.
+                        Genshin Impact™ and other properties belong to their respective owners.
+                    </TextBlock>
                 </ui:SimpleStackPanel>
             </GroupBox>
         </ui:SimpleStackPanel>
