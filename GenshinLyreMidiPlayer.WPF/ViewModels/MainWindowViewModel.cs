@@ -1,7 +1,8 @@
-﻿using System.Collections.Generic;
+using System.Collections.Generic;
 using System.Linq;
 using GenshinLyreMidiPlayer.Data;
 using GenshinLyreMidiPlayer.WPF.Views;
+using ModernWpf;
 using ModernWpf.Controls;
 using Stylet;
 using StyletIoC;
@@ -41,7 +42,7 @@ namespace GenshinLyreMidiPlayer.WPF.ViewModels
             // Work around because events do not conform to the signatures Stylet supports
             _navView = ((MainWindowView) View).NavView;
 
-            _navView.AutoSuggestBox.TextChanged += PlaylistView.OnFilterTextChanged;
+            _navView.AutoSuggestBox.TextChanged += AutoSuggestBoxOnTextChanged;
 
             _navView.SelectionChanged += Navigate;
             _navView.BackRequested    += NavigateBack;
@@ -57,6 +58,19 @@ namespace GenshinLyreMidiPlayer.WPF.ViewModels
 
             await using var db = _ioc.Get<LyreContext>();
             await PlaylistView.AddFiles(db.History.Select(midi => midi.Path));
+        }
+
+        private void AutoSuggestBoxOnTextChanged(AutoSuggestBox sender, AutoSuggestBoxTextChangedEventArgs e)
+        {
+            PlaylistView.OnFilterTextChanged(sender, e);
+            if (ActiveItem != PlaylistView)
+            {
+                var playlist = (NavigationViewItem) _navView.MenuItems
+                    .Cast<NavigationViewItemBase>()
+                    .First(nav => nav.Tag == PlaylistView);
+
+                _navView.SelectedItem = playlist;
+            }
         }
 
         private void NavigateBack(NavigationView sender, NavigationViewBackRequestedEventArgs args)
