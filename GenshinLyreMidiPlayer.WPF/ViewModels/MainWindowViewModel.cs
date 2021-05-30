@@ -75,9 +75,6 @@ namespace GenshinLyreMidiPlayer.WPF.ViewModels
 
         private void NavigateBack(NavigationView sender, NavigationViewBackRequestedEventArgs args)
         {
-            GoBack();
-
-            // Work around to select the navigation item that this IScreen is a part of
             _history.Pop();
             sender.SelectedItem  = _history.Pop();
             sender.IsBackEnabled = _history.Count > 1;
@@ -86,22 +83,18 @@ namespace GenshinLyreMidiPlayer.WPF.ViewModels
         private void Navigate(NavigationView sender, NavigationViewSelectionChangedEventArgs args)
         {
             if (args.IsSettingsSelected)
-                NavigateToSettings();
+                Activate(SettingsView);
             else if ((args.SelectedItem as NavigationViewItem)?.Tag is IScreen viewModel)
+                Activate(viewModel);
+
+            sender.IsBackEnabled = _history.Count > 1;
+            NotifyOfPropertyChange(() => ShowUpdate);
+
+            void Activate(IScreen viewModel)
             {
                 ActivateItem(viewModel);
                 _history.Push((NavigationViewItem) sender.SelectedItem);
             }
-
-            sender.IsBackEnabled = _history.Count > 1;
-            NotifyOfPropertyChange(() => ShowUpdate);
-        }
-
-        public void NavigateToSettings()
-        {
-            ActivateItem(SettingsView);
-            _history.Push((NavigationViewItem) _navView.SettingsItem);
-            _navView.SelectedItem = _navView.SettingsItem;
         }
     }
 }
