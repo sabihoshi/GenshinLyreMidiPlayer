@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using GenshinLyreMidiPlayer.WPF.Core;
@@ -48,6 +49,13 @@ namespace GenshinLyreMidiPlayer.WPF.ViewModels
         {
             get => _shorten;
             set => SetAndNotify(ref _shorten, Math.Max(value, 1));
+        }
+
+        [OnChangedMethod(nameof(Update))]
+        public KeyValuePair<Keyboard.Layout, string> SelectedLayout
+        {
+            get => SettingsPage.SelectedLayout; 
+            set => SettingsPage.SelectedLayout = value;
         }
 
         protected override void OnActivate() { Update(); }

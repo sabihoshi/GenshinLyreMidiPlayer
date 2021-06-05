@@ -39,7 +39,7 @@
                 <GroupBox Header="Layout">
                     <ComboBox
                         ItemsSource="{x:Static core:Keyboard.LayoutNames}"
-                        SelectedItem="{Binding SettingsPage.SelectedLayout}"
+                        SelectedItem="{Binding SelectedLayout}"
                         SelectedIndex="{Binding Default.SelectedLayout, Source={StaticResource Settings}}"
                         DisplayMemberPath="Value" />
                 </GroupBox>
