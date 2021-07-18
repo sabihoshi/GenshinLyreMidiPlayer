@@ -83,37 +83,13 @@
 
             <GroupBox Header="Location">
                 <ui:SimpleStackPanel Orientation="Horizontal">
-                    <ui:SimpleStackPanel.Resources>
-                        <Style TargetType="Button" BasedOn="{StaticResource {x:Type Button}}" />
-                    </ui:SimpleStackPanel.Resources>
-
-                    <Button Command="{s:Action SetLocation}"
-                            Background="Transparent">
+                    <Button Command="{s:Action SetLocation}" Background="Transparent">
                         <ui:FontIcon Glyph="&#xE8E5;" />
                     </Button>
                     <TextBlock Text="{Binding GenshinLocation}"
                                VerticalAlignment="Center"/>
                 </ui:SimpleStackPanel>
             </GroupBox>
-
-            <GroupBox Header="Theme Mode">
-                <ui:RadioButtons
-                    SelectedItem="{Binding 
-                        Source={x:Static ui:ThemeManager.Current}, Path=ApplicationTheme, 
-                        Converter={StaticResource AppThemeConverter}}"
-                    SelectedIndex="{Binding Default.AppTheme, Source={StaticResource Settings}}">
-                    <ui:RadioButtons.ItemsSource>
-                        <theme:AppThemes />
-                    </ui:RadioButtons.ItemsSource>
-                </ui:RadioButtons>
-            </GroupBox>
-
-            <Expander Header="Transition style">
-                <ui:RadioButtons
-                    SelectedItem="{Binding Transition}"
-                    SelectedIndex="{Binding Default.SelectedTransition, Source={StaticResource Settings}}"
-                    ItemsSource="{x:Static transitions:TransitionCollection.Transitions}" />
-            </Expander>
 
             <GroupBox Header="Version">
                 <ui:SimpleStackPanel>
@@ -145,6 +121,25 @@
                     <ui:ToggleSwitch Header="Include beta updates" IsOn="{Binding IncludeBetaUpdates}" />
                 </ui:SimpleStackPanel>
             </GroupBox>
+
+            <GroupBox Header="Theme Mode">
+                <ui:RadioButtons
+                    SelectedItem="{Binding
+                        Source={x:Static ui:ThemeManager.Current}, Path=ApplicationTheme,
+                        Converter={StaticResource AppThemeConverter}}"
+                    SelectedIndex="{Binding Default.AppTheme, Source={StaticResource Settings}}">
+                    <ui:RadioButtons.ItemsSource>
+                        <theme:AppThemes />
+                    </ui:RadioButtons.ItemsSource>
+                </ui:RadioButtons>
+            </GroupBox>
+
+            <Expander Header="Transition style">
+                <ui:RadioButtons
+                    SelectedItem="{Binding Transition}"
+                    SelectedIndex="{Binding Default.SelectedTransition, Source={StaticResource Settings}}"
+                    ItemsSource="{x:Static transitions:TransitionCollection.Transitions}" />
+            </Expander>
 
             <GroupBox Header="License">
                 <ui:SimpleStackPanel Margin="10">
