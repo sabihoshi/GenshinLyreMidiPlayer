@@ -55,5 +55,8 @@
     <Setting Name="UpgradeRequired" Type="System.Boolean" Scope="User">
       <Value Profile="(Default)">True</Value>
     </Setting>
+    <Setting Name="GenshinLocation" Type="System.String" Scope="User">
+      <Value Profile="(Default)">GenshinImpact.exe</Value>
+    </Setting>
   </Settings>
 </SettingsFile>

@@ -1,18 +1,26 @@
 ﻿using System;
 using System.Diagnostics;
+using System.IO;
 using System.Linq;
 using System.Runtime.InteropServices;
+using GenshinLyreMidiPlayer.Data.Properties;
+using Microsoft.Win32;
 
 namespace GenshinLyreMidiPlayer.WPF.Core
 {
     public static class WindowHelper
     {
-        private const string GenshinProcessName = "GenshinImpact";
+        public static string? InstallLocation => Registry.LocalMachine
+            .OpenSubKey(@"SOFTWARE\launcher", false)
+            ?.GetValue("InstPath") as string;
+
+        private static string GenshinProcessName
+            => Path.GetFileNameWithoutExtension(Settings.Default.GenshinLocation)!;
 
         private static IntPtr? FindWindowByProcessName(string processName)
         {
             var process = Process.GetProcessesByName(processName);
-            return process.FirstOrDefault()?.MainWindowHandle;
+            return process.FirstOrDefault(p => p.MainWindowHandle != IntPtr.Zero)?.MainWindowHandle;
         }
 
         [DllImport("user32.dll", CharSet = CharSet.Auto, ExactSpelling = true)]
@@ -43,7 +51,7 @@ namespace GenshinLyreMidiPlayer.WPF.Core
         {
             var genshinWindow = FindWindowByProcessName(GenshinProcessName);
             return genshinWindow != null &&
-                   IsWindowFocused((IntPtr) genshinWindow);
+                IsWindowFocused((IntPtr) genshinWindow);
         }
     }
 }

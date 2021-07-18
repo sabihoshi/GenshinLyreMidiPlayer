@@ -81,6 +81,21 @@
                 </ui:SimpleStackPanel>
             </GroupBox>
 
+            <GroupBox Header="Location">
+                <ui:SimpleStackPanel Orientation="Horizontal">
+                    <ui:SimpleStackPanel.Resources>
+                        <Style TargetType="Button" BasedOn="{StaticResource {x:Type Button}}" />
+                    </ui:SimpleStackPanel.Resources>
+
+                    <Button Command="{s:Action SetLocation}"
+                            Background="Transparent">
+                        <ui:FontIcon Glyph="&#xE8E5;" />
+                    </Button>
+                    <TextBlock Text="{Binding GenshinLocation}"
+                               VerticalAlignment="Center"/>
+                </ui:SimpleStackPanel>
+            </GroupBox>
+
             <GroupBox Header="Theme Mode">
                 <ui:RadioButtons
                     SelectedItem="{Binding 

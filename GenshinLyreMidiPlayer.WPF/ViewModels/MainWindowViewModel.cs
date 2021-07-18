@@ -2,7 +2,6 @@ using System.Collections.Generic;
 using System.Linq;
 using GenshinLyreMidiPlayer.Data;
 using GenshinLyreMidiPlayer.WPF.Views;
-using ModernWpf;
 using ModernWpf.Controls;
 using Stylet;
 using StyletIoC;
@@ -49,6 +48,8 @@ namespace GenshinLyreMidiPlayer.WPF.ViewModels
 
             var menuItems = _navView.MenuItems.Cast<NavigationViewItemBase>();
             _navView.SelectedItem = menuItems.FirstOrDefault(item => item is NavigationViewItem);
+
+            if (!SettingsView.TryGetLocation()) _ = SettingsView.LocationMissing();
 
             if (SettingsView.AutoCheckUpdates)
             {
