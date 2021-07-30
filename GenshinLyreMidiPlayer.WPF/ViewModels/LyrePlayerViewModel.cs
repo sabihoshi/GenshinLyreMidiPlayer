@@ -108,8 +108,8 @@ namespace GenshinLyreMidiPlayer.WPF.ViewModels
                     .Any(t => t.CanBePlayed) ?? false;
 
                 return Playback is not null
-                       && hasNotes
-                       && MaximumTime > TimeSpan.Zero;
+                    && hasNotes
+                    && MaximumTime > TimeSpan.Zero;
             }
         }
 
@@ -395,8 +395,6 @@ namespace GenshinLyreMidiPlayer.WPF.ViewModels
                 Playback.Stop();
             else
             {
-                Playback.Loop = Playlist.Loop == Track;
-
                 var time = new MetricTimeSpan(CurrentTime);
                 Playback.PlaybackStart = time;
                 Playback.MoveToTime(time);
