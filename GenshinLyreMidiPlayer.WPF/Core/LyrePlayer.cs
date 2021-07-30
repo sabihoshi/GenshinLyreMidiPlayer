@@ -9,7 +9,7 @@ namespace GenshinLyreMidiPlayer.WPF.Core
 {
     public static class LyrePlayer
     {
-        public enum Tranpose
+        public enum Transpose
         {
             Ignore,
             Up,
@@ -46,7 +46,7 @@ namespace GenshinLyreMidiPlayer.WPF.Core
         };
 
         public static int TransposeNote(int noteId,
-            Tranpose direction = Tranpose.Ignore)
+            Transpose direction = Transpose.Ignore)
         {
             while (true)
             {
@@ -61,9 +61,9 @@ namespace GenshinLyreMidiPlayer.WPF.Core
                 {
                     return direction switch
                     {
-                        Tranpose.Ignore => noteId,
-                        Tranpose.Up     => ++noteId,
-                        Tranpose.Down   => --noteId
+                        Transpose.Ignore => noteId,
+                        Transpose.Up     => ++noteId,
+                        Transpose.Down   => --noteId
                     };
                 }
             }

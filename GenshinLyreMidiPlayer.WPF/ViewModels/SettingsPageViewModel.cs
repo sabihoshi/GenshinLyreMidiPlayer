@@ -155,7 +155,7 @@ namespace GenshinLyreMidiPlayer.WPF.ViewModels
 
         public string UpdateString { get; set; } = string.Empty;
 
-        public LyrePlayer.Tranpose Transpose { get; set; } = LyrePlayer.Tranpose.Ignore;
+        public LyrePlayer.Transpose? Transpose { get; set; }
 
         public uint MergeMilliseconds { get; set; } = Settings.MergeMilliseconds;
 

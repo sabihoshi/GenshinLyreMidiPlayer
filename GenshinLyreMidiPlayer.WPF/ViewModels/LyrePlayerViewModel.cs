@@ -17,7 +17,7 @@ using ModernWpf.Controls;
 using Stylet;
 using StyletIoC;
 using static Windows.Media.MediaPlaybackAutoRepeatMode;
-using static GenshinLyreMidiPlayer.WPF.Core.LyrePlayer.Tranpose;
+using static GenshinLyreMidiPlayer.WPF.Core.LyrePlayer.Transpose;
 using MidiFile = GenshinLyreMidiPlayer.Data.Midi.MidiFile;
 
 namespace GenshinLyreMidiPlayer.WPF.ViewModels
@@ -298,7 +298,7 @@ namespace GenshinLyreMidiPlayer.WPF.ViewModels
             var outOfRange = midi.GetNotes().Where(note =>
                 !_settings.SelectedLayout.Key.TryGetKey(ApplyNoteSettings(note.NoteNumber), out _));
 
-            if (outOfRange.Any())
+            if (_settings.Transpose is null && outOfRange.Any())
             {
                 await Application.Current.Dispatcher.Invoke(async () =>
                 {
@@ -352,7 +352,7 @@ namespace GenshinLyreMidiPlayer.WPF.ViewModels
             noteId -= Settings.KeyOffset;
 
             if (Settings.TransposeNotes)
-                noteId = LyrePlayer.TransposeNote(noteId, _settings.Transpose);
+                noteId = LyrePlayer.TransposeNote(noteId, _settings.Transpose ?? Ignore);
 
             return noteId;
         }
