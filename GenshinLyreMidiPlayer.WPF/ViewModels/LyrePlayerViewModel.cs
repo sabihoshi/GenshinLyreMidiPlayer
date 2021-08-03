@@ -16,7 +16,6 @@ using Melanchall.DryWetMidi.Tools;
 using ModernWpf.Controls;
 using Stylet;
 using StyletIoC;
-using static Windows.Media.MediaPlaybackAutoRepeatMode;
 using static GenshinLyreMidiPlayer.WPF.Core.LyrePlayer.Transpose;
 using MidiFile = GenshinLyreMidiPlayer.Data.Midi.MidiFile;
 
@@ -91,7 +90,7 @@ namespace GenshinLyreMidiPlayer.WPF.ViewModels
         {
             get
             {
-                if (Playlist.Loop is List or Track)
+                if (Playlist.Loop is not PlaylistViewModel.LoopMode.Playlist)
                     return true;
 
                 var last = Playlist.GetPlaylist().LastOrDefault();
@@ -175,12 +174,17 @@ namespace GenshinLyreMidiPlayer.WPF.ViewModels
 
         public void OnSongPositionChanged()
         {
-            if (!_ignoreSliderChange && Playback is { IsRunning: true })
-            {
-                Playback.Stop();
-                Playback.MoveToTime(new MetricTimeSpan(CurrentTime));
+            NotifyOfPropertyChange(() => CurrentTime);
 
-                if (Settings.UseSpeakers)
+            if (Playback is null) Next();
+
+            if (!_ignoreSliderChange && Playback is not null)
+            {
+                var isRunning = Playback.IsRunning;
+                Playback.Stop();
+                Playback.MoveToTime(new MetricTimeSpan(_songPosition));
+
+                if (Settings.UseSpeakers && isRunning)
                     Playback.Start();
             }
 
@@ -191,12 +195,13 @@ namespace GenshinLyreMidiPlayer.WPF.ViewModels
         {
             _inputDevice?.Dispose();
 
-            if (SelectedMidiInput?.DeviceName != null && SelectedMidiInput.DeviceName != "None")
+            if (SelectedMidiInput?.DeviceName is not null
+                && SelectedMidiInput.DeviceName != "None")
             {
                 _inputDevice = InputDevice.GetByName(SelectedMidiInput.DeviceName);
 
-                _inputDevice.EventReceived += OnNoteEvent;
-                _inputDevice.StartEventsListening();
+                _inputDevice!.EventReceived += OnNoteEvent;
+                _inputDevice!.StartEventsListening();
             }
         }
 
@@ -375,12 +380,18 @@ namespace GenshinLyreMidiPlayer.WPF.ViewModels
         {
             var next = Playlist.Next();
             if (next is null)
-                return;
+            {
+                if (Playback is not null)
+                {
+                    Playback.PlaybackStart = null;
+                    Playback.MoveToStart();
+                }
 
-            if (next == Playlist.OpenedFile && Playlist.Loop == Track)
-                Handle(next);
-            else if (next != Playlist.OpenedFile)
-                Handle(next);
+                MoveSlider(TimeSpan.Zero);
+                return;
+            }
+
+            Handle(next);
 
             if (Playback is not null)
                 await PlayPause();

@@ -3,7 +3,6 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 using System.Windows.Media;
-using Windows.Media;
 using GenshinLyreMidiPlayer.Data;
 using GenshinLyreMidiPlayer.Data.Entities;
 using GenshinLyreMidiPlayer.WPF.ModernWPF.Errors;
@@ -13,13 +12,20 @@ using ModernWpf;
 using ModernWpf.Controls;
 using Stylet;
 using StyletIoC;
-using static Windows.Media.MediaPlaybackAutoRepeatMode;
 using MidiFile = GenshinLyreMidiPlayer.Data.Midi.MidiFile;
 
 namespace GenshinLyreMidiPlayer.WPF.ViewModels
 {
     public class PlaylistViewModel : Screen
     {
+        public enum LoopMode
+        {
+            Once,
+            Track,
+            Playlist,
+            All
+        }
+
         private readonly IEventAggregator _events;
         private readonly IContainer _ioc;
 
@@ -39,7 +45,7 @@ namespace GenshinLyreMidiPlayer.WPF.ViewModels
 
         public bool Shuffle { get; set; }
 
-        public MediaPlaybackAutoRepeatMode Loop { get; set; }
+        public LoopMode Loop { get; set; }
 
         public MidiFile? OpenedFile { get; set; }
 
@@ -56,9 +62,10 @@ namespace GenshinLyreMidiPlayer.WPF.ViewModels
         public string LoopStateString =>
             Loop switch
             {
-                None  => "\xF5E7",
-                Track => "\xE8ED",
-                List  => "\xE8EE"
+                LoopMode.Once     => "\xF5E7",
+                LoopMode.Track    => "\xE8ED",
+                LoopMode.Playlist => "\xEBE7",
+                LoopMode.All      => "\xE8EE"
             };
 
         public void OnFilterTextChanged(AutoSuggestBox sender, AutoSuggestBoxTextChangedEventArgs e)
@@ -79,32 +86,30 @@ namespace GenshinLyreMidiPlayer.WPF.ViewModels
         public void ToggleLoop()
         {
             var loopState = (int) Loop;
-            var loopStates = Enum.GetValues(typeof(MediaPlaybackAutoRepeatMode)).Length;
+            var loopStates = Enum.GetValues(typeof(LoopMode)).Length;
 
             var newState = (loopState + 1) % loopStates;
-            Loop = (MediaPlaybackAutoRepeatMode) newState;
+            Loop = (LoopMode) newState;
         }
 
         public MidiFile? Next()
         {
             var playlist = GetPlaylist().ToList();
+            if (OpenedFile is null) return playlist.FirstOrDefault();
 
-            if (Loop == Track)
-                return OpenedFile ?? playlist.FirstOrDefault();
-
-            var next = playlist.FirstOrDefault();
-
-            if (OpenedFile is not null)
+            switch (Loop)
             {
-                var current = playlist.IndexOf(OpenedFile) + 1;
-
-                if (Loop is List)
-                    current %= playlist.Count;
-
-                next = playlist.ElementAtOrDefault(current);
+                case LoopMode.Once:
+                    return null;
+                case LoopMode.Track:
+                    return OpenedFile;
             }
 
-            return next;
+            var next = playlist.IndexOf(OpenedFile) + 1;
+            if (Loop is LoopMode.All)
+                next %= playlist.Count;
+
+            return playlist.ElementAtOrDefault(next);
         }
 
         public BindableCollection<MidiFile> GetPlaylist() => Shuffle ? ShuffledTracks : Tracks;
