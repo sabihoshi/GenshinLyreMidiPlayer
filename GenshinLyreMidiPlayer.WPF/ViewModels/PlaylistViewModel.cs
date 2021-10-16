@@ -26,8 +26,9 @@ namespace GenshinLyreMidiPlayer.WPF.ViewModels
             All
         }
 
-        private readonly IEventAggregator _events;
         private readonly IContainer _ioc;
+
+        private readonly IEventAggregator _events;
 
         public PlaylistViewModel(IContainer ioc, IEventAggregator events)
         {
@@ -38,8 +39,6 @@ namespace GenshinLyreMidiPlayer.WPF.ViewModels
         public BindableCollection<MidiFile> FilteredTracks => string.IsNullOrWhiteSpace(FilterText)
             ? Tracks
             : new(Tracks.Where(t => t.Title.Contains(FilterText, StringComparison.OrdinalIgnoreCase)));
-
-        private BindableCollection<MidiFile> ShuffledTracks { get; set; } = new();
 
         public BindableCollection<MidiFile> Tracks { get; } = new();
 
@@ -68,29 +67,9 @@ namespace GenshinLyreMidiPlayer.WPF.ViewModels
                 LoopMode.All      => "\xE8EE"
             };
 
-        public void OnFilterTextChanged(AutoSuggestBox sender, AutoSuggestBoxTextChangedEventArgs e)
-        {
-            FilterText = sender.Text;
-        }
+        private BindableCollection<MidiFile> ShuffledTracks { get; set; } = new();
 
-        public void ToggleShuffle()
-        {
-            Shuffle = !Shuffle;
-
-            if (Shuffle)
-                ShuffledTracks = new(Tracks.OrderBy(_ => Guid.NewGuid()));
-
-            RefreshPlaylist();
-        }
-
-        public void ToggleLoop()
-        {
-            var loopState = (int) Loop;
-            var loopStates = Enum.GetValues(typeof(LoopMode)).Length;
-
-            var newState = (loopState + 1) % loopStates;
-            Loop = (LoopMode) newState;
-        }
+        public BindableCollection<MidiFile> GetPlaylist() => Shuffle ? ShuffledTracks : Tracks;
 
         public MidiFile? Next()
         {
@@ -112,7 +91,27 @@ namespace GenshinLyreMidiPlayer.WPF.ViewModels
             return playlist.ElementAtOrDefault(next);
         }
 
-        public BindableCollection<MidiFile> GetPlaylist() => Shuffle ? ShuffledTracks : Tracks;
+        public async Task AddFiles(IEnumerable<string> files)
+        {
+            foreach (var file in files)
+            {
+                await AddFile(file);
+            }
+
+            ShuffledTracks = new(Tracks.OrderBy(_ => Guid.NewGuid()));
+            RefreshPlaylist();
+            await UpdateHistory();
+
+            var next = Next();
+            if (OpenedFile is null && Tracks.Count > 0 && next is not null)
+                _events.Publish(Next());
+        }
+
+        public async Task ClearPlaylist()
+        {
+            Tracks.Clear();
+            await UpdateHistory();
+        }
 
         public async Task OpenFile()
         {
@@ -128,20 +127,57 @@ namespace GenshinLyreMidiPlayer.WPF.ViewModels
             await AddFiles(openFileDialog.FileNames);
         }
 
-        public async Task AddFiles(IEnumerable<string> files)
+        public async Task UpdateHistory()
         {
-            foreach (var file in files)
+            await using var db = _ioc.Get<LyreContext>();
+            db.History.RemoveRange(db.History);
+            db.History.AddRange(Tracks.Select(t => new History(t.Path)));
+            await db.SaveChangesAsync();
+        }
+
+        public void OnFileChanged(object sender, EventArgs e)
+        {
+            if (SelectedFile is not null)
+                _events.Publish(SelectedFile);
+        }
+
+        public void OnFilterTextChanged(AutoSuggestBox sender, AutoSuggestBoxTextChangedEventArgs e)
+        {
+            FilterText = sender.Text;
+        }
+
+        public void Previous()
+        {
+            History.Pop();
+            _events.Publish(History.Pop());
+        }
+
+        public void RemoveTrack()
+        {
+            if (SelectedFile is not null)
             {
-                await AddFile(file);
+                Tracks.Remove(SelectedFile);
+                RefreshPlaylist();
             }
+        }
 
-            ShuffledTracks = new(Tracks.OrderBy(_ => Guid.NewGuid()));
+        public void ToggleLoop()
+        {
+            var loopState = (int) Loop;
+            var loopStates = Enum.GetValues(typeof(LoopMode)).Length;
+
+            var newState = (loopState + 1) % loopStates;
+            Loop = (LoopMode) newState;
+        }
+
+        public void ToggleShuffle()
+        {
+            Shuffle = !Shuffle;
+
+            if (Shuffle)
+                ShuffledTracks = new(Tracks.OrderBy(_ => Guid.NewGuid()));
+
             RefreshPlaylist();
-            await UpdateHistory();
-
-            var next = Next();
-            if (OpenedFile is null && Tracks.Count > 0 && next is not null)
-                _events.Publish(Next());
         }
 
         private async Task AddFile(string fileName, ReadingSettings? settings = null)
@@ -159,29 +195,6 @@ namespace GenshinLyreMidiPlayer.WPF.ViewModels
             }
         }
 
-        public void RemoveTrack()
-        {
-            if (SelectedFile is not null)
-            {
-                Tracks.Remove(SelectedFile);
-                RefreshPlaylist();
-            }
-        }
-
-        public async Task ClearPlaylist()
-        {
-            Tracks.Clear();
-            await UpdateHistory();
-        }
-
-        public async Task UpdateHistory()
-        {
-            await using var db = _ioc.Get<LyreContext>();
-            db.History.RemoveRange(db.History);
-            db.History.AddRange(Tracks.Select(t => new History(t.Path)));
-            await db.SaveChangesAsync();
-        }
-
         private void RefreshPlaylist()
         {
             var playlist = GetPlaylist();
@@ -189,18 +202,6 @@ namespace GenshinLyreMidiPlayer.WPF.ViewModels
             {
                 file.Position = playlist.IndexOf(file);
             }
-        }
-
-        public void OnFileChanged(object sender, EventArgs e)
-        {
-            if (SelectedFile is not null)
-                _events.Publish(SelectedFile);
-        }
-
-        public void Previous()
-        {
-            History.Pop();
-            _events.Publish(History.Pop());
         }
     }
 }

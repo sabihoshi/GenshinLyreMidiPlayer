@@ -45,6 +45,20 @@ namespace GenshinLyreMidiPlayer.WPF.Core
             83  // B5
         };
 
+        public static bool TryGetKey(this Layout layout, int noteId, out VirtualKeyCode key)
+        {
+            var keys = GetLayout(layout);
+            return TryGetKey(keys, noteId, out key);
+        }
+
+        public static bool TryGetKey(this IEnumerable<VirtualKeyCode> keys, int noteId, out VirtualKeyCode key)
+        {
+            var keyIndex = LyreNotes.IndexOf(noteId);
+            key = keys.ElementAtOrDefault(keyIndex);
+
+            return keyIndex != -1;
+        }
+
         public static int TransposeNote(int noteId,
             Transpose direction = Transpose.Ignore)
         {
@@ -69,9 +83,11 @@ namespace GenshinLyreMidiPlayer.WPF.Core
             }
         }
 
-        public static void PlayNote(int noteId, Layout selectedLayout)
+        public static void InteractNote(int noteId, Layout selectedLayout,
+            Func<VirtualKeyCode, IKeyboardSimulator> action)
         {
-            InteractNote(noteId, selectedLayout, Input.Keyboard.KeyPress);
+            if (selectedLayout.TryGetKey(noteId, out var key))
+                action.Invoke(key);
         }
 
         public static void NoteDown(int noteId, Layout selectedLayout)
@@ -84,25 +100,9 @@ namespace GenshinLyreMidiPlayer.WPF.Core
             InteractNote(noteId, selectedLayout, Input.Keyboard.KeyUp);
         }
 
-        public static void InteractNote(int noteId, Layout selectedLayout,
-            Func<VirtualKeyCode, IKeyboardSimulator> action)
+        public static void PlayNote(int noteId, Layout selectedLayout)
         {
-            if (selectedLayout.TryGetKey(noteId, out var key))
-                action.Invoke(key);
-        }
-
-        public static bool TryGetKey(this Layout layout, int noteId, out VirtualKeyCode key)
-        {
-            var keys = GetLayout(layout);
-            return TryGetKey(keys, noteId, out key);
-        }
-
-        public static bool TryGetKey(this IEnumerable<VirtualKeyCode> keys, int noteId, out VirtualKeyCode key)
-        {
-            var keyIndex = LyreNotes.IndexOf(noteId);
-            key = keys.ElementAtOrDefault(keyIndex);
-
-            return keyIndex != -1;
+            InteractNote(noteId, selectedLayout, Input.Keyboard.KeyPress);
         }
     }
 }

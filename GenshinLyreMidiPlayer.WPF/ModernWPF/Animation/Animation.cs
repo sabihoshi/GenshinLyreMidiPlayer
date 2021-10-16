@@ -42,13 +42,6 @@ namespace GenshinLyreMidiPlayer.WPF.ModernWPF.Animation
             _element.InvalidateProperty(UIElement.RenderTransformOriginProperty);
         }
 
-        private void OnCurrentStateInvalidated(object? sender, EventArgs e)
-        {
-            if (sender is Clock clock) _currentState = clock.CurrentState;
-        }
-
-        private void OnCompleted(object? sender, EventArgs e) { Completed?.Invoke(this, EventArgs.Empty); }
-
         private BitmapCache GetBitmapCache()
         {
 #if NETCOREAPP || NET462
@@ -56,6 +49,13 @@ namespace GenshinLyreMidiPlayer.WPF.ModernWPF.Animation
 #else
             return _defaultBitmapCache;
 #endif
+        }
+
+        private void OnCompleted(object? sender, EventArgs e) { Completed?.Invoke(this, EventArgs.Empty); }
+
+        private void OnCurrentStateInvalidated(object? sender, EventArgs e)
+        {
+            if (sender is Clock clock) _currentState = clock.CurrentState;
         }
     }
 }

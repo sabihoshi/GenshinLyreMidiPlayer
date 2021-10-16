@@ -10,6 +10,8 @@ namespace GenshinLyreMidiPlayer.Data.Properties
     //  The SettingsSaving event is raised before the setting values are saved.
     public sealed partial class Settings
     {
+        protected override void OnPropertyChanged(object sender, PropertyChangedEventArgs e) => Save();
+
         protected override void OnSettingsLoaded(object sender, SettingsLoadedEventArgs e)
         {
             if (Default.UpgradeRequired)
@@ -19,7 +21,5 @@ namespace GenshinLyreMidiPlayer.Data.Properties
                 Default.Save();
             }
         }
-
-        protected override void OnPropertyChanged(object sender, PropertyChangedEventArgs e) => Save();
     }
 }

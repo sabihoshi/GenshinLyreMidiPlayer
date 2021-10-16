@@ -24,6 +24,13 @@ namespace GenshinLyreMidiPlayer.WPF.ViewModels
 
         [OnChangedMethod(nameof(Update))] public char Delimiter { get; set; } = '.';
 
+        [OnChangedMethod(nameof(Update))]
+        public KeyValuePair<Keyboard.Layout, string> SelectedLayout
+        {
+            get => SettingsPage.SelectedLayout;
+            set => SettingsPage.SelectedLayout = value;
+        }
+
         public PlaylistViewModel PlaylistView { get; }
 
         public SettingsPageViewModel SettingsPage { get; }
@@ -50,15 +57,6 @@ namespace GenshinLyreMidiPlayer.WPF.ViewModels
             get => _shorten;
             set => SetAndNotify(ref _shorten, Math.Max(value, 1));
         }
-
-        [OnChangedMethod(nameof(Update))]
-        public KeyValuePair<Keyboard.Layout, string> SelectedLayout
-        {
-            get => SettingsPage.SelectedLayout; 
-            set => SettingsPage.SelectedLayout = value;
-        }
-
-        protected override void OnActivate() { Update(); }
 
         public void Update()
         {
@@ -102,5 +100,7 @@ namespace GenshinLyreMidiPlayer.WPF.ViewModels
 
             Result = sb.ToString();
         }
+
+        protected override void OnActivate() { Update(); }
     }
 }

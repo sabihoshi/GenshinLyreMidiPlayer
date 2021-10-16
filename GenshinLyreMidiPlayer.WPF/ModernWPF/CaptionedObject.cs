@@ -11,9 +11,9 @@ namespace GenshinLyreMidiPlayer.WPF.ModernWPF
             Caption = caption;
         }
 
-        protected string? Caption { get; }
-
         public T Object { get; }
+
+        protected string? Caption { get; }
 
         public override string ToString() => Caption ?? base.ToString() ?? string.Empty;
     }

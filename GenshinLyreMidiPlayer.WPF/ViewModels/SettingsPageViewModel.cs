@@ -149,6 +149,12 @@ namespace GenshinLyreMidiPlayer.WPF.ViewModels
 
         public MidiSpeed SelectedSpeed { get; set; } = MidiSpeeds[Settings.SelectedSpeed];
 
+        public string GenshinLocation
+        {
+            get => Settings.GenshinLocation;
+            set => Settings.GenshinLocation = value;
+        }
+
         public string Key => $"Key: {KeyOffsets[KeyOffset]}";
 
         public string TimerText => CanChangeTime ? "Start" : "Stop";
@@ -160,12 +166,6 @@ namespace GenshinLyreMidiPlayer.WPF.ViewModels
         public uint MergeMilliseconds { get; set; } = Settings.MergeMilliseconds;
 
         public static Version ProgramVersion => Assembly.GetExecutingAssembly().GetName().Version!;
-
-        public string GenshinLocation
-        {
-            get => Settings.GenshinLocation;
-            set => Settings.GenshinLocation = value;
-        }
 
         public bool TryGetLocation()
         {
@@ -190,32 +190,30 @@ namespace GenshinLyreMidiPlayer.WPF.ViewModels
             return locations.Any(TrySetLocation);
         }
 
-        private bool TrySetLocation(string? location)
+        public async Task CheckForUpdate()
         {
-            if (File.Exists(location) && location is not null)
+            if (IsCheckingUpdate)
+                return;
+
+            UpdateString     = "Checking for updates...";
+            IsCheckingUpdate = true;
+
+            try
             {
-                Settings.GenshinLocation = location;
-                NotifyOfPropertyChange(() => Settings.GenshinLocation);
-                return true;
+                LatestVersion = await GetLatestVersion();
+                UpdateString = LatestVersion.Version > ProgramVersion
+                    ? "(Update available!)"
+                    : string.Empty;
             }
-
-            return false;
-        }
-
-        public async Task SetLocation()
-        {
-            var openFileDialog = new OpenFileDialog
+            catch (Exception)
             {
-                Filter = "Executable|*.exe|All files (*.*)|*.*",
-                InitialDirectory = WindowHelper.InstallLocation is null
-                    ? string.Empty
-                    : Path.Combine(WindowHelper.InstallLocation, "Genshin Impact Game")
-            };
-
-            var success = openFileDialog.ShowDialog() == true;
-            var set = TrySetLocation(openFileDialog.FileName);
-
-            if (!(success && set)) await LocationMissing();
+                UpdateString = "Failed to check updates";
+            }
+            finally
+            {
+                IsCheckingUpdate = false;
+                NotifyOfPropertyChange(() => NeedsUpdate);
+            }
         }
 
         public async Task LocationMissing()
@@ -245,6 +243,22 @@ namespace GenshinLyreMidiPlayer.WPF.ViewModels
             }
         }
 
+        public async Task SetLocation()
+        {
+            var openFileDialog = new OpenFileDialog
+            {
+                Filter = "Executable|*.exe|All files (*.*)|*.*",
+                InitialDirectory = WindowHelper.InstallLocation is null
+                    ? string.Empty
+                    : Path.Combine(WindowHelper.InstallLocation, "Genshin Impact Game")
+            };
+
+            var success = openFileDialog.ShowDialog() == true;
+            var set = TrySetLocation(openFileDialog.FileName);
+
+            if (!(success && set)) await LocationMissing();
+        }
+
         public async Task StartStopTimer()
         {
             if (PlayTimerToken is not null)
@@ -265,44 +279,6 @@ namespace GenshinLyreMidiPlayer.WPF.ViewModels
             PlayTimerToken = null;
         }
 
-        public void SetTimeToNow() => DateTime = DateTime.Now;
-
-        private void OnAutoCheckUpdatesChanged()
-        {
-            if (AutoCheckUpdates)
-                _ = CheckForUpdate();
-        }
-
-        private void OnIncludeBetaUpdatesChanged() => _ = CheckForUpdate();
-
-        private void OnKeyOffsetChanged() => Settings.Modify(s => s.KeyOffset = KeyOffset);
-
-        public async Task CheckForUpdate()
-        {
-            if (IsCheckingUpdate)
-                return;
-
-            UpdateString     = "Checking for updates...";
-            IsCheckingUpdate = true;
-
-            try
-            {
-                LatestVersion = await GetLatestVersion();
-                UpdateString = LatestVersion.Version > ProgramVersion
-                    ? "(Update available!)"
-                    : string.Empty;
-            }
-            catch (Exception)
-            {
-                UpdateString = "Failed to check updates";
-            }
-            finally
-            {
-                IsCheckingUpdate = false;
-                NotifyOfPropertyChange(() => NeedsUpdate);
-            }
-        }
-
         public async Task<GitVersion> GetLatestVersion()
         {
             var client = new HttpClient();
@@ -321,11 +297,41 @@ namespace GenshinLyreMidiPlayer.WPF.ViewModels
                 .First(v => !v.Draft && !v.Prerelease || IncludeBetaUpdates);
         }
 
-        private void OnSelectedLayoutIndexChanged()
+        public void OnThemeChanged()
         {
-            var layout = (int) SelectedLayout.Key;
-            Settings.Modify(s => s.SelectedLayout = layout);
+            var theme = (int?) ThemeManager.Current.ApplicationTheme ?? -1;
+            Settings.Modify(s => s.AppTheme = theme);
         }
+
+        public void SetTimeToNow() => DateTime = DateTime.Now;
+
+        protected override void OnActivate()
+        {
+            if (AutoCheckUpdates)
+                _ = CheckForUpdate();
+        }
+
+        private bool TrySetLocation(string? location)
+        {
+            if (File.Exists(location) && location is not null)
+            {
+                Settings.GenshinLocation = location;
+                NotifyOfPropertyChange(() => Settings.GenshinLocation);
+                return true;
+            }
+
+            return false;
+        }
+
+        private void OnAutoCheckUpdatesChanged()
+        {
+            if (AutoCheckUpdates)
+                _ = CheckForUpdate();
+        }
+
+        private void OnIncludeBetaUpdatesChanged() => _ = CheckForUpdate();
+
+        private void OnKeyOffsetChanged() => Settings.Modify(s => s.KeyOffset = KeyOffset);
 
         private void OnMergeMillisecondsChanged()
         {
@@ -339,18 +345,12 @@ namespace GenshinLyreMidiPlayer.WPF.ViewModels
             _events.Publish(new MergeNotesNotification(MergeNotes));
         }
 
+        private void OnSelectedLayoutIndexChanged()
+        {
+            var layout = (int) SelectedLayout.Key;
+            Settings.Modify(s => s.SelectedLayout = layout);
+        }
+
         private void OnSelectedSpeedChanged() => _events.Publish(this);
-
-        public void OnThemeChanged()
-        {
-            var theme = (int?) ThemeManager.Current.ApplicationTheme ?? -1;
-            Settings.Modify(s => s.AppTheme = theme);
-        }
-
-        protected override void OnActivate()
-        {
-            if (AutoCheckUpdates)
-                _ = CheckForUpdate();
-        }
     }
 }

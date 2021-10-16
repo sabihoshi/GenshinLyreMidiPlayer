@@ -28,7 +28,8 @@
 
         <ui:SimpleStackPanel Grid.Row="0">
             <TextBlock VerticalAlignment="Center">
-                Current song: <Run Text="{Binding PlaylistView.OpenedFile.Title, Mode=OneWay, FallbackValue=Nothing}" />
+                Current song:
+                <Run Text="{Binding PlaylistView.OpenedFile.Title, Mode=OneWay, FallbackValue=Nothing}" />
             </TextBlock>
 
             <ui:SimpleStackPanel Orientation="Horizontal">

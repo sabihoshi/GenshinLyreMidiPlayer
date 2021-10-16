@@ -39,13 +39,6 @@ namespace GenshinLyreMidiPlayer.WPF.ModernWPF.Animation
             DecelerateKeySpline.Freeze();
         }
 
-        //protected virtual string GetNavigationStateCore();
-        //protected virtual void SetNavigationStateCore(string navigationState);
-
-        protected abstract Animation? GetEnterAnimation(FrameworkElement element, bool movingBackwards);
-
-        protected abstract Animation? GetExitAnimation(FrameworkElement element, bool movingBackwards);
-
         public Animation? GetEnterAnimation(object element, bool movingBackwards) =>
             GetEnterAnimation(
                 (FrameworkElement) element, movingBackwards);
@@ -53,5 +46,12 @@ namespace GenshinLyreMidiPlayer.WPF.ModernWPF.Animation
         public Animation? GetExitAnimation(object element, bool movingBackwards) =>
             GetExitAnimation(
                 (FrameworkElement) element, movingBackwards);
+
+        //protected virtual string GetNavigationStateCore();
+        //protected virtual void SetNavigationStateCore(string navigationState);
+
+        protected abstract Animation? GetEnterAnimation(FrameworkElement element, bool movingBackwards);
+
+        protected abstract Animation? GetExitAnimation(FrameworkElement element, bool movingBackwards);
     }
 }

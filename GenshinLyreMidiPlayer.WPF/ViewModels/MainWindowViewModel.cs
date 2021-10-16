@@ -10,8 +10,8 @@ namespace GenshinLyreMidiPlayer.WPF.ViewModels
 {
     public class MainWindowViewModel : Conductor<IScreen>.StackNavigation
     {
-        private readonly Stack<NavigationViewItem> _history = new();
         private readonly IContainer _ioc;
+        private readonly Stack<NavigationViewItem> _history = new();
         private NavigationView _navView;
 
         public MainWindowViewModel(IContainer ioc, IEventAggregator events)
@@ -74,13 +74,6 @@ namespace GenshinLyreMidiPlayer.WPF.ViewModels
             }
         }
 
-        private void NavigateBack(NavigationView sender, NavigationViewBackRequestedEventArgs args)
-        {
-            _history.Pop();
-            sender.SelectedItem  = _history.Pop();
-            sender.IsBackEnabled = _history.Count > 1;
-        }
-
         private void Navigate(NavigationView sender, NavigationViewSelectionChangedEventArgs args)
         {
             if (args.IsSettingsSelected)
@@ -96,6 +89,13 @@ namespace GenshinLyreMidiPlayer.WPF.ViewModels
                 ActivateItem(viewModel);
                 _history.Push((NavigationViewItem) sender.SelectedItem);
             }
+        }
+
+        private void NavigateBack(NavigationView sender, NavigationViewBackRequestedEventArgs args)
+        {
+            _history.Pop();
+            sender.SelectedItem  = _history.Pop();
+            sender.IsBackEnabled = _history.Count > 1;
         }
     }
 }

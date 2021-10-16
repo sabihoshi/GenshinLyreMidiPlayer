@@ -98,7 +98,8 @@
                             <Style x:Key="TracksSwitch" TargetType="ui:ToggleSwitch">
                                 <Style.Triggers>
                                     <Trigger Property="IsEnabled" Value="False">
-                                        <Setter Property="ToolTip" Value="Cannot disable track containing tempo settings." />
+                                        <Setter Property="ToolTip"
+                                                Value="Cannot disable track containing tempo settings." />
                                         <Setter Property="ToolTipService.ShowOnDisabled" Value="True" />
                                     </Trigger>
                                 </Style.Triggers>
