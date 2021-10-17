@@ -7,6 +7,6 @@ namespace GenshinLyreMidiPlayer.Data
     {
         public LyreContext(DbContextOptions<LyreContext> options) : base(options) { }
 
-        public DbSet<History> History { get; set; }
+        public DbSet<History> History { get; set; } = null!;
     }
 }

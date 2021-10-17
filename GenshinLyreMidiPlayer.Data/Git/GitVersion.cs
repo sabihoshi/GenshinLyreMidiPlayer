@@ -9,11 +9,11 @@ namespace GenshinLyreMidiPlayer.Data.Git
 
         [JsonPropertyName("prerelease")] public bool Prerelease { get; set; }
 
-        [JsonPropertyName("name")] public string Name { get; set; }
+        [JsonPropertyName("name")] public string Name { get; set; } = null!;
 
-        [JsonPropertyName("tag_name")] public string TagName { get; set; }
+        [JsonPropertyName("tag_name")] public string TagName { get; set; } = null!;
 
-        [JsonPropertyName("html_url")] public string Url { get; set; }
+        [JsonPropertyName("html_url")] public string Url { get; set; } = null!;
 
         public Version Version => new(TagName.Replace("v", string.Empty));
     }

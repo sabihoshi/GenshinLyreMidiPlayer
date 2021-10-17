@@ -27,7 +27,7 @@ namespace GenshinLyreMidiPlayer.Data.Midi
             set => SetAndNotify(ref _position, value);
         }
 
-        public Melanchall.DryWetMidi.Core.MidiFile Midi { get; private set; }
+        public Melanchall.DryWetMidi.Core.MidiFile Midi { get; private set; } = null!;
 
         public string Path { get; }
 
