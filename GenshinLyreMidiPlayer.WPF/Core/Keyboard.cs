@@ -7,6 +7,7 @@ namespace GenshinLyreMidiPlayer.WPF.Core
     [SuppressMessage("ReSharper", "InconsistentNaming")]
     [SuppressMessage("ReSharper", "StringLiteralTypo")]
     [SuppressMessage("ReSharper", "IdentifierTypo")]
+    [SuppressMessage("ReSharper", "CollectionNeverQueried.Global")]
     public static class Keyboard
     {
         public enum Layout
