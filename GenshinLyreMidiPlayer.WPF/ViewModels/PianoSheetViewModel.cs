@@ -6,6 +6,7 @@ using GenshinLyreMidiPlayer.WPF.Core;
 using Melanchall.DryWetMidi.Interaction;
 using PropertyChanged;
 using Stylet;
+using static GenshinLyreMidiPlayer.WPF.Core.LyrePlayer.Transpose;
 
 namespace GenshinLyreMidiPlayer.WPF.ViewModels;
 
@@ -35,7 +36,7 @@ public class PianoSheetViewModel : Screen
 
     public SettingsPageViewModel SettingsPage { get; }
 
-    public string Result { get; private set; }
+    public string Result { get; private set; } = string.Empty;
 
     [OnChangedMethod(nameof(Update))]
     public uint Bars
@@ -82,17 +83,19 @@ public class PianoSheetViewModel : Screen
 
             foreach (var note in notes)
             {
-                var id = LyrePlayer.TransposeNote(note.NoteNumber);
-                if (layout.TryGetKey(id, out var key))
-                {
-                    var difference = note.Time - last;
-                    var dotCount = difference / Shorten;
+                var offset = note.NoteNumber - SettingsPage.KeyOffset;
+                var transpose = SettingsPage.Transpose ?? Ignore;
+                var id = LyrePlayer.TransposeNote(offset, transpose);
 
-                    sb.Append(new string(Delimiter, (int) dotCount));
-                    sb.Append(key.ToString().Last());
+                if (!layout.TryGetKey(id, out var key)) continue;
 
-                    last = (int) note.Time;
-                }
+                var difference = note.Time - last;
+                var dotCount = difference / Shorten;
+
+                sb.Append(new string(Delimiter, (int) dotCount));
+                sb.Append(key.ToString().Last());
+
+                last = (int) note.Time;
             }
 
             sb.AppendLine();
