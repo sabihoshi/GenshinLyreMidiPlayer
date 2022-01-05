@@ -17,25 +17,28 @@ jobs:
     - uses: actions/checkout@v2.3.4
 
     - name: Setup .NET Core SDK
-      uses: actions/setup-dotnet@v1.7.2
+      uses: actions/setup-dotnet@v1.8.2
       with:
-        dotnet-version: 5.0.x
+        dotnet-version: 6.0.x
 
     - name: Publish with dotnet
-      run: dotnet publish GenshinLyreMidiPlayer.WPF -r win-x64 -c Release -o .\output --self-contained false -p:PublishSingleFile=true
+      run: |
+        dotnet publish GenshinLyreMidiPlayer.WPF -r win-x64 -c Release -o .\dependent --self-contained false -p:PublishSingleFile=true
+        dotnet publish GenshinLyreMidiPlayer.WPF -r win-x64 -c Release -o .\standalone --self-contained true -p:PublishSingleFile=true
 
     - name: Zip release
-      run: 7z a GenshinLyreMidiPlayer_${{ steps.tag.outputs.VERSION }}_win-x64.zip .\output\* '-xr!*.pdb'
-
-    - name: 7Zip release
-      run: 7z a GenshinLyreMidiPlayer_${{ steps.tag.outputs.VERSION }}_win-x64.7z .\output\* '-xr!*.pdb'
+      run: |
+        7z a GenshinLyreMidiPlayer_${{ steps.tag.outputs.VERSION }}_win-x64_dependent.zip .\dependent\* -mx9
+        7z a GenshinLyreMidiPlayer_${{ steps.tag.outputs.VERSION }}_win-x64_standalone.zip .\standalone\* -mx9
 
     - name: Create Release
-      uses: ncipollo/release-action@v1.8.4
+      uses: ncipollo/release-action@v1.8.10
       with:
           allowUpdates: true
           omitBodyDuringUpdate: true
           omitNameDuringUpdate: true
-          artifacts: ./GenshinLyreMidiPlayer_${{ steps.tag.outputs.VERSION }}_win-x64.zip,./GenshinLyreMidiPlayer_${{ steps.tag.outputs.VERSION }}_win-x64.7z
+          artifacts:
+              ./GenshinLyreMidiPlayer_${{ steps.tag.outputs.VERSION }}_win-x64_dependent.zip,
+              ./GenshinLyreMidiPlayer_${{ steps.tag.outputs.VERSION }}_win-x64_standalone.zip
           artifactContentType: application/zip
           token: ${{ secrets.GITHUB_TOKEN }}
