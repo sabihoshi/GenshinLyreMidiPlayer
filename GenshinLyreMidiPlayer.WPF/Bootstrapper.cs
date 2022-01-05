@@ -18,72 +18,71 @@ using Microsoft.EntityFrameworkCore;
 using Stylet;
 using StyletIoC;
 
-namespace GenshinLyreMidiPlayer.WPF
+namespace GenshinLyreMidiPlayer.WPF;
+
+public class Bootstrapper : Bootstrapper<MainWindowViewModel>
 {
-    public class Bootstrapper : Bootstrapper<MainWindowViewModel>
+    public Bootstrapper()
     {
-        public Bootstrapper()
-        {
-            // Make Hyperlinks handle themselves
-            EventManager.RegisterClassHandler(
-                typeof(Hyperlink), Hyperlink.RequestNavigateEvent,
-                new RequestNavigateEventHandler((_, e) =>
-                {
-                    var url = e.Uri.ToString();
-                    Process.Start(new ProcessStartInfo(url)
-                    {
-                        UseShellExecute = true
-                    });
-                })
-            );
-        }
-
-        protected override void ConfigureIoC(IStyletIoCBuilder builder)
-        {
-            var config = ConfigurationManager
-                .OpenExeConfiguration(ConfigurationUserLevel.PerUserRoamingAndLocal);
-
-            var path = Path.GetDirectoryName(config.FilePath);
-            if (!Directory.Exists(path))
-                Directory.CreateDirectory(path);
-
-            builder.Bind<LyreContext>().ToFactory(_ =>
+        // Make Hyperlinks handle themselves
+        EventManager.RegisterClassHandler(
+            typeof(Hyperlink), Hyperlink.RequestNavigateEvent,
+            new RequestNavigateEventHandler((_, e) =>
             {
-                var source = Path.Combine(path!, Settings.Default.SqliteConnection);
+                var url = e.Uri.ToString();
+                Process.Start(new ProcessStartInfo(url)
+                {
+                    UseShellExecute = true
+                });
+            })
+        );
+    }
 
-                var options = new DbContextOptionsBuilder<LyreContext>()
-                    .UseSqlite($"Data Source={source}")
-                    .Options;
+    protected override void ConfigureIoC(IStyletIoCBuilder builder)
+    {
+        var config = ConfigurationManager
+            .OpenExeConfiguration(ConfigurationUserLevel.PerUserRoamingAndLocal);
 
-                var db = new LyreContext(options);
-                db.Database.EnsureCreated();
+        var path = Path.GetDirectoryName(config.FilePath);
+        if (!Directory.Exists(path))
+            Directory.CreateDirectory(path);
 
-                return db;
+        builder.Bind<LyreContext>().ToFactory(_ =>
+        {
+            var source = Path.Combine(path!, Settings.Default.SqliteConnection);
+
+            var options = new DbContextOptionsBuilder<LyreContext>()
+                .UseSqlite($"Data Source={source}")
+                .Options;
+
+            var db = new LyreContext(options);
+            db.Database.EnsureCreated();
+
+            return db;
+        });
+
+        builder.Bind<MediaPlayer>().ToFactory(_ =>
+        {
+            var player = new MediaPlayer();
+            var controls = player.SystemMediaTransportControls;
+
+            controls.IsEnabled           = true;
+            controls.DisplayUpdater.Type = MediaPlaybackType.Music;
+
+            Task.Run(async () =>
+            {
+                const string name = "item_windsong_lyre.png";
+                var location = Path.Combine(path!, name);
+
+                var uri = new Uri($"pack://application:,,,/{name}");
+                var resource = Application.GetResourceStream(uri)!.Stream;
+                Image.FromStream(resource).Save(location);
+
+                var file = await StorageFile.GetFileFromPathAsync(location);
+                controls.DisplayUpdater.Thumbnail = RandomAccessStreamReference.CreateFromFile(file);
             });
 
-            builder.Bind<MediaPlayer>().ToFactory(_ =>
-            {
-                var player = new MediaPlayer();
-                var controls = player.SystemMediaTransportControls;
-
-                controls.IsEnabled           = true;
-                controls.DisplayUpdater.Type = MediaPlaybackType.Music;
-
-                Task.Run(async () =>
-                {
-                    const string name = "item_windsong_lyre.png";
-                    var location = Path.Combine(path!, name);
-
-                    var uri = new Uri($"pack://application:,,,/{name}");
-                    var resource = Application.GetResourceStream(uri)!.Stream;
-                    Image.FromStream(resource).Save(location);
-
-                    var file = await StorageFile.GetFileFromPathAsync(location);
-                    controls.DisplayUpdater.Thumbnail = RandomAccessStreamReference.CreateFromFile(file);
-                });
-
-                return player;
-            }).InSingletonScope();
-        }
+            return player;
+        }).InSingletonScope();
     }
 }

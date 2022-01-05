@@ -7,100 +7,99 @@ using Melanchall.DryWetMidi.Interaction;
 using PropertyChanged;
 using Stylet;
 
-namespace GenshinLyreMidiPlayer.WPF.ViewModels
+namespace GenshinLyreMidiPlayer.WPF.ViewModels;
+
+public class PianoSheetViewModel : Screen
 {
-    public class PianoSheetViewModel : Screen
+    private uint _bars = 1;
+    private uint _beats;
+    private uint _shorten = 1;
+
+    public PianoSheetViewModel(SettingsPageViewModel settingsPage,
+        PlaylistViewModel playlistView)
     {
-        private uint _bars = 1;
-        private uint _beats;
-        private uint _shorten = 1;
+        SettingsPage = settingsPage;
+        PlaylistView = playlistView;
+    }
 
-        public PianoSheetViewModel(SettingsPageViewModel settingsPage,
-            PlaylistViewModel playlistView)
+    [OnChangedMethod(nameof(Update))] public char Delimiter { get; set; } = '.';
+
+    [OnChangedMethod(nameof(Update))]
+    public KeyValuePair<Keyboard.Layout, string> SelectedLayout
+    {
+        get => SettingsPage.SelectedLayout;
+        set => SettingsPage.SelectedLayout = value;
+    }
+
+    public PlaylistViewModel PlaylistView { get; }
+
+    public SettingsPageViewModel SettingsPage { get; }
+
+    public string Result { get; private set; }
+
+    [OnChangedMethod(nameof(Update))]
+    public uint Bars
+    {
+        get => _bars;
+        set => SetAndNotify(ref _bars, Math.Max(value, 0));
+    }
+
+    [OnChangedMethod(nameof(Update))]
+    public uint Beats
+    {
+        get => _beats;
+        set => SetAndNotify(ref _beats, Math.Max(value, 0));
+    }
+
+    [OnChangedMethod(nameof(Update))]
+    public uint Shorten
+    {
+        get => _shorten;
+        set => SetAndNotify(ref _shorten, Math.Max(value, 1));
+    }
+
+    public void Update()
+    {
+        if (PlaylistView.OpenedFile is null)
+            return;
+
+        if (Bars == 0 && Beats == 0)
+            return;
+
+        var layout = SettingsPage.SelectedLayout.Key;
+
+        // Ticks is too small so it is not included
+        var split = PlaylistView.OpenedFile.Split(Bars, Beats, 0);
+
+        var sb = new StringBuilder();
+        foreach (var bar in split)
         {
-            SettingsPage = settingsPage;
-            PlaylistView = playlistView;
-        }
+            var notes = bar.GetNotes();
+            if (notes.Count == 0)
+                continue;
 
-        [OnChangedMethod(nameof(Update))] public char Delimiter { get; set; } = '.';
+            var last = 0;
 
-        [OnChangedMethod(nameof(Update))]
-        public KeyValuePair<Keyboard.Layout, string> SelectedLayout
-        {
-            get => SettingsPage.SelectedLayout;
-            set => SettingsPage.SelectedLayout = value;
-        }
-
-        public PlaylistViewModel PlaylistView { get; }
-
-        public SettingsPageViewModel SettingsPage { get; }
-
-        public string Result { get; private set; }
-
-        [OnChangedMethod(nameof(Update))]
-        public uint Bars
-        {
-            get => _bars;
-            set => SetAndNotify(ref _bars, Math.Max(value, 0));
-        }
-
-        [OnChangedMethod(nameof(Update))]
-        public uint Beats
-        {
-            get => _beats;
-            set => SetAndNotify(ref _beats, Math.Max(value, 0));
-        }
-
-        [OnChangedMethod(nameof(Update))]
-        public uint Shorten
-        {
-            get => _shorten;
-            set => SetAndNotify(ref _shorten, Math.Max(value, 1));
-        }
-
-        public void Update()
-        {
-            if (PlaylistView.OpenedFile is null)
-                return;
-
-            if (Bars == 0 && Beats == 0)
-                return;
-
-            var layout = SettingsPage.SelectedLayout.Key;
-
-            // Ticks is too small so it is not included
-            var split = PlaylistView.OpenedFile.Split(Bars, Beats, 0);
-
-            var sb = new StringBuilder();
-            foreach (var bar in split)
+            foreach (var note in notes)
             {
-                var notes = bar.GetNotes();
-                if (notes.Count == 0)
-                    continue;
-
-                var last = 0;
-
-                foreach (var note in notes)
+                var id = LyrePlayer.TransposeNote(note.NoteNumber);
+                if (layout.TryGetKey(id, out var key))
                 {
-                    var id = LyrePlayer.TransposeNote(note.NoteNumber);
-                    if (layout.TryGetKey(id, out var key))
-                    {
-                        var difference = note.Time - last;
-                        var dotCount = difference / Shorten;
+                    var difference = note.Time - last;
+                    var dotCount = difference / Shorten;
 
-                        sb.Append(new string(Delimiter, (int) dotCount));
-                        sb.Append(key.ToString().Last());
+                    sb.Append(new string(Delimiter, (int) dotCount));
+                    sb.Append(key.ToString().Last());
 
-                        last = (int) note.Time;
-                    }
+                    last = (int) note.Time;
                 }
-
-                sb.AppendLine();
             }
 
-            Result = sb.ToString();
+            sb.AppendLine();
         }
 
-        protected override void OnActivate() { Update(); }
+        Result = sb.ToString();
     }
+
+    protected override void OnActivate() => Update();
 }

@@ -14,194 +14,191 @@ using Stylet;
 using StyletIoC;
 using MidiFile = GenshinLyreMidiPlayer.Data.Midi.MidiFile;
 
-namespace GenshinLyreMidiPlayer.WPF.ViewModels
+namespace GenshinLyreMidiPlayer.WPF.ViewModels;
+
+public class PlaylistViewModel : Screen
 {
-    public class PlaylistViewModel : Screen
+    public enum LoopMode
     {
-        public enum LoopMode
+        Once,
+        Track,
+        Playlist,
+        All
+    }
+
+    private readonly IContainer _ioc;
+
+    private readonly IEventAggregator _events;
+
+    public PlaylistViewModel(IContainer ioc, IEventAggregator events)
+    {
+        _ioc    = ioc;
+        _events = events;
+    }
+
+    public BindableCollection<MidiFile> FilteredTracks => string.IsNullOrWhiteSpace(FilterText)
+        ? Tracks
+        : new(Tracks.Where(t => t.Title.Contains(FilterText, StringComparison.OrdinalIgnoreCase)));
+
+    public BindableCollection<MidiFile> Tracks { get; } = new();
+
+    public bool Shuffle { get; set; }
+
+    public LoopMode Loop { get; set; }
+
+    public MidiFile? OpenedFile { get; set; }
+
+    public MidiFile? SelectedFile { get; set; }
+
+    public SolidColorBrush ShuffleStateColor => Shuffle
+        ? new(ThemeManager.Current.ActualAccentColor)
+        : Brushes.Gray;
+
+    public Stack<MidiFile> History { get; } = new();
+
+    public string FilterText { get; set; }
+
+    public string LoopStateString =>
+        Loop switch
         {
-            Once,
-            Track,
-            Playlist,
-            All
+            LoopMode.Once     => "\xF5E7",
+            LoopMode.Track    => "\xE8ED",
+            LoopMode.Playlist => "\xEBE7",
+            LoopMode.All      => "\xE8EE"
+        };
+
+    private BindableCollection<MidiFile> ShuffledTracks { get; set; } = new();
+
+    public BindableCollection<MidiFile> GetPlaylist() => Shuffle ? ShuffledTracks : Tracks;
+
+    public MidiFile? Next()
+    {
+        var playlist = GetPlaylist().ToList();
+        if (OpenedFile is null) return playlist.FirstOrDefault();
+
+        switch (Loop)
+        {
+            case LoopMode.Once:
+                return null;
+            case LoopMode.Track:
+                return OpenedFile;
         }
 
-        private readonly IContainer _ioc;
+        var next = playlist.IndexOf(OpenedFile) + 1;
+        if (Loop is LoopMode.All)
+            next %= playlist.Count;
 
-        private readonly IEventAggregator _events;
+        return playlist.ElementAtOrDefault(next);
+    }
 
-        public PlaylistViewModel(IContainer ioc, IEventAggregator events)
+    public async Task AddFiles(IEnumerable<string> files)
+    {
+        foreach (var file in files)
         {
-            _ioc    = ioc;
-            _events = events;
+            await AddFile(file);
         }
 
-        public BindableCollection<MidiFile> FilteredTracks => string.IsNullOrWhiteSpace(FilterText)
-            ? Tracks
-            : new(Tracks.Where(t => t.Title.Contains(FilterText, StringComparison.OrdinalIgnoreCase)));
+        ShuffledTracks = new(Tracks.OrderBy(_ => Guid.NewGuid()));
+        RefreshPlaylist();
+        await UpdateHistory();
 
-        public BindableCollection<MidiFile> Tracks { get; } = new();
+        var next = Next();
+        if (OpenedFile is null && Tracks.Count > 0 && next is not null)
+            _events.Publish(Next());
+    }
 
-        public bool Shuffle { get; set; }
+    public async Task ClearPlaylist()
+    {
+        Tracks.Clear();
+        await UpdateHistory();
+    }
 
-        public LoopMode Loop { get; set; }
-
-        public MidiFile? OpenedFile { get; set; }
-
-        public MidiFile? SelectedFile { get; set; }
-
-        public SolidColorBrush ShuffleStateColor => Shuffle
-            ? new(ThemeManager.Current.ActualAccentColor)
-            : Brushes.Gray;
-
-        public Stack<MidiFile> History { get; } = new();
-
-        public string FilterText { get; set; }
-
-        public string LoopStateString =>
-            Loop switch
-            {
-                LoopMode.Once     => "\xF5E7",
-                LoopMode.Track    => "\xE8ED",
-                LoopMode.Playlist => "\xEBE7",
-                LoopMode.All      => "\xE8EE"
-            };
-
-        private BindableCollection<MidiFile> ShuffledTracks { get; set; } = new();
-
-        public BindableCollection<MidiFile> GetPlaylist() => Shuffle ? ShuffledTracks : Tracks;
-
-        public MidiFile? Next()
+    public async Task OpenFile()
+    {
+        var openFileDialog = new OpenFileDialog
         {
-            var playlist = GetPlaylist().ToList();
-            if (OpenedFile is null) return playlist.FirstOrDefault();
+            Filter      = "MIDI file|*.mid;*.midi|All files (*.*)|*.*",
+            Multiselect = true
+        };
 
-            switch (Loop)
-            {
-                case LoopMode.Once:
-                    return null;
-                case LoopMode.Track:
-                    return OpenedFile;
-            }
+        if (openFileDialog.ShowDialog() != true)
+            return;
 
-            var next = playlist.IndexOf(OpenedFile) + 1;
-            if (Loop is LoopMode.All)
-                next %= playlist.Count;
+        await AddFiles(openFileDialog.FileNames);
+    }
 
-            return playlist.ElementAtOrDefault(next);
+    public async Task UpdateHistory()
+    {
+        await using var db = _ioc.Get<LyreContext>();
+        db.History.RemoveRange(db.History);
+        db.History.AddRange(Tracks.Select(t => new History(t.Path)));
+        await db.SaveChangesAsync();
+    }
+
+    public void OnFileChanged(object sender, EventArgs e)
+    {
+        if (SelectedFile is not null)
+            _events.Publish(SelectedFile);
+    }
+
+    public void OnFilterTextChanged(AutoSuggestBox sender, AutoSuggestBoxTextChangedEventArgs e)
+        => FilterText = sender.Text;
+
+    public void Previous()
+    {
+        History.Pop();
+        _events.Publish(History.Pop());
+    }
+
+    public void RemoveTrack()
+    {
+        if (SelectedFile is not null)
+        {
+            Tracks.Remove(SelectedFile);
+            RefreshPlaylist();
         }
+    }
 
-        public async Task AddFiles(IEnumerable<string> files)
-        {
-            foreach (var file in files)
-            {
-                await AddFile(file);
-            }
+    public void ToggleLoop()
+    {
+        var loopState = (int) Loop;
+        var loopStates = Enum.GetValues(typeof(LoopMode)).Length;
 
+        var newState = (loopState + 1) % loopStates;
+        Loop = (LoopMode) newState;
+    }
+
+    public void ToggleShuffle()
+    {
+        Shuffle = !Shuffle;
+
+        if (Shuffle)
             ShuffledTracks = new(Tracks.OrderBy(_ => Guid.NewGuid()));
-            RefreshPlaylist();
-            await UpdateHistory();
 
-            var next = Next();
-            if (OpenedFile is null && Tracks.Count > 0 && next is not null)
-                _events.Publish(Next());
-        }
+        RefreshPlaylist();
+    }
 
-        public async Task ClearPlaylist()
+    private async Task AddFile(string fileName, ReadingSettings? settings = null)
+    {
+        try
         {
-            Tracks.Clear();
-            await UpdateHistory();
+            var file = new MidiFile(fileName, settings);
+            Tracks.Add(file);
         }
-
-        public async Task OpenFile()
+        catch (Exception e)
         {
-            var openFileDialog = new OpenFileDialog
-            {
-                Filter      = "MIDI file|*.mid;*.midi|All files (*.*)|*.*",
-                Multiselect = true
-            };
-
-            if (openFileDialog.ShowDialog() != true)
-                return;
-
-            await AddFiles(openFileDialog.FileNames);
+            settings ??= new();
+            if (await ExceptionHandler.TryHandleException(e, settings))
+                await AddFile(fileName, settings);
         }
+    }
 
-        public async Task UpdateHistory()
+    private void RefreshPlaylist()
+    {
+        var playlist = GetPlaylist();
+        foreach (var file in playlist)
         {
-            await using var db = _ioc.Get<LyreContext>();
-            db.History.RemoveRange(db.History);
-            db.History.AddRange(Tracks.Select(t => new History(t.Path)));
-            await db.SaveChangesAsync();
-        }
-
-        public void OnFileChanged(object sender, EventArgs e)
-        {
-            if (SelectedFile is not null)
-                _events.Publish(SelectedFile);
-        }
-
-        public void OnFilterTextChanged(AutoSuggestBox sender, AutoSuggestBoxTextChangedEventArgs e)
-        {
-            FilterText = sender.Text;
-        }
-
-        public void Previous()
-        {
-            History.Pop();
-            _events.Publish(History.Pop());
-        }
-
-        public void RemoveTrack()
-        {
-            if (SelectedFile is not null)
-            {
-                Tracks.Remove(SelectedFile);
-                RefreshPlaylist();
-            }
-        }
-
-        public void ToggleLoop()
-        {
-            var loopState = (int) Loop;
-            var loopStates = Enum.GetValues(typeof(LoopMode)).Length;
-
-            var newState = (loopState + 1) % loopStates;
-            Loop = (LoopMode) newState;
-        }
-
-        public void ToggleShuffle()
-        {
-            Shuffle = !Shuffle;
-
-            if (Shuffle)
-                ShuffledTracks = new(Tracks.OrderBy(_ => Guid.NewGuid()));
-
-            RefreshPlaylist();
-        }
-
-        private async Task AddFile(string fileName, ReadingSettings? settings = null)
-        {
-            try
-            {
-                var file = new MidiFile(fileName, settings);
-                Tracks.Add(file);
-            }
-            catch (Exception e)
-            {
-                settings ??= new();
-                if (await ExceptionHandler.TryHandleException(e, settings))
-                    await AddFile(fileName, settings);
-            }
-        }
-
-        private void RefreshPlaylist()
-        {
-            var playlist = GetPlaylist();
-            foreach (var file in playlist)
-            {
-                file.Position = playlist.IndexOf(file);
-            }
+            file.Position = playlist.IndexOf(file);
         }
     }
 }

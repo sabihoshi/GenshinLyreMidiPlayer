@@ -1,13 +1,12 @@
 ﻿using System;
 
-namespace GenshinLyreMidiPlayer.Data.Properties
+namespace GenshinLyreMidiPlayer.Data.Properties;
+
+public static class SettingsExtensions
 {
-    public static class SettingsExtensions
+    public static void Modify(this Settings settings, Action<Settings> action)
     {
-        public static void Modify(this Settings settings, Action<Settings> action)
-        {
-            action.Invoke(settings);
-            settings.Save();
-        }
+        action.Invoke(settings);
+        settings.Save();
     }
 }

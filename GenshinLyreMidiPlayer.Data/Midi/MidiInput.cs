@@ -1,9 +1,8 @@
-﻿namespace GenshinLyreMidiPlayer.Data.Midi
-{
-    public class MidiInput
-    {
-        public MidiInput(string deviceName) { DeviceName = deviceName; }
+﻿namespace GenshinLyreMidiPlayer.Data.Midi;
 
-        public string DeviceName { get; }
-    }
+public class MidiInput
+{
+    public MidiInput(string deviceName) { DeviceName = deviceName; }
+
+    public string DeviceName { get; }
 }

@@ -1,4 +1,3 @@
-﻿namespace GenshinLyreMidiPlayer.Data.Notification
-{
-    public class PlayTimerNotification { }
-}
+﻿namespace GenshinLyreMidiPlayer.Data.Notification;
+
+public class PlayTimerNotification { }

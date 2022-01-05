@@ -1,16 +1,17 @@
 ﻿<Project Sdk="Microsoft.NET.Sdk">
 
     <PropertyGroup>
-        <TargetFramework>net5.0-windows10.0.19041.0</TargetFramework>
+        <TargetFramework>net6.0-windows10.0.22000.0</TargetFramework>
         <LangVersion>latest</LangVersion>
         <Nullable>enable</Nullable>
+        <SupportedOSPlatformVersion>7.0</SupportedOSPlatformVersion>
     </PropertyGroup>
 
     <ItemGroup>
-        <PackageReference Include="Melanchall.DryWetMidi" Version="5.2.1" />
-        <PackageReference Include="Microsoft.EntityFrameworkCore" Version="5.0.11" />
-        <PackageReference Include="Microsoft.EntityFrameworkCore.Sqlite" Version="5.0.11" />
-        <PackageReference Include="Microsoft.EntityFrameworkCore.Sqlite.Core" Version="5.0.11" />
+        <PackageReference Include="Melanchall.DryWetMidi" Version="6.0.1" />
+        <PackageReference Include="Microsoft.EntityFrameworkCore" Version="6.0.1" />
+        <PackageReference Include="Microsoft.EntityFrameworkCore.Sqlite" Version="6.0.1" />
+        <PackageReference Include="Microsoft.EntityFrameworkCore.Sqlite.Core" Version="6.0.1" />
         <PackageReference Include="Stylet" Version="1.3.6" />
     </ItemGroup>
 

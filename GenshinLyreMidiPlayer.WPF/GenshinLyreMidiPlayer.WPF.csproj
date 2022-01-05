@@ -1,8 +1,8 @@
-<Project Sdk="Microsoft.NET.Sdk">
+﻿<Project Sdk="Microsoft.NET.Sdk">
 
     <PropertyGroup>
         <OutputType>WinExe</OutputType>
-        <TargetFramework>net5.0-windows10.0.19041.0</TargetFramework>
+        <TargetFramework>net6.0-windows10.0.22000.0</TargetFramework>
         <UseWPF>true</UseWPF>
         <StartupObject>GenshinLyreMidiPlayer.WPF.App</StartupObject>
         <ApplicationManifest>app.manifest</ApplicationManifest>
@@ -18,12 +18,13 @@
         <LangVersion>latest</LangVersion>
         <PackageLicenseFile>LICENSE.md</PackageLicenseFile>
         <IncludeNativeLibrariesForSelfExtract>true</IncludeNativeLibrariesForSelfExtract>
+        <SupportedOSPlatformVersion>7.0</SupportedOSPlatformVersion>
     </PropertyGroup>
 
     <ItemGroup>
-        <PackageReference Include="Humanizer.Core" Version="2.11.10" />
+        <PackageReference Include="Humanizer.Core" Version="2.13.14" />
         <PackageReference Include="InputSimulator" Version="1.0.4" />
-        <PackageReference Include="Melanchall.DryWetMidi" Version="5.2.1" />
+        <PackageReference Include="Melanchall.DryWetMidi" Version="6.0.1" />
         <PackageReference Include="ModernWpfUI" Version="0.9.4" />
         <PackageReference Include="ModernWpfUI.MahApps" Version="0.9.4" />
         <PackageReference Include="PropertyChanged.Fody" Version="3.4.0" />
