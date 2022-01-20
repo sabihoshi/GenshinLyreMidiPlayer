@@ -18,6 +18,7 @@ using GenshinLyreMidiPlayer.WPF.Core;
 using GenshinLyreMidiPlayer.WPF.ModernWPF;
 using GenshinLyreMidiPlayer.WPF.ModernWPF.Animation;
 using GenshinLyreMidiPlayer.WPF.ModernWPF.Animation.Transitions;
+using JetBrains.Annotations;
 using Microsoft.Win32;
 using ModernWpf;
 using ModernWpf.Controls;
@@ -73,15 +74,16 @@ public class SettingsPageViewModel : Screen
 
     public bool MergeNotes { get; set; } = Settings.MergeNotes;
 
-    public bool NeedsUpdate => ProgramVersion < LatestVersion?.Version;
+    public bool NeedsUpdate => ProgramVersion < LatestVersion.Version;
 
-    public CancellationTokenSource? PlayTimerToken { get; private set; }
+    [UsedImplicitly] public CancellationTokenSource? PlayTimerToken { get; private set; }
 
     public static CaptionedObject<Transition>? Transition { get; set; } =
         TransitionCollection.Transitions[Settings.SelectedTransition];
 
     public DateTime DateTime { get; set; } = DateTime.Now;
 
+    [UsedImplicitly]
     public Dictionary<int, string> KeyOffsets { get; set; } = new()
     {
         [-27] = "A0",
@@ -138,7 +140,7 @@ public class SettingsPageViewModel : Screen
         [24]  = "C5"
     };
 
-    public GitVersion? LatestVersion { get; set; }
+    public GitVersion LatestVersion { get; set; } = new();
 
     public int KeyOffset
     {
@@ -168,7 +170,7 @@ public class SettingsPageViewModel : Screen
 
     public MidiSpeed SelectedSpeed { get; set; } = MidiSpeeds[Settings.SelectedSpeed];
 
-    public string GenshinLocation
+    public static string GenshinLocation
     {
         get => Settings.GenshinLocation;
         set => Settings.GenshinLocation = value;
@@ -178,7 +180,7 @@ public class SettingsPageViewModel : Screen
 
     public string TimerText => CanChangeTime ? "Start" : "Stop";
 
-    public string UpdateString { get; set; } = string.Empty;
+    [UsedImplicitly] public string UpdateString { get; set; } = string.Empty;
 
     public uint MergeMilliseconds { get; set; } = Settings.MergeMilliseconds;
 
@@ -219,7 +221,7 @@ public class SettingsPageViewModel : Screen
 
         try
         {
-            LatestVersion = await GetLatestVersion();
+            LatestVersion = await GetLatestVersion() ?? new GitVersion();
             UpdateString = LatestVersion.Version > ProgramVersion
                 ? "(Update available!)"
                 : string.Empty;
@@ -259,9 +261,13 @@ public class SettingsPageViewModel : Screen
                 break;
             case ContentDialogResult.Secondary:
                 break;
+            default:
+                throw new ArgumentOutOfRangeException(
+                    nameof(result), result, $"Invalid {nameof(ContentDialogResult)}");
         }
     }
 
+    [PublicAPI]
     public async Task SetLocation()
     {
         var openFileDialog = new OpenFileDialog
@@ -278,6 +284,7 @@ public class SettingsPageViewModel : Screen
         if (!(success && set)) await LocationMissing();
     }
 
+    [UsedImplicitly]
     public async Task StartStopTimer()
     {
         if (PlayTimerToken is not null)
@@ -298,7 +305,33 @@ public class SettingsPageViewModel : Screen
         PlayTimerToken = null;
     }
 
-    public async Task<GitVersion> GetLatestVersion()
+    [UsedImplicitly]
+    public void OnThemeChanged()
+    {
+        var theme = (int?) ThemeManager.Current.ApplicationTheme ?? -1;
+        Settings.Modify(s => s.AppTheme = theme);
+    }
+
+    [UsedImplicitly]
+    public void SetTimeToNow() => DateTime = DateTime.Now;
+
+    protected override void OnActivate()
+    {
+        if (AutoCheckUpdates)
+            _ = CheckForUpdate();
+    }
+
+    private bool TrySetLocation(string? location)
+    {
+        if (!File.Exists(location)) return false;
+
+        Settings.GenshinLocation = location;
+        NotifyOfPropertyChange(() => Settings.GenshinLocation);
+
+        return true;
+    }
+
+    private async Task<GitVersion?> GetLatestVersion()
     {
         var client = new HttpClient();
         var request = new HttpRequestMessage(HttpMethod.Get,
@@ -311,37 +344,12 @@ public class SettingsPageViewModel : Screen
         var response = await client.SendAsync(request);
         var versions = JsonSerializer.Deserialize<List<GitVersion>>(await response.Content.ReadAsStringAsync());
 
-        return versions
+        return versions?
             .OrderByDescending(v => v.Version)
-            .First(v => !v.Draft && !v.Prerelease || IncludeBetaUpdates);
+            .FirstOrDefault(v => !v.Draft && !v.Prerelease || IncludeBetaUpdates);
     }
 
-    public void OnThemeChanged()
-    {
-        var theme = (int?) ThemeManager.Current.ApplicationTheme ?? -1;
-        Settings.Modify(s => s.AppTheme = theme);
-    }
-
-    public void SetTimeToNow() => DateTime = DateTime.Now;
-
-    protected override void OnActivate()
-    {
-        if (AutoCheckUpdates)
-            _ = CheckForUpdate();
-    }
-
-    private bool TrySetLocation(string? location)
-    {
-        if (File.Exists(location) && location is not null)
-        {
-            Settings.GenshinLocation = location;
-            NotifyOfPropertyChange(() => Settings.GenshinLocation);
-            return true;
-        }
-
-        return false;
-    }
-
+    [UsedImplicitly]
     private void OnAutoCheckUpdatesChanged()
     {
         if (AutoCheckUpdates)
@@ -350,8 +358,10 @@ public class SettingsPageViewModel : Screen
         Settings.Modify(s => s.AutoCheckUpdates = AutoCheckUpdates);
     }
 
+    [UsedImplicitly]
     private void OnIncludeBetaUpdatesChanged() => _ = CheckForUpdate();
 
+    [UsedImplicitly]
     private async void OnKeyOffsetChanged()
     {
         if (Playlist.OpenedFile is null)
@@ -365,26 +375,31 @@ public class SettingsPageViewModel : Screen
         await db.SaveChangesAsync();
     }
 
+    [UsedImplicitly]
     private void OnMergeMillisecondsChanged()
     {
         Settings.Modify(s => s.MergeMilliseconds = MergeMilliseconds);
         _events.Publish(this);
     }
 
+    [UsedImplicitly]
     private void OnMergeNotesChanged()
     {
         Settings.Modify(s => s.MergeNotes = MergeNotes);
         _events.Publish(new MergeNotesNotification(MergeNotes));
     }
 
+    [UsedImplicitly]
     private void OnSelectedLayoutIndexChanged()
     {
         var layout = (int) SelectedLayout.Key;
         Settings.Modify(s => s.SelectedLayout = layout);
     }
 
+    [UsedImplicitly]
     private void OnSelectedSpeedChanged() => _events.Publish(this);
 
+    [UsedImplicitly]
     private async void OnTransposeChanged()
     {
         if (Playlist.OpenedFile is null)

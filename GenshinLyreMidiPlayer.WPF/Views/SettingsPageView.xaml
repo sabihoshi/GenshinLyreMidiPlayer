@@ -95,7 +95,7 @@
                     <Button Command="{s:Action SetLocation}" Background="Transparent">
                         <ui:FontIcon Glyph="&#xE8E5;" />
                     </Button>
-                    <TextBlock Text="{Binding GenshinLocation}"
+                    <TextBlock Text="{x:Static viewModels:SettingsPageViewModel.GenshinLocation}"
                                VerticalAlignment="Center" />
                 </ui:SimpleStackPanel>
             </GroupBox>
@@ -103,7 +103,7 @@
             <GroupBox Header="Version">
                 <ui:SimpleStackPanel>
                     <ui:SimpleStackPanel Orientation="Horizontal">
-                        <TextBlock x:Name="VersionText" Style="{StaticResource SubtitleTextBlockStyle}">
+                        <TextBlock x:Name="VersionText" Style="{DynamicResource SubtitleTextBlockStyle}">
                             You are running version
                             v<Run Text="{Binding ProgramVersion, Mode=OneTime}" />
                         </TextBlock>
@@ -167,7 +167,7 @@
                         </Hyperlink>
                         .
                     </TextBlock>
-                    <TextBlock Style="{StaticResource BaseTextBlockStyle}">
+                    <TextBlock Style="{DynamicResource BaseTextBlockStyle}">
                         All rights reserved by © miHoYo Co., Ltd.
                         This project is not affiliated nor endorsed by miHoYo.
                         Genshin Impact™ and other properties belong to their respective owners.

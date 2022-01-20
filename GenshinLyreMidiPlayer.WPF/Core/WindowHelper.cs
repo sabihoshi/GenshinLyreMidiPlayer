@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Diagnostics;
+using System.Diagnostics.CodeAnalysis;
 using System.IO;
 using System.Linq;
 using System.Runtime.InteropServices;
@@ -14,26 +15,23 @@ public static class WindowHelper
         .OpenSubKey(@"SOFTWARE\launcher", false)
         ?.GetValue("InstPath") as string;
 
+    [SuppressMessage("ReSharper", "AssignNullToNotNullAttribute")]
     private static string GenshinProcessName
-        => Path.GetFileNameWithoutExtension(Settings.Default.GenshinLocation)!;
-
-    public static bool EnsureGameOnTop()
-    {
-        var genshinWindow = FindWindowByProcessName(GenshinProcessName);
-
-        if (genshinWindow is null)
-            return false;
-
-        SwitchToThisWindow((IntPtr) genshinWindow, true);
-
-        return GetForegroundWindow().Equals(genshinWindow);
-    }
+        => Path.GetFileNameWithoutExtension(Settings.Default.GenshinLocation);
 
     public static bool IsGameFocused()
     {
         var genshinWindow = FindWindowByProcessName(GenshinProcessName);
         return genshinWindow != null &&
             IsWindowFocused((IntPtr) genshinWindow);
+    }
+
+    public static void EnsureGameOnTop()
+    {
+        var genshinWindow = FindWindowByProcessName(GenshinProcessName);
+        if (genshinWindow is null) return;
+
+        SwitchToThisWindow((IntPtr) genshinWindow, true);
     }
 
     private static bool IsWindowFocused(IntPtr windowPtr)
@@ -45,7 +43,7 @@ public static class WindowHelper
     [DllImport("user32.dll", CharSet = CharSet.Auto, ExactSpelling = true)]
     private static extern IntPtr GetForegroundWindow();
 
-    private static IntPtr? FindWindowByProcessName(string processName)
+    private static IntPtr? FindWindowByProcessName(string? processName)
     {
         var process = Process.GetProcessesByName(processName);
         return process.FirstOrDefault(p => p.MainWindowHandle != IntPtr.Zero)?.MainWindowHandle;

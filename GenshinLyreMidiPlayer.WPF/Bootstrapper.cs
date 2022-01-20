@@ -45,7 +45,7 @@ public class Bootstrapper : Bootstrapper<MainWindowViewModel>
 
         var path = Path.GetDirectoryName(config.FilePath);
         if (!Directory.Exists(path))
-            Directory.CreateDirectory(path);
+            Directory.CreateDirectory(path!);
 
         builder.Bind<LyreContext>().ToFactory(_ =>
         {

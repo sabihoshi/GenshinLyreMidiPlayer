@@ -69,9 +69,9 @@ public static class LyrePlayer
             {
                 return direction switch
                 {
-                    Transpose.Ignore => noteId,
-                    Transpose.Up     => ++noteId,
-                    Transpose.Down   => --noteId
+                    Transpose.Up   => ++noteId,
+                    Transpose.Down => --noteId,
+                    _              => noteId
                 };
             }
         }

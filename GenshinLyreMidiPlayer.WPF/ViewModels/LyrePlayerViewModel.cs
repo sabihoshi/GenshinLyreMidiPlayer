@@ -100,9 +100,9 @@ public class LyrePlayerViewModel : Screen,
     {
         get
         {
-            var hasNotes = MidiTracks?
+            var hasNotes = MidiTracks
                 .Where(t => t.IsChecked)
-                .Any(t => t.CanBePlayed) ?? false;
+                .Any(t => t.CanBePlayed);
 
             return Playback is not null
                 && hasNotes
@@ -405,31 +405,31 @@ public class LyrePlayerViewModel : Screen,
 
                 SettingsView.Transpose = result switch
                 {
-                    ContentDialogResult.None      => TransposeNames.ElementAt(0),
                     ContentDialogResult.Primary   => TransposeNames.ElementAt(1),
-                    ContentDialogResult.Secondary => TransposeNames.ElementAt(2)
+                    ContentDialogResult.Secondary => TransposeNames.ElementAt(2),
+                    _                             => TransposeNames.ElementAt(0)
                 };
             });
         }
 
-        Playback       = midi.GetPlayback();
-        Playback.Speed = SettingsView.SelectedSpeed.Speed;
+        var playback = midi.GetPlayback();
 
-        Playback.InterruptNotesOnStop = true;
+        Playback                      =  playback;
+        playback.Speed                =  SettingsView.SelectedSpeed.Speed;
+        playback.InterruptNotesOnStop =  true;
+        playback.Finished             += (_, _) => { Next(); };
+        playback.EventPlayed          += OnNoteEvent;
 
-        Playback.Finished    += (_, _) => { Next(); };
-        Playback.EventPlayed += OnNoteEvent;
-
-        Playback.Started += (_, _) =>
+        playback.Started += (_, _) =>
         {
             _timeWatcher.RemoveAllPlaybacks();
-            _timeWatcher.AddPlayback(Playback, TimeSpanType.Metric);
+            _timeWatcher.AddPlayback(playback, TimeSpanType.Metric);
             _timeWatcher.Start();
 
             UpdateButtons();
         };
 
-        Playback.Stopped += (_, _) =>
+        playback.Stopped += (_, _) =>
         {
             _timeWatcher.Stop();
 

@@ -63,7 +63,8 @@ public class PlaylistViewModel : Screen
             LoopMode.Once     => "\xF5E7",
             LoopMode.Track    => "\xE8ED",
             LoopMode.Playlist => "\xEBE7",
-            LoopMode.All      => "\xE8EE"
+            LoopMode.All      => "\xE8EE",
+            _                 => string.Empty
         };
 
     public string? FilterText { get; set; }
@@ -150,7 +151,7 @@ public class PlaylistViewModel : Screen
             db.History.Remove(SelectedFile.History);
             await db.SaveChangesAsync();
 
-            OpenedFile   = OpenedFile == SelectedFile ? null : OpenedFile;
+            OpenedFile = OpenedFile == SelectedFile ? null : OpenedFile;
             Tracks.Remove(SelectedFile);
 
             RefreshPlaylist();
@@ -223,7 +224,7 @@ public class PlaylistViewModel : Screen
         }
     }
 
-    private async Task AddFile(string fileName, ReadingSettings? settings = null)
+    private async Task AddFile(string fileName)
     {
         var history = new History(fileName, _main.SettingsView.KeyOffset);
 

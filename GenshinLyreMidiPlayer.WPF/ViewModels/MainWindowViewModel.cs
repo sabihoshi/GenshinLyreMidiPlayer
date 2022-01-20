@@ -2,19 +2,21 @@ using System.Collections.Generic;
 using System.Linq;
 using GenshinLyreMidiPlayer.Data;
 using GenshinLyreMidiPlayer.WPF.Views;
+using JetBrains.Annotations;
 using ModernWpf.Controls;
 using Stylet;
 using StyletIoC;
 
 namespace GenshinLyreMidiPlayer.WPF.ViewModels;
 
+[UsedImplicitly]
 public class MainWindowViewModel : Conductor<IScreen>.StackNavigation
 {
     private readonly IContainer _ioc;
     private readonly Stack<NavigationViewItem> _history = new();
     private NavigationView _navView = null!;
 
-    public MainWindowViewModel(IContainer ioc, IEventAggregator events)
+    public MainWindowViewModel(IContainer ioc)
     {
         _ioc = ioc;
 

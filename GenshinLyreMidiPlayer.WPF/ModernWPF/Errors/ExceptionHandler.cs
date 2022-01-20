@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Diagnostics.CodeAnalysis;
 using System.Linq;
 using System.Threading.Tasks;
+using Melanchall.DryWetMidi.Common;
 using Melanchall.DryWetMidi.Core;
 using ModernWpf.Controls;
 
@@ -91,32 +92,31 @@ internal static class ExceptionHandler
 
         var option = result switch
         {
-            ContentDialogResult.Primary   => command?.ElementAtOrDefault(0),
-            ContentDialogResult.Secondary => command?.ElementAtOrDefault(1)
+            ContentDialogResult.Primary   => command.ElementAtOrDefault(0),
+            ContentDialogResult.Secondary => command.ElementAtOrDefault(1),
+            _                             => null
         };
+
+        if (option is null) return false;
 
         switch (e)
         {
             // User selectable policy
             case InvalidChannelEventParameterValueException:
-                settings.InvalidChannelEventParameterValuePolicy =
-                    (InvalidChannelEventParameterValuePolicy) option!;
+                settings.InvalidChannelEventParameterValuePolicy = (InvalidChannelEventParameterValuePolicy) option;
                 break;
             case InvalidMetaEventParameterValueException:
-                settings.InvalidMetaEventParameterValuePolicy =
-                    (InvalidMetaEventParameterValuePolicy) option!;
+                settings.InvalidMetaEventParameterValuePolicy = (InvalidMetaEventParameterValuePolicy) option;
                 break;
             case InvalidSystemCommonEventParameterValueException:
-                settings.InvalidSystemCommonEventParameterValuePolicy =
-                    (InvalidSystemCommonEventParameterValuePolicy) option!;
+                settings.InvalidSystemCommonEventParameterValuePolicy
+                    = (InvalidSystemCommonEventParameterValuePolicy) option;
                 break;
             case UnknownChannelEventException:
-                settings.UnknownChannelEventPolicy =
-                    (UnknownChannelEventPolicy) option!;
+                settings.UnknownChannelEventPolicy = (UnknownChannelEventPolicy) option;
                 break;
             case UnknownChunkException:
-                settings.UnknownChunkIdPolicy =
-                    (UnknownChunkIdPolicy) option!;
+                settings.UnknownChunkIdPolicy = (UnknownChunkIdPolicy) option;
                 break;
 
             // Ignorable policies
