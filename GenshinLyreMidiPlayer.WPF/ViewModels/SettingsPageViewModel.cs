@@ -8,6 +8,8 @@ using System.Reflection;
 using System.Text.Json;
 using System.Threading;
 using System.Threading.Tasks;
+using GenshinLyreMidiPlayer.Data;
+using GenshinLyreMidiPlayer.Data.Entities;
 using GenshinLyreMidiPlayer.Data.Git;
 using GenshinLyreMidiPlayer.Data.Midi;
 using GenshinLyreMidiPlayer.Data.Notification;
@@ -21,18 +23,33 @@ using ModernWpf;
 using ModernWpf.Controls;
 using Stylet;
 using StyletIoC;
+using static GenshinLyreMidiPlayer.Data.Entities.Transpose;
 
 namespace GenshinLyreMidiPlayer.WPF.ViewModels;
 
 public class SettingsPageViewModel : Screen
 {
     private static readonly Settings Settings = Settings.Default;
-    private readonly IEventAggregator _events;
-    private int _keyOffset = Settings.KeyOffset;
 
-    public SettingsPageViewModel(IContainer ioc)
+    public static readonly Dictionary<Transpose, string> TransposeNames = new()
     {
+        [Ignore] = "Ignore notes",
+        [Up]     = "Shift one semitone up",
+        [Down]   = "Shift one semitone down"
+    };
+
+    private readonly IContainer _ioc;
+    private readonly IEventAggregator _events;
+    private readonly MainWindowViewModel _main;
+    private int _keyOffset;
+
+    public SettingsPageViewModel(IContainer ioc, MainWindowViewModel main)
+    {
+        _ioc    = ioc;
         _events = ioc.Get<IEventAggregator>();
+        _main   = main;
+
+        _keyOffset = Playlist.OpenedFile?.History.Key ?? 0;
 
         ThemeManager.Current.ApplicationTheme = Settings.AppTheme switch
         {
@@ -135,6 +152,8 @@ public class SettingsPageViewModel : Screen
 
     public KeyValuePair<Keyboard.Layout, string> SelectedLayout { get; set; }
 
+    public KeyValuePair<Transpose, string> Transpose { get; set; } = TransposeNames.First();
+
     public static List<MidiSpeed> MidiSpeeds { get; } = new()
     {
         new("0.25x", 0.25),
@@ -161,11 +180,11 @@ public class SettingsPageViewModel : Screen
 
     public string UpdateString { get; set; } = string.Empty;
 
-    public LyrePlayer.Transpose? Transpose { get; set; }
-
     public uint MergeMilliseconds { get; set; } = Settings.MergeMilliseconds;
 
     public static Version ProgramVersion => Assembly.GetExecutingAssembly().GetName().Version!;
+
+    private PlaylistViewModel Playlist => _main.PlaylistView;
 
     public bool TryGetLocation()
     {
@@ -327,11 +346,24 @@ public class SettingsPageViewModel : Screen
     {
         if (AutoCheckUpdates)
             _ = CheckForUpdate();
+
+        Settings.Modify(s => s.AutoCheckUpdates = AutoCheckUpdates);
     }
 
     private void OnIncludeBetaUpdatesChanged() => _ = CheckForUpdate();
 
-    private void OnKeyOffsetChanged() => Settings.Modify(s => s.KeyOffset = KeyOffset);
+    private async void OnKeyOffsetChanged()
+    {
+        if (Playlist.OpenedFile is null)
+            return;
+
+        await using var db = _ioc.Get<LyreContext>();
+
+        Playlist.OpenedFile.History.Key = KeyOffset;
+        db.Update(Playlist.OpenedFile.History);
+
+        await db.SaveChangesAsync();
+    }
 
     private void OnMergeMillisecondsChanged()
     {
@@ -352,4 +384,17 @@ public class SettingsPageViewModel : Screen
     }
 
     private void OnSelectedSpeedChanged() => _events.Publish(this);
+
+    private async void OnTransposeChanged()
+    {
+        if (Playlist.OpenedFile is null)
+            return;
+
+        await using var db = _ioc.Get<LyreContext>();
+
+        Playlist.OpenedFile.History.Transpose = Transpose.Key;
+        db.Update(Playlist.OpenedFile.History);
+
+        await db.SaveChangesAsync();
+    }
 }

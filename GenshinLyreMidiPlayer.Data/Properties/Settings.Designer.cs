@@ -12,7 +12,7 @@ namespace GenshinLyreMidiPlayer.Data.Properties {
     
     
     [global::System.Runtime.CompilerServices.CompilerGeneratedAttribute()]
-    [global::System.CodeDom.Compiler.GeneratedCodeAttribute("Microsoft.VisualStudio.Editors.SettingsDesigner.SettingsSingleFileGenerator", "16.10.0.0")]
+    [global::System.CodeDom.Compiler.GeneratedCodeAttribute("Microsoft.VisualStudio.Editors.SettingsDesigner.SettingsSingleFileGenerator", "17.0.3.0")]
     public sealed partial class Settings : global::System.Configuration.ApplicationSettingsBase {
         
         private static Settings defaultInstance = ((Settings)(global::System.Configuration.ApplicationSettingsBase.Synchronized(new Settings())));
@@ -46,8 +46,8 @@ namespace GenshinLyreMidiPlayer.Data.Properties {
         [global::System.Configuration.ApplicationScopedSettingAttribute()]
         [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
         [global::System.Configuration.SpecialSettingAttribute(global::System.Configuration.SpecialSetting.WebServiceUrl)]
-        [global::System.Configuration.DefaultSettingValueAttribute("https://github.com/sabihoshi/GenshinLyreMidiPlayer/blob/main/THIRD-PARTY-NOTICES." +
-            "md")]
+        [global::System.Configuration.DefaultSettingValueAttribute("\r\n                https://github.com/sabihoshi/GenshinLyreMidiPlayer/blob/main/TH" +
+            "IRD-PARTY-NOTICES.md\r\n            ")]
         public string ThirdPartyLicenseUri {
             get {
                 return ((string)(this["ThirdPartyLicenseUri"]));
@@ -123,18 +123,6 @@ namespace GenshinLyreMidiPlayer.Data.Properties {
             }
             set {
                 this["UseSpeakers"] = value;
-            }
-        }
-        
-        [global::System.Configuration.UserScopedSettingAttribute()]
-        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
-        [global::System.Configuration.DefaultSettingValueAttribute("0")]
-        public int KeyOffset {
-            get {
-                return ((int)(this["KeyOffset"]));
-            }
-            set {
-                this["KeyOffset"] = value;
             }
         }
         

@@ -4,6 +4,7 @@ using System.Threading.Tasks;
 using System.Windows;
 using Windows.Media;
 using Windows.Media.Playback;
+using GenshinLyreMidiPlayer.Data.Entities;
 using GenshinLyreMidiPlayer.Data.Midi;
 using GenshinLyreMidiPlayer.Data.Notification;
 using GenshinLyreMidiPlayer.Data.Properties;
@@ -16,7 +17,7 @@ using Melanchall.DryWetMidi.Tools;
 using ModernWpf.Controls;
 using Stylet;
 using StyletIoC;
-using static GenshinLyreMidiPlayer.WPF.Core.LyrePlayer.Transpose;
+using static GenshinLyreMidiPlayer.WPF.ViewModels.SettingsPageViewModel;
 using MidiFile = GenshinLyreMidiPlayer.Data.Midi.MidiFile;
 
 namespace GenshinLyreMidiPlayer.WPF.ViewModels;
@@ -29,24 +30,21 @@ public class LyrePlayerViewModel : Screen,
 {
     private static readonly Settings Settings = Settings.Default;
     private readonly IEventAggregator _events;
+    private readonly MainWindowViewModel _main;
     private readonly MediaPlayer? _player;
     private readonly OutputDevice? _speakers;
     private readonly PlaybackCurrentTimeWatcher _timeWatcher;
-    private readonly SettingsPageViewModel _settings;
     private bool _ignoreSliderChange;
     private InputDevice? _inputDevice;
     private TimeSpan _songPosition;
 
-    public LyrePlayerViewModel(IContainer ioc,
-        SettingsPageViewModel settings, PlaylistViewModel playlist)
+    public LyrePlayerViewModel(IContainer ioc, MainWindowViewModel main)
     {
+        _main        = main;
         _timeWatcher = PlaybackCurrentTimeWatcher.Instance;
 
         _events = ioc.Get<IEventAggregator>();
         _events.Subscribe(this);
-
-        _settings = settings;
-        Playlist  = playlist;
 
         SelectedMidiInput = MidiInputs[0];
 
@@ -74,8 +72,8 @@ public class LyrePlayerViewModel : Screen,
         {
             new ErrorContentDialog(e, closeText: "Ignore").ShowAsync();
 
-            _settings.CanUseSpeakers = false;
-            Settings.UseSpeakers     = false;
+            SettingsView.CanUseSpeakers = false;
+            Settings.UseSpeakers        = false;
         }
     }
 
@@ -124,7 +122,7 @@ public class LyrePlayerViewModel : Screen,
 
     public Playback? Playback { get; private set; }
 
-    public PlaylistViewModel Playlist { get; }
+    public PlaylistViewModel Playlist => _main.PlaylistView;
 
     public string PlayPauseIcon => Playback?.IsRunning ?? false ? PauseIcon : PlayIcon;
 
@@ -134,6 +132,8 @@ public class LyrePlayerViewModel : Screen,
 
     private MusicDisplayProperties? Display =>
         _player?.SystemMediaTransportControls.DisplayUpdater.MusicProperties;
+
+    private SettingsPageViewModel SettingsView => _main.SettingsView;
 
     private static string PauseIcon => "\xEDB4";
 
@@ -355,10 +355,10 @@ public class LyrePlayerViewModel : Screen,
 
     private int ApplyNoteSettings(int noteId)
     {
-        noteId -= Settings.KeyOffset;
+        noteId -= Playlist.OpenedFile?.History.Key ?? 0;
 
         if (Settings.TransposeNotes)
-            noteId = LyrePlayer.TransposeNote(noteId, _settings.Transpose ?? Ignore);
+            noteId = LyrePlayer.TransposeNote(noteId, SettingsView.Transpose.Key);
 
         return noteId;
     }
@@ -388,13 +388,13 @@ public class LyrePlayerViewModel : Screen,
 
         // Check for notes that cannot be played even after transposing.
         var outOfRange = midi.GetNotes().Where(note =>
-            !_settings.SelectedLayout.Key.TryGetKey(ApplyNoteSettings(note.NoteNumber), out _));
+            !SettingsView.SelectedLayout.Key.TryGetKey(ApplyNoteSettings(note.NoteNumber), out _));
 
-        if (_settings.Transpose is null && outOfRange.Any())
+        if (Playlist.OpenedFile.History.Transpose is null && outOfRange.Any())
         {
             await Application.Current.Dispatcher.Invoke(async () =>
             {
-                var options = new Enum[] { Up, Down };
+                var options = new Enum[] { Transpose.Up, Transpose.Down };
                 var exceptionDialog = new ErrorContentDialog(
                     new IndexOutOfRangeException(
                         "Some notes cannot be played by the Lyre because it is missing Sharps & Flats. " +
@@ -403,17 +403,17 @@ public class LyrePlayerViewModel : Screen,
 
                 var result = await exceptionDialog.ShowAsync();
 
-                _settings.Transpose = result switch
+                SettingsView.Transpose = result switch
                 {
-                    ContentDialogResult.None      => Ignore,
-                    ContentDialogResult.Primary   => Up,
-                    ContentDialogResult.Secondary => Down
+                    ContentDialogResult.None      => TransposeNames.ElementAt(0),
+                    ContentDialogResult.Primary   => TransposeNames.ElementAt(1),
+                    ContentDialogResult.Secondary => TransposeNames.ElementAt(2)
                 };
             });
         }
 
         Playback       = midi.GetPlayback();
-        Playback.Speed = _settings.SelectedSpeed.Speed;
+        Playback.Speed = SettingsView.SelectedSpeed.Speed;
 
         Playback.InterruptNotesOnStop = true;
 
@@ -486,7 +486,7 @@ public class LyrePlayerViewModel : Screen,
             return;
         }
 
-        var layout = _settings.SelectedLayout.Key;
+        var layout = SettingsView.SelectedLayout.Key;
         var note = ApplyNoteSettings(noteEvent.NoteNumber);
 
         switch (noteEvent.EventType)

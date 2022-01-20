@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using GenshinLyreMidiPlayer.Data.Entities;
 using Melanchall.DryWetMidi.Core;
 using Melanchall.DryWetMidi.Interaction;
 using Melanchall.DryWetMidi.Tools;
@@ -13,13 +14,15 @@ public class MidiFile : Screen
     private readonly ReadingSettings? _settings;
     private int _position;
 
-    public MidiFile(string path, ReadingSettings? settings = null)
+    public MidiFile(History history, ReadingSettings? settings = null)
     {
         _settings = settings;
 
-        Path = path;
+        History = history;
         InitializeMidi();
     }
+
+    public History History { get; }
 
     public int Position
     {
@@ -29,7 +32,7 @@ public class MidiFile : Screen
 
     public Melanchall.DryWetMidi.Core.MidiFile Midi { get; private set; } = null!;
 
-    public string Path { get; }
+    public string Path => History.Path;
 
     public string Title => GetFileNameWithoutExtension(Path);
 

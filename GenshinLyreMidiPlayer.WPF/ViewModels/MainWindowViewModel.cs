@@ -12,16 +12,16 @@ public class MainWindowViewModel : Conductor<IScreen>.StackNavigation
 {
     private readonly IContainer _ioc;
     private readonly Stack<NavigationViewItem> _history = new();
-    private NavigationView _navView;
+    private NavigationView _navView = null!;
 
     public MainWindowViewModel(IContainer ioc, IEventAggregator events)
     {
         _ioc = ioc;
 
-        SettingsView   = ioc.Get<SettingsPageViewModel>();
-        PlaylistView   = ioc.Get<PlaylistViewModel>();
-        PlayerView     = new(ioc, SettingsView, PlaylistView);
-        PianoSheetView = new(SettingsView, PlaylistView);
+        PlaylistView   = new(ioc, this);
+        SettingsView   = new(ioc, this);
+        PlayerView     = new(ioc, this);
+        PianoSheetView = new(this);
     }
 
     public bool ShowUpdate => SettingsView.NeedsUpdate && ActiveItem != SettingsView;
@@ -58,7 +58,7 @@ public class MainWindowViewModel : Conductor<IScreen>.StackNavigation
         }
 
         await using var db = _ioc.Get<LyreContext>();
-        await PlaylistView.AddFiles(db.History.Select(midi => midi.Path));
+        await PlaylistView.AddFiles(db.History);
     }
 
     private void AutoSuggestBoxOnTextChanged(AutoSuggestBox sender, AutoSuggestBoxTextChangedEventArgs e)

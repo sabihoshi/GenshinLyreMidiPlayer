@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using GenshinLyreMidiPlayer.Data.Entities;
 using WindowsInput;
 using WindowsInput.Native;
 using static GenshinLyreMidiPlayer.WPF.Core.Keyboard;
@@ -9,13 +10,6 @@ namespace GenshinLyreMidiPlayer.WPF.Core;
 
 public static class LyrePlayer
 {
-    public enum Transpose
-    {
-        Ignore,
-        Up,
-        Down
-    }
-
     private static readonly IInputSimulator Input = new InputSimulator();
 
     private static readonly List<int> LyreNotes = new()

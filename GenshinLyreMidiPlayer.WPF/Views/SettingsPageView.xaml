@@ -69,6 +69,15 @@
                 </GroupBox>
             </ui:SimpleStackPanel>
 
+            <ui:SimpleStackPanel Orientation="Horizontal">
+                <GroupBox Header="Transpose">
+                    <ComboBox
+                        ItemsSource="{x:Static viewModels:SettingsPageViewModel.TransposeNames}"
+                        SelectedItem="{Binding Transpose}"
+                        DisplayMemberPath="Value" />
+                </GroupBox>
+            </ui:SimpleStackPanel>
+
             <GroupBox Header="Timer">
                 <ui:SimpleStackPanel Orientation="Horizontal">
                     <ui:SimpleStackPanel.Resources>

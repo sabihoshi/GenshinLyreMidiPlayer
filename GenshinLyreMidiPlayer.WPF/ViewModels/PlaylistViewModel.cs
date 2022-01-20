@@ -27,13 +27,14 @@ public class PlaylistViewModel : Screen
     }
 
     private readonly IContainer _ioc;
-
     private readonly IEventAggregator _events;
+    private readonly MainWindowViewModel _main;
 
-    public PlaylistViewModel(IContainer ioc, IEventAggregator events)
+    public PlaylistViewModel(IContainer ioc, MainWindowViewModel main)
     {
         _ioc    = ioc;
-        _events = events;
+        _events = ioc.Get<IEventAggregator>();
+        _main   = main;
     }
 
     public BindableCollection<MidiFile> FilteredTracks => string.IsNullOrWhiteSpace(FilterText)
@@ -44,7 +45,7 @@ public class PlaylistViewModel : Screen
 
     public bool Shuffle { get; set; }
 
-    public LoopMode Loop { get; set; }
+    public LoopMode Loop { get; set; } = LoopMode.All;
 
     public MidiFile? OpenedFile { get; set; }
 
@@ -56,8 +57,6 @@ public class PlaylistViewModel : Screen
 
     public Stack<MidiFile> History { get; } = new();
 
-    public string FilterText { get; set; }
-
     public string LoopStateString =>
         Loop switch
         {
@@ -66,6 +65,8 @@ public class PlaylistViewModel : Screen
             LoopMode.Playlist => "\xEBE7",
             LoopMode.All      => "\xE8EE"
         };
+
+    public string? FilterText { get; set; }
 
     private BindableCollection<MidiFile> ShuffledTracks { get; set; } = new();
 
@@ -100,17 +101,31 @@ public class PlaylistViewModel : Screen
 
         ShuffledTracks = new(Tracks.OrderBy(_ => Guid.NewGuid()));
         RefreshPlaylist();
-        await UpdateHistory();
 
         var next = Next();
         if (OpenedFile is null && Tracks.Count > 0 && next is not null)
             _events.Publish(Next());
     }
 
+    public async Task AddFiles(IEnumerable<History> files)
+    {
+        foreach (var file in files)
+        {
+            await AddFile(file);
+        }
+
+        RefreshPlaylist();
+    }
+
     public async Task ClearPlaylist()
     {
+        await using var db = _ioc.Get<LyreContext>();
+        db.History.RemoveRange(db.History);
+        await db.SaveChangesAsync();
+
         Tracks.Clear();
-        await UpdateHistory();
+        OpenedFile   = null;
+        SelectedFile = null;
     }
 
     public async Task OpenFile()
@@ -127,11 +142,25 @@ public class PlaylistViewModel : Screen
         await AddFiles(openFileDialog.FileNames);
     }
 
+    public async Task RemoveTrack()
+    {
+        if (SelectedFile is not null)
+        {
+            await using var db = _ioc.Get<LyreContext>();
+            db.History.Remove(SelectedFile.History);
+            await db.SaveChangesAsync();
+
+            OpenedFile   = OpenedFile == SelectedFile ? null : OpenedFile;
+            Tracks.Remove(SelectedFile);
+
+            RefreshPlaylist();
+        }
+    }
+
     public async Task UpdateHistory()
     {
         await using var db = _ioc.Get<LyreContext>();
-        db.History.RemoveRange(db.History);
-        db.History.AddRange(Tracks.Select(t => new History(t.Path)));
+        db.UpdateRange(Tracks.Select(t => t.History));
         await db.SaveChangesAsync();
     }
 
@@ -144,19 +173,21 @@ public class PlaylistViewModel : Screen
     public void OnFilterTextChanged(AutoSuggestBox sender, AutoSuggestBoxTextChangedEventArgs e)
         => FilterText = sender.Text;
 
+    public void OnOpenedFileChanged()
+    {
+        if (OpenedFile is null) return;
+
+        var transpose = SettingsPageViewModel.TransposeNames
+            .FirstOrDefault(e => e.Key == OpenedFile.History.Transpose);
+
+        _main.SettingsView.Transpose = transpose;
+        _main.SettingsView.KeyOffset = OpenedFile.History.Key;
+    }
+
     public void Previous()
     {
         History.Pop();
         _events.Publish(History.Pop());
-    }
-
-    public void RemoveTrack()
-    {
-        if (SelectedFile is not null)
-        {
-            Tracks.Remove(SelectedFile);
-            RefreshPlaylist();
-        }
     }
 
     public void ToggleLoop()
@@ -178,19 +209,29 @@ public class PlaylistViewModel : Screen
         RefreshPlaylist();
     }
 
-    private async Task AddFile(string fileName, ReadingSettings? settings = null)
+    private async Task AddFile(History history, ReadingSettings? settings = null)
     {
         try
         {
-            var file = new MidiFile(fileName, settings);
-            Tracks.Add(file);
+            Tracks.Add(new(history, settings));
         }
         catch (Exception e)
         {
             settings ??= new();
             if (await ExceptionHandler.TryHandleException(e, settings))
-                await AddFile(fileName, settings);
+                await AddFile(history, settings);
         }
+    }
+
+    private async Task AddFile(string fileName, ReadingSettings? settings = null)
+    {
+        var history = new History(fileName, _main.SettingsView.KeyOffset);
+
+        await AddFile(history);
+
+        await using var db = _ioc.Get<LyreContext>();
+        db.History.Add(history);
+        await db.SaveChangesAsync();
     }
 
     private void RefreshPlaylist()

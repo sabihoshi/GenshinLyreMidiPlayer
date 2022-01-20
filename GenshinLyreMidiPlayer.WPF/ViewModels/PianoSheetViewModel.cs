@@ -6,22 +6,17 @@ using GenshinLyreMidiPlayer.WPF.Core;
 using Melanchall.DryWetMidi.Interaction;
 using PropertyChanged;
 using Stylet;
-using static GenshinLyreMidiPlayer.WPF.Core.LyrePlayer.Transpose;
 
 namespace GenshinLyreMidiPlayer.WPF.ViewModels;
 
 public class PianoSheetViewModel : Screen
 {
+    private readonly MainWindowViewModel _main;
     private uint _bars = 1;
     private uint _beats;
     private uint _shorten = 1;
 
-    public PianoSheetViewModel(SettingsPageViewModel settingsPage,
-        PlaylistViewModel playlistView)
-    {
-        SettingsPage = settingsPage;
-        PlaylistView = playlistView;
-    }
+    public PianoSheetViewModel(MainWindowViewModel main) { _main = main; }
 
     [OnChangedMethod(nameof(Update))] public char Delimiter { get; set; } = '.';
 
@@ -32,9 +27,9 @@ public class PianoSheetViewModel : Screen
         set => SettingsPage.SelectedLayout = value;
     }
 
-    public PlaylistViewModel PlaylistView { get; }
+    public PlaylistViewModel PlaylistView => _main.PlaylistView;
 
-    public SettingsPageViewModel SettingsPage { get; }
+    public SettingsPageViewModel SettingsPage => _main.SettingsView;
 
     public string Result { get; private set; } = string.Empty;
 
@@ -84,7 +79,7 @@ public class PianoSheetViewModel : Screen
             foreach (var note in notes)
             {
                 var offset = note.NoteNumber - SettingsPage.KeyOffset;
-                var transpose = SettingsPage.Transpose ?? Ignore;
+                var transpose = SettingsPage.Transpose.Key;
                 var id = LyrePlayer.TransposeNote(offset, transpose);
 
                 if (!layout.TryGetKey(id, out var key)) continue;
