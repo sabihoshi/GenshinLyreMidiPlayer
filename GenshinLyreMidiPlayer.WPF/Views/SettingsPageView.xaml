@@ -52,19 +52,19 @@
             </ui:SimpleStackPanel>
 
             <ui:SimpleStackPanel Orientation="Horizontal">
-                <GroupBox Header="Speed">
-                    <ComboBox
-                        ItemsSource="{Binding MidiSpeeds}"
-                        SelectedItem="{Binding SelectedSpeed}"
-                        SelectedIndex="{Binding Default.SelectedSpeed, Source={StaticResource Settings}}"
-                        DisplayMemberPath="SpeedName" />
-                </GroupBox>
-
                 <GroupBox Header="Layout">
                     <ComboBox
                         ItemsSource="{x:Static core:Keyboard.LayoutNames}"
                         SelectedItem="{Binding SelectedLayout}"
                         SelectedIndex="{Binding Default.SelectedLayout, Source={StaticResource Settings}}"
+                        DisplayMemberPath="Value" />
+                </GroupBox>
+
+                <GroupBox Header="Instrument">
+                    <ComboBox
+                        ItemsSource="{x:Static core:Keyboard.InstrumentNames}"
+                        SelectedItem="{Binding SelectedInstrument}"
+                        SelectedIndex="{Binding Default.SelectedInstrument, Source={StaticResource Settings}}"
                         DisplayMemberPath="Value" />
                 </GroupBox>
             </ui:SimpleStackPanel>
@@ -75,6 +75,14 @@
                         ItemsSource="{x:Static viewModels:SettingsPageViewModel.TransposeNames}"
                         SelectedItem="{Binding Transpose}"
                         DisplayMemberPath="Value" />
+                </GroupBox>
+
+                <GroupBox Header="Speed">
+                    <ComboBox
+                        ItemsSource="{Binding MidiSpeeds}"
+                        SelectedItem="{Binding SelectedSpeed}"
+                        SelectedIndex="{Binding Default.SelectedSpeed, Source={StaticResource Settings}}"
+                        DisplayMemberPath="SpeedName" />
                 </GroupBox>
             </ui:SimpleStackPanel>
 

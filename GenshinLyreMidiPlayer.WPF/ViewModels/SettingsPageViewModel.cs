@@ -4,6 +4,7 @@ using System.IO;
 using System.Linq;
 using System.Net.Http;
 using System.Net.Http.Headers;
+using System.Net.Http.Json;
 using System.Reflection;
 using System.Text.Json;
 using System.Threading;
@@ -30,8 +31,6 @@ namespace GenshinLyreMidiPlayer.WPF.ViewModels;
 
 public class SettingsPageViewModel : Screen
 {
-    private static readonly Settings Settings = Settings.Default;
-
     public static readonly Dictionary<Transpose, string> TransposeNames = new()
     {
         [Ignore] = "Ignore notes",
@@ -39,6 +38,7 @@ public class SettingsPageViewModel : Screen
         [Down]   = "Shift one semitone down"
     };
 
+    private static readonly Settings Settings = Settings.Default;
     private readonly IContainer _ioc;
     private readonly IEventAggregator _events;
     private readonly MainWindowViewModel _main;
@@ -151,6 +151,8 @@ public class SettingsPageViewModel : Screen
     public int MaxOffset => KeyOffsets.Keys.Max();
 
     public int MinOffset => KeyOffsets.Keys.Min();
+
+    public KeyValuePair<Keyboard.Instrument, string> SelectedInstrument { get; set; }
 
     public KeyValuePair<Keyboard.Layout, string> SelectedLayout { get; set; }
 
@@ -338,15 +340,14 @@ public class SettingsPageViewModel : Screen
             "https://api.github.com/repos/sabihoshi/GenshinLyreMidiPlayer/releases");
 
         var productInfo = new ProductInfoHeaderValue("GenshinLyreMidiPlayer", ProgramVersion.ToString());
-
         request.Headers.UserAgent.Add(productInfo);
 
         var response = await client.SendAsync(request);
-        var versions = JsonSerializer.Deserialize<List<GitVersion>>(await response.Content.ReadAsStringAsync());
+        var versions = await response.Content.ReadFromJsonAsync<List<GitVersion>>();
 
         return versions?
             .OrderByDescending(v => v.Version)
-            .FirstOrDefault(v => !v.Draft && !v.Prerelease || IncludeBetaUpdates);
+            .FirstOrDefault(v => (!v.Draft && !v.Prerelease) || IncludeBetaUpdates);
     }
 
     [UsedImplicitly]
@@ -394,6 +395,13 @@ public class SettingsPageViewModel : Screen
     {
         var layout = (int) SelectedLayout.Key;
         Settings.Modify(s => s.SelectedLayout = layout);
+    }
+
+    [UsedImplicitly]
+    private void OnSelectedInstrumentIndexChanged()
+    {
+        var instrument = (int) SelectedInstrument.Key;
+        Settings.Modify(s => s.SelectedInstrument = instrument);
     }
 
     [UsedImplicitly]

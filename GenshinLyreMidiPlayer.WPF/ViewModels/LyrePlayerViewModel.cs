@@ -10,6 +10,7 @@ using GenshinLyreMidiPlayer.Data.Notification;
 using GenshinLyreMidiPlayer.Data.Properties;
 using GenshinLyreMidiPlayer.WPF.Core;
 using GenshinLyreMidiPlayer.WPF.ModernWPF.Errors;
+using Melanchall.DryWetMidi.Common;
 using Melanchall.DryWetMidi.Core;
 using Melanchall.DryWetMidi.Interaction;
 using Melanchall.DryWetMidi.Multimedia;
@@ -72,7 +73,7 @@ public class LyrePlayerViewModel : Screen,
         {
             new ErrorContentDialog(e, closeText: "Ignore").ShowAsync();
 
-            SettingsView.CanUseSpeakers = false;
+            SettingsPage.CanUseSpeakers = false;
             Settings.UseSpeakers        = false;
         }
     }
@@ -133,7 +134,7 @@ public class LyrePlayerViewModel : Screen,
     private MusicDisplayProperties? Display =>
         _player?.SystemMediaTransportControls.DisplayUpdater.MusicProperties;
 
-    private SettingsPageViewModel SettingsView => _main.SettingsView;
+    private SettingsPageViewModel SettingsPage => _main.SettingsView;
 
     private static string PauseIcon => "\xEDB4";
 
@@ -353,14 +354,12 @@ public class LyrePlayerViewModel : Screen,
         }
     }
 
-    private int ApplyNoteSettings(int noteId)
+    private int ApplyNoteSettings(Keyboard.Instrument instrument, int noteId)
     {
-        noteId -= Playlist.OpenedFile?.History.Key ?? 0;
-
-        if (Settings.TransposeNotes)
-            noteId = LyrePlayer.TransposeNote(noteId, SettingsView.Transpose.Key);
-
-        return noteId;
+        noteId -= Playlist.OpenedFile?.History.Key ?? SettingsPage.KeyOffset;
+        return Settings.TransposeNotes
+            ? LyrePlayer.TransposeNote(instrument, ref noteId, SettingsPage.Transpose.Key)
+            : noteId;
     }
 
     private async Task InitializePlayback()
@@ -387,8 +386,10 @@ public class LyrePlayerViewModel : Screen,
         }
 
         // Check for notes that cannot be played even after transposing.
-        var outOfRange = midi.GetNotes().Where(note =>
-            !SettingsView.SelectedLayout.Key.TryGetKey(ApplyNoteSettings(note.NoteNumber), out _));
+        var outOfRange = midi.GetNotes().Where(n => !LyrePlayer.TryGetKey(
+            SettingsPage.SelectedLayout.Key,
+            SettingsPage.SelectedInstrument.Key,
+            ApplyNoteSettings(SettingsPage.SelectedInstrument.Key, n.NoteNumber), out _));
 
         if (Playlist.OpenedFile.History.Transpose is null && outOfRange.Any())
         {
@@ -396,14 +397,14 @@ public class LyrePlayerViewModel : Screen,
             {
                 var options = new Enum[] { Transpose.Up, Transpose.Down };
                 var exceptionDialog = new ErrorContentDialog(
-                    new IndexOutOfRangeException(
-                        "Some notes cannot be played by the Lyre because it is missing Sharps & Flats. " +
+                    new MissingNotesException(
+                        "Some notes cannot be played by this instrument, and may play incorrectly. " +
                         "This can be solved by snapping to the nearest semitone."),
                     options, "Ignore");
 
                 var result = await exceptionDialog.ShowAsync();
 
-                SettingsView.Transpose = result switch
+                SettingsPage.Transpose = result switch
                 {
                     ContentDialogResult.Primary   => TransposeNames.ElementAt(1),
                     ContentDialogResult.Secondary => TransposeNames.ElementAt(2),
@@ -415,7 +416,7 @@ public class LyrePlayerViewModel : Screen,
         var playback = midi.GetPlayback();
 
         Playback                      =  playback;
-        playback.Speed                =  SettingsView.SelectedSpeed.Speed;
+        playback.Speed                =  SettingsPage.SelectedSpeed.Speed;
         playback.InterruptNotesOnStop =  true;
         playback.Finished             += (_, _) => { Next(); };
         playback.EventPlayed          += OnNoteEvent;
@@ -474,8 +475,13 @@ public class LyrePlayerViewModel : Screen,
 
     private void PlayNote(NoteEvent noteEvent)
     {
+        var layout = SettingsPage.SelectedLayout.Key;
+        var instrument = SettingsPage.SelectedInstrument.Key;
+        var note = ApplyNoteSettings(instrument, noteEvent.NoteNumber);
+
         if (Settings.UseSpeakers)
         {
+            noteEvent.NoteNumber = new((byte) note);
             _speakers?.SendEvent(noteEvent);
             return;
         }
@@ -486,21 +492,18 @@ public class LyrePlayerViewModel : Screen,
             return;
         }
 
-        var layout = SettingsView.SelectedLayout.Key;
-        var note = ApplyNoteSettings(noteEvent.NoteNumber);
-
         switch (noteEvent.EventType)
         {
             case MidiEventType.NoteOff:
-                LyrePlayer.NoteUp(note, layout);
+                LyrePlayer.NoteUp(note, layout, instrument);
                 break;
             case MidiEventType.NoteOn when noteEvent.Velocity <= 0:
                 return;
             case MidiEventType.NoteOn when Settings.HoldNotes:
-                LyrePlayer.NoteDown(note, layout);
+                LyrePlayer.NoteDown(note, layout, instrument);
                 break;
             case MidiEventType.NoteOn:
-                LyrePlayer.PlayNote(note, layout);
+                LyrePlayer.PlayNote(note, layout, instrument);
                 break;
         }
     }

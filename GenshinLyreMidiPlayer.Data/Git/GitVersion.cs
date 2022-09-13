@@ -13,7 +13,7 @@ public class GitVersion
 
     [JsonPropertyName("name")] public string Name { get; set; } = "Unknown";
 
-    [JsonPropertyName("tag_name")] public string TagName { get; set; } = "0";
+    [JsonPropertyName("tag_name")] public string TagName { get; set; } = "0.0";
 
     [JsonPropertyName("html_url")] public string Url { get; set; } = null!;
 

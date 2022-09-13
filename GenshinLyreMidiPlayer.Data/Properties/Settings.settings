@@ -1,64 +1,63 @@
 ﻿<?xml version='1.0' encoding='utf-8'?>
-<SettingsFile xmlns="http://schemas.microsoft.com/VisualStudio/2004/01/settings" CurrentProfile="(Default)"
-              GeneratedClassNamespace="GenshinLyreMidiPlayer.Data.Properties" GeneratedClassName="Settings">
-    <Profiles />
-    <Settings>
-        <Setting Name="SqliteConnection" Type="(Connection string)" Scope="Application">
-            <DesignTimeValue Profile="(Default)">&lt;?xml version="1.0" encoding="utf-16"?&gt;
+<SettingsFile xmlns="http://schemas.microsoft.com/VisualStudio/2004/01/settings" CurrentProfile="(Default)" GeneratedClassNamespace="GenshinLyreMidiPlayer.Data.Properties" GeneratedClassName="Settings">
+  <Profiles />
+  <Settings>
+    <Setting Name="SqliteConnection" Type="(Connection string)" Scope="Application">
+      <DesignTimeValue Profile="(Default)">&lt;?xml version="1.0" encoding="utf-16"?&gt;
                 &lt;SerializableConnectionString xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
                 xmlns:xsd="http://www.w3.org/2001/XMLSchema"&gt;
                 &lt;ConnectionString&gt;history.db&lt;/ConnectionString&gt;
                 &lt;ProviderName /&gt;
-                &lt;/SerializableConnectionString&gt;
-            </DesignTimeValue>
-            <Value Profile="(Default)">history.db</Value>
-        </Setting>
-        <Setting Name="LicenseUri" Type="(Web Service URL)" Scope="Application">
-            <Value Profile="(Default)">https://github.com/sabihoshi/GenshinLyreMidiPlayer/blob/main/LICENSE.md</Value>
-        </Setting>
-        <Setting Name="ThirdPartyLicenseUri" Type="(Web Service URL)" Scope="Application">
-            <Value Profile="(Default)">
-                https://github.com/sabihoshi/GenshinLyreMidiPlayer/blob/main/THIRD-PARTY-NOTICES.md
-            </Value>
-        </Setting>
-        <Setting Name="AutoCheckUpdates" Type="System.Boolean" Scope="User">
-            <Value Profile="(Default)">True</Value>
-        </Setting>
-        <Setting Name="IncludeBetaUpdates" Type="System.Boolean" Scope="User">
-            <Value Profile="(Default)">True</Value>
-        </Setting>
-        <Setting Name="HoldNotes" Type="System.Boolean" Scope="User">
-            <Value Profile="(Default)">False</Value>
-        </Setting>
-        <Setting Name="TransposeNotes" Type="System.Boolean" Scope="User">
-            <Value Profile="(Default)">True</Value>
-        </Setting>
-        <Setting Name="MergeNotes" Type="System.Boolean" Scope="User">
-            <Value Profile="(Default)">False</Value>
-        </Setting>
-        <Setting Name="UseSpeakers" Type="System.Boolean" Scope="User">
-            <Value Profile="(Default)">False</Value>
-        </Setting>
-        <Setting Name="AppTheme" Type="System.Int32" Scope="User">
-            <Value Profile="(Default)">-1</Value>
-        </Setting>
-        <Setting Name="SelectedLayout" Type="System.Int32" Scope="User">
-            <Value Profile="(Default)">0</Value>
-        </Setting>
-        <Setting Name="SelectedSpeed" Type="System.Int32" Scope="User">
-            <Value Profile="(Default)">3</Value>
-        </Setting>
-        <Setting Name="SelectedTransition" Type="System.Int32" Scope="User">
-            <Value Profile="(Default)">0</Value>
-        </Setting>
-        <Setting Name="MergeMilliseconds" Type="System.UInt32" Scope="User">
-            <Value Profile="(Default)">0</Value>
-        </Setting>
-        <Setting Name="UpgradeRequired" Type="System.Boolean" Scope="User">
-            <Value Profile="(Default)">True</Value>
-        </Setting>
-        <Setting Name="GenshinLocation" Type="System.String" Scope="User">
-            <Value Profile="(Default)">GenshinImpact.exe</Value>
-        </Setting>
-    </Settings>
+                &lt;/SerializableConnectionString&gt;</DesignTimeValue>
+      <Value Profile="(Default)">history.db</Value>
+    </Setting>
+    <Setting Name="LicenseUri" Type="(Web Service URL)" Scope="Application">
+      <Value Profile="(Default)">https://github.com/sabihoshi/GenshinLyreMidiPlayer/blob/main/LICENSE.md</Value>
+    </Setting>
+    <Setting Name="ThirdPartyLicenseUri" Type="(Web Service URL)" Scope="Application">
+      <Value Profile="(Default)">https://github.com/sabihoshi/GenshinLyreMidiPlayer/blob/main/THIRD-PARTY-NOTICES.md</Value>
+    </Setting>
+    <Setting Name="AutoCheckUpdates" Type="System.Boolean" Scope="User">
+      <Value Profile="(Default)">True</Value>
+    </Setting>
+    <Setting Name="IncludeBetaUpdates" Type="System.Boolean" Scope="User">
+      <Value Profile="(Default)">True</Value>
+    </Setting>
+    <Setting Name="HoldNotes" Type="System.Boolean" Scope="User">
+      <Value Profile="(Default)">False</Value>
+    </Setting>
+    <Setting Name="TransposeNotes" Type="System.Boolean" Scope="User">
+      <Value Profile="(Default)">True</Value>
+    </Setting>
+    <Setting Name="MergeNotes" Type="System.Boolean" Scope="User">
+      <Value Profile="(Default)">False</Value>
+    </Setting>
+    <Setting Name="UseSpeakers" Type="System.Boolean" Scope="User">
+      <Value Profile="(Default)">False</Value>
+    </Setting>
+    <Setting Name="AppTheme" Type="System.Int32" Scope="User">
+      <Value Profile="(Default)">-1</Value>
+    </Setting>
+    <Setting Name="SelectedLayout" Type="System.Int32" Scope="User">
+      <Value Profile="(Default)">0</Value>
+    </Setting>
+    <Setting Name="SelectedSpeed" Type="System.Int32" Scope="User">
+      <Value Profile="(Default)">3</Value>
+    </Setting>
+    <Setting Name="SelectedTransition" Type="System.Int32" Scope="User">
+      <Value Profile="(Default)">0</Value>
+    </Setting>
+    <Setting Name="MergeMilliseconds" Type="System.UInt32" Scope="User">
+      <Value Profile="(Default)">0</Value>
+    </Setting>
+    <Setting Name="UpgradeRequired" Type="System.Boolean" Scope="User">
+      <Value Profile="(Default)">True</Value>
+    </Setting>
+    <Setting Name="GenshinLocation" Type="System.String" Scope="User">
+      <Value Profile="(Default)">GenshinImpact.exe</Value>
+    </Setting>
+    <Setting Name="SelectedInstrument" Type="System.Int32" Scope="User">
+      <Value Profile="(Default)">0</Value>
+    </Setting>
+  </Settings>
 </SettingsFile>

@@ -12,58 +12,20 @@ public static class LyrePlayer
 {
     private static readonly IInputSimulator Input = new InputSimulator();
 
-    private static readonly List<int> LyreNotes = new()
-    {
-        48, // C3
-        50, // D3
-        52, // E3
-        53, // F3
-        55, // G3
-        57, // A3
-        59, // B3
-
-        60, // C4
-        62, // D4
-        64, // E4
-        65, // F4
-        67, // G4
-        69, // A4
-        71, // B4
-
-        72, // C5
-        74, // D5
-        76, // E5
-        77, // F5
-        79, // G5
-        81, // A5
-        83  // B5
-    };
-
-    public static bool TryGetKey(this Layout layout, int noteId, out VirtualKeyCode key)
-    {
-        var keys = GetLayout(layout);
-        return TryGetKey(keys, noteId, out key);
-    }
-
-    public static bool TryGetKey(this IEnumerable<VirtualKeyCode> keys, int noteId, out VirtualKeyCode key)
-    {
-        var keyIndex = LyreNotes.IndexOf(noteId);
-        key = keys.ElementAtOrDefault(keyIndex);
-
-        return keyIndex != -1;
-    }
-
-    public static int TransposeNote(int noteId,
+    public static int TransposeNote(
+        Instrument instrument, ref int noteId,
         Transpose direction = Transpose.Ignore)
     {
+        if (direction is Transpose.Ignore) return noteId;
+        var notes = GetNotes(instrument);
         while (true)
         {
-            if (LyreNotes.Contains(noteId))
+            if (notes.Contains(noteId))
                 return noteId;
 
-            if (noteId < LyreNotes.First())
+            if (noteId < notes.First())
                 noteId += 12;
-            else if (noteId > LyreNotes.Last())
+            else if (noteId > notes.Last())
                 noteId -= 12;
             else
             {
@@ -77,19 +39,37 @@ public static class LyrePlayer
         }
     }
 
-    public static void InteractNote(int noteId, Layout selectedLayout,
-        Func<VirtualKeyCode, IKeyboardSimulator> action)
+    public static void NoteDown(int noteId, Layout layout, Instrument instrument)
+        => InteractNote(noteId, layout, instrument, Input.Keyboard.KeyDown);
+
+    public static void NoteUp(int noteId, Layout layout, Instrument instrument)
+        => InteractNote(noteId, layout, instrument, Input.Keyboard.KeyUp);
+
+    public static void PlayNote(int noteId, Layout layout, Instrument instrument)
+        => InteractNote(noteId, layout, instrument, Input.Keyboard.KeyPress);
+
+    public static bool TryGetKey(Layout layout, Instrument instrument, int noteId, out VirtualKeyCode key)
     {
-        if (selectedLayout.TryGetKey(noteId, out var key))
-            action.Invoke(key);
+        var keys = GetLayout(layout);
+        var notes = GetNotes(instrument);
+        return TryGetKey(keys, notes, noteId, out key);
     }
 
-    public static void NoteDown(int noteId, Layout selectedLayout)
-        => InteractNote(noteId, selectedLayout, Input.Keyboard.KeyDown);
+    private static bool TryGetKey(
+        this IEnumerable<VirtualKeyCode> keys, IList<int> notes,
+        int noteId, out VirtualKeyCode key)
+    {
+        var keyIndex = notes.IndexOf(noteId);
+        key = keys.ElementAtOrDefault(keyIndex);
 
-    public static void NoteUp(int noteId, Layout selectedLayout)
-        => InteractNote(noteId, selectedLayout, Input.Keyboard.KeyUp);
+        return keyIndex != -1;
+    }
 
-    public static void PlayNote(int noteId, Layout selectedLayout)
-        => InteractNote(noteId, selectedLayout, Input.Keyboard.KeyPress);
+    private static void InteractNote(
+        int noteId, Layout layout, Instrument instrument,
+        Func<VirtualKeyCode, IKeyboardSimulator> action)
+    {
+        if (TryGetKey(layout, instrument, noteId, out var key))
+            action.Invoke(key);
+    }
 }

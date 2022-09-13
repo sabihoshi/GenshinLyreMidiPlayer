@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
+using GenshinLyreMidiPlayer.Data.Properties;
 using GenshinLyreMidiPlayer.WPF.Core;
 using Melanchall.DryWetMidi.Interaction;
 using PropertyChanged;
@@ -11,6 +12,8 @@ namespace GenshinLyreMidiPlayer.WPF.ViewModels;
 
 public class PianoSheetViewModel : Screen
 {
+    private static readonly Settings Settings = Settings.Default;
+
     private readonly MainWindowViewModel _main;
     private uint _bars = 1;
     private uint _beats;
@@ -63,6 +66,7 @@ public class PianoSheetViewModel : Screen
             return;
 
         var layout = SettingsPage.SelectedLayout.Key;
+        var instrument = SettingsPage.SelectedInstrument.Key;
 
         // Ticks is too small so it is not included
         var split = PlaylistView.OpenedFile.Split(Bars, Beats, 0);
@@ -78,11 +82,12 @@ public class PianoSheetViewModel : Screen
 
             foreach (var note in notes)
             {
-                var offset = note.NoteNumber - SettingsPage.KeyOffset;
+                var id = note.NoteNumber - SettingsPage.KeyOffset;
                 var transpose = SettingsPage.Transpose.Key;
-                var id = LyrePlayer.TransposeNote(offset, transpose);
+                if (Settings.TransposeNotes)
+                    LyrePlayer.TransposeNote(instrument, ref id, transpose);
 
-                if (!layout.TryGetKey(id, out var key)) continue;
+                if (!LyrePlayer.TryGetKey(layout, instrument, id, out var key)) continue;
 
                 var difference = note.Time - last;
                 var dotCount = difference / Shorten;
