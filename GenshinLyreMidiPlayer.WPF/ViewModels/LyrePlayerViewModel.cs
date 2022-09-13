@@ -10,7 +10,6 @@ using GenshinLyreMidiPlayer.Data.Notification;
 using GenshinLyreMidiPlayer.Data.Properties;
 using GenshinLyreMidiPlayer.WPF.Core;
 using GenshinLyreMidiPlayer.WPF.ModernWPF.Errors;
-using Melanchall.DryWetMidi.Common;
 using Melanchall.DryWetMidi.Core;
 using Melanchall.DryWetMidi.Interaction;
 using Melanchall.DryWetMidi.Multimedia;
@@ -379,8 +378,9 @@ public class LyrePlayerViewModel : Screen,
 
         if (Settings.MergeNotes)
         {
-            midi.MergeNotes(new()
+            midi.MergeObjects(ObjectType.Note, new()
             {
+                VelocityMergingPolicy = VelocityMergingPolicy.Average,
                 Tolerance = new MetricTimeSpan(0, 0, 0, (int) Settings.MergeMilliseconds)
             });
         }
