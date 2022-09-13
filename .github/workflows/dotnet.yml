@@ -14,31 +14,31 @@ jobs:
       shell: bash
       run: echo ::set-output name=VERSION::${GITHUB_REF/refs\/tags\//}
 
-    - uses: actions/checkout@v2.3.4
+    - uses: actions/checkout@v3
 
     - name: Setup .NET Core SDK
-      uses: actions/setup-dotnet@v1.8.2
+      uses: actions/setup-dotnet@v2
       with:
         dotnet-version: 6.0.x
 
     - name: Publish with dotnet
       run: |
-        dotnet publish GenshinLyreMidiPlayer.WPF -r win-x64 -c Release -o .\dependent --self-contained false -p:PublishSingleFile=true
-        dotnet publish GenshinLyreMidiPlayer.WPF -r win-x64 -c Release -o .\standalone --self-contained true -p:PublishSingleFile=true
+        dotnet publish GenshinLyreMidiPlayer.WPF -r win-x64 -c Release -o .\install --self-contained false -p:PublishSingleFile=true
+        dotnet publish GenshinLyreMidiPlayer.WPF -r win-x64 -c Release -o .\portable --self-contained true -p:PublishSingleFile=true
 
     - name: Zip release
       run: |
-        7z a GenshinLyreMidiPlayer_${{ steps.tag.outputs.VERSION }}_win-x64_dependent.zip .\dependent\* -mx9
-        7z a GenshinLyreMidiPlayer_${{ steps.tag.outputs.VERSION }}_win-x64_standalone.zip .\standalone\* -mx9
+        7z a GenshinLyreMidiPlayer_${{ steps.tag.outputs.VERSION }}_win-x64_net-install.zip .\install\* -mx9
+        7z a GenshinLyreMidiPlayer_${{ steps.tag.outputs.VERSION }}_win-x64_portable.zip .\portable\* -mx9
 
     - name: Create Release
-      uses: ncipollo/release-action@v1.8.10
+      uses: ncipollo/release-action@v1.10.0
       with:
           allowUpdates: true
           omitBodyDuringUpdate: true
           omitNameDuringUpdate: true
           artifacts:
-              ./GenshinLyreMidiPlayer_${{ steps.tag.outputs.VERSION }}_win-x64_dependent.zip,
-              ./GenshinLyreMidiPlayer_${{ steps.tag.outputs.VERSION }}_win-x64_standalone.zip
+              ./GenshinLyreMidiPlayer_${{ steps.tag.outputs.VERSION }}_win-x64_net-install.zip,
+              ./GenshinLyreMidiPlayer_${{ steps.tag.outputs.VERSION }}_win-x64_portable.zip
           artifactContentType: application/zip
           token: ${{ secrets.GITHUB_TOKEN }}
