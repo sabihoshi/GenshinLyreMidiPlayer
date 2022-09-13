@@ -24,6 +24,8 @@ using ModernWpf;
 using ModernWpf.Controls;
 using Stylet;
 using StyletIoC;
+using Wpf.Ui.Appearance;
+using Wpf.Ui.Mvvm.Contracts;
 using static GenshinLyreMidiPlayer.Data.Entities.Transpose;
 
 namespace GenshinLyreMidiPlayer.WPF.ViewModels;
@@ -40,6 +42,7 @@ public class SettingsPageViewModel : Screen
     private static readonly Settings Settings = Settings.Default;
     private readonly IContainer _ioc;
     private readonly IEventAggregator _events;
+    private readonly IThemeService _theme;
     private readonly MainWindowViewModel _main;
     private int _keyOffset;
 
@@ -47,6 +50,7 @@ public class SettingsPageViewModel : Screen
     {
         _ioc    = ioc;
         _events = ioc.Get<IEventAggregator>();
+        _theme  = ioc.Get<IThemeService>();
         _main   = main;
 
         _keyOffset = Playlist.OpenedFile?.History.Key ?? 0;
@@ -155,7 +159,7 @@ public class SettingsPageViewModel : Screen
 
     public KeyValuePair<Keyboard.Layout, string> SelectedLayout { get; set; }
 
-    public KeyValuePair<Transpose, string> Transpose { get; set; } = TransposeNames.First();
+    public KeyValuePair<Transpose, string>? Transpose { get; set; }
 
     public static List<MidiSpeed> MidiSpeeds { get; } = new()
     {
@@ -309,8 +313,14 @@ public class SettingsPageViewModel : Screen
     [UsedImplicitly]
     public void OnThemeChanged()
     {
-        var theme = (int?) ThemeManager.Current.ApplicationTheme ?? -1;
-        Settings.Modify(s => s.AppTheme = theme);
+        _theme.SetTheme(ThemeManager.Current.ApplicationTheme switch
+        {
+            ApplicationTheme.Light => ThemeType.Light,
+            ApplicationTheme.Dark  => ThemeType.Dark,
+            _                      => _theme.GetSystemTheme()
+        });
+
+        Settings.Modify(s => s.AppTheme = (int?) ThemeManager.Current.ApplicationTheme ?? -1);
     }
 
     [UsedImplicitly]
@@ -390,17 +400,17 @@ public class SettingsPageViewModel : Screen
     }
 
     [UsedImplicitly]
-    private void OnSelectedLayoutIndexChanged()
-    {
-        var layout = (int) SelectedLayout.Key;
-        Settings.Modify(s => s.SelectedLayout = layout);
-    }
-
-    [UsedImplicitly]
     private void OnSelectedInstrumentIndexChanged()
     {
         var instrument = (int) SelectedInstrument.Key;
         Settings.Modify(s => s.SelectedInstrument = instrument);
+    }
+
+    [UsedImplicitly]
+    private void OnSelectedLayoutIndexChanged()
+    {
+        var layout = (int) SelectedLayout.Key;
+        Settings.Modify(s => s.SelectedLayout = layout);
     }
 
     [UsedImplicitly]
@@ -414,7 +424,7 @@ public class SettingsPageViewModel : Screen
 
         await using var db = _ioc.Get<LyreContext>();
 
-        Playlist.OpenedFile.History.Transpose = Transpose.Key;
+        Playlist.OpenedFile.History.Transpose = Transpose?.Key;
         db.Update(Playlist.OpenedFile.History);
 
         await db.SaveChangesAsync();

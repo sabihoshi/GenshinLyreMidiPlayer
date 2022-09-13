@@ -6,7 +6,9 @@
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
     xmlns:d="http://schemas.microsoft.com/expression/blend/2008" mc:Ignorable="d"
 
-    xmlns:ui="http://schemas.modernwpf.com/2019"
+    xmlns:ui="http://schemas.lepo.co/wpfui/2022/xaml"
+    xmlns:modern="http://schemas.modernwpf.com/2019"
+
     xmlns:s="https://github.com/canton7/Stylet"
     xmlns:theme="clr-namespace:GenshinLyreMidiPlayer.WPF.ModernWPF.Theme"
     xmlns:core="clr-namespace:GenshinLyreMidiPlayer.WPF.Core"
@@ -21,37 +23,37 @@
     </UserControl.Resources>
 
     <ScrollViewer>
-        <ui:SimpleStackPanel>
-            <ui:SimpleStackPanel Orientation="Horizontal">
-                <ui:ToggleSwitch
+        <modern:SimpleStackPanel>
+            <modern:SimpleStackPanel Orientation="Horizontal">
+                <modern:ToggleSwitch
                     Header="Test Mode (Speakers)"
                     IsEnabled="{Binding CanUseSpeakers}"
                     IsOn="{Binding Default.UseSpeakers, Source={StaticResource Settings}}" />
 
-                <ui:ToggleSwitch
+                <modern:ToggleSwitch
                     Header="Transpose"
                     IsOn="{Binding Default.TransposeNotes, Source={StaticResource Settings}}" />
 
-                <ui:NumberBox
+                <modern:NumberBox
                     Header="{Binding Key}" Value="{Binding KeyOffset}"
                     Minimum="{Binding MinOffset}" Maximum="{Binding MaxOffset}" />
-            </ui:SimpleStackPanel>
+            </modern:SimpleStackPanel>
 
-            <ui:SimpleStackPanel Orientation="Horizontal">
-                <ui:ToggleSwitch
+            <modern:SimpleStackPanel Orientation="Horizontal">
+                <modern:ToggleSwitch
                     Header="Hold notes"
                     IsOn="{Binding Default.HoldNotes, Source={StaticResource Settings}}" />
 
-                <ui:ToggleSwitch
+                <modern:ToggleSwitch
                     Header="Merge nearby notes"
                     IsOn="{Binding MergeNotes}" />
 
-                <ui:NumberBox
+                <modern:NumberBox
                     Header="Tolerance (ms)" IsEnabled="{Binding MergeNotes}"
                     Value="{Binding MergeMilliseconds}" />
-            </ui:SimpleStackPanel>
+            </modern:SimpleStackPanel>
 
-            <ui:SimpleStackPanel Orientation="Horizontal">
+            <modern:SimpleStackPanel Orientation="Horizontal">
                 <GroupBox Header="Layout">
                     <ComboBox
                         ItemsSource="{x:Static core:Keyboard.LayoutNames}"
@@ -67,9 +69,9 @@
                         SelectedIndex="{Binding Default.SelectedInstrument, Source={StaticResource Settings}}"
                         DisplayMemberPath="Value" />
                 </GroupBox>
-            </ui:SimpleStackPanel>
+            </modern:SimpleStackPanel>
 
-            <ui:SimpleStackPanel Orientation="Horizontal">
+            <modern:SimpleStackPanel Orientation="Horizontal">
                 <GroupBox Header="Transpose">
                     <ComboBox
                         ItemsSource="{x:Static viewModels:SettingsPageViewModel.TransposeNames}"
@@ -84,45 +86,47 @@
                         SelectedIndex="{Binding Default.SelectedSpeed, Source={StaticResource Settings}}"
                         DisplayMemberPath="SpeedName" />
                 </GroupBox>
-            </ui:SimpleStackPanel>
+            </modern:SimpleStackPanel>
 
             <GroupBox Header="Timer">
-                <ui:SimpleStackPanel Orientation="Horizontal">
-                    <ui:SimpleStackPanel.Resources>
+                <modern:SimpleStackPanel Orientation="Horizontal">
+                    <modern:SimpleStackPanel.Resources>
                         <Style TargetType="Button" BasedOn="{StaticResource {x:Type Button}}" />
-                    </ui:SimpleStackPanel.Resources>
+                    </modern:SimpleStackPanel.Resources>
 
-                    <ui:SimpleTimePicker SelectedDateTime="{Binding DateTime}" IsEnabled="{Binding CanChangeTime}" />
+                    <modern:SimpleTimePicker SelectedDateTime="{Binding DateTime}" IsEnabled="{Binding CanChangeTime}" />
                     <Button Command="{s:Action SetTimeToNow}" IsEnabled="{Binding CanChangeTime}">Now</Button>
                     <Button Command="{s:Action StartStopTimer}" Content="{Binding TimerText}" />
-                </ui:SimpleStackPanel>
+                </modern:SimpleStackPanel>
             </GroupBox>
 
             <GroupBox Header="Location">
-                <ui:SimpleStackPanel Orientation="Horizontal">
+                <modern:SimpleStackPanel Orientation="Horizontal">
                     <Button Command="{s:Action SetLocation}" Background="Transparent">
                         <ui:FontIcon Glyph="&#xE8E5;" />
                     </Button>
                     <TextBlock Text="{x:Static viewModels:SettingsPageViewModel.GenshinLocation}"
                                VerticalAlignment="Center" />
-                </ui:SimpleStackPanel>
+                </modern:SimpleStackPanel>
             </GroupBox>
 
             <GroupBox Header="Version">
-                <ui:SimpleStackPanel>
-                    <ui:SimpleStackPanel Orientation="Horizontal">
-                        <TextBlock x:Name="VersionText" Style="{DynamicResource SubtitleTextBlockStyle}">
+                <modern:SimpleStackPanel>
+                    <TextBlock x:Name="VersionText" VerticalAlignment="Center" Style="{DynamicResource SubtitleTextBlockStyle}">
                             You are running version
                             v<Run Text="{Binding ProgramVersion, Mode=OneTime}" />
                         </TextBlock>
-                        <Button Command="{s:Action CheckForUpdate}" Margin="-3"
+                    <modern:SimpleStackPanel Orientation="Horizontal">
+                        <Button Command="{s:Action CheckForUpdate}"
                                 Visibility="{Binding IsCheckingUpdate, Converter={x:Static s:BoolToVisibilityConverter.InverseInstance}}">
                             <ui:FontIcon
                                 Glyph="&#xE72C;"
                                 FontSize="{Binding ElementName=VersionText, Path=FontSize}" />
                         </Button>
-                        <ui:ProgressRing IsActive="{Binding IsCheckingUpdate}" />
-                    </ui:SimpleStackPanel>
+                        <ui:ProgressRing 
+	                        IsIndeterminate="True" IsEnabled="{Binding IsCheckingUpdate}"
+                            Visibility="{Binding IsCheckingUpdate, Converter={x:Static s:BoolToVisibilityConverter.Instance}}" />
+                    </modern:SimpleStackPanel>
 
                     <TextBlock
                         Visibility="{Binding NeedsUpdate, Converter={x:Static s:BoolToVisibilityConverter.Instance}}">
@@ -134,34 +138,35 @@
                         </Hyperlink>
                     </TextBlock>
 
-                    <ui:ToggleSwitch Header="Automatically check updates" IsOn="{Binding AutoCheckUpdates}" />
-                    <ui:ToggleSwitch Header="Include beta updates" IsOn="{Binding IncludeBetaUpdates}" />
-                </ui:SimpleStackPanel>
+                    <modern:ToggleSwitch Header="Automatically check updates" IsOn="{Binding AutoCheckUpdates}" />
+                    <modern:ToggleSwitch Header="Include beta updates" IsOn="{Binding IncludeBetaUpdates}" />
+                </modern:SimpleStackPanel>
             </GroupBox>
 
             <GroupBox Header="Theme Mode">
-                <ui:RadioButtons
+                <modern:RadioButtons
                     SelectedItem="{Binding
-                        Source={x:Static ui:ThemeManager.Current}, Path=ApplicationTheme,
+                        Source={x:Static modern:ThemeManager.Current}, Path=ApplicationTheme,
                         Converter={StaticResource AppThemeConverter}}"
+                    SelectionChanged="{s:Action OnThemeChanged}"
                     SelectedIndex="{Binding Default.AppTheme, Source={StaticResource Settings}}">
-                    <ui:RadioButtons.ItemsSource>
+                    <modern:RadioButtons.ItemsSource>
                         <theme:AppThemes />
-                    </ui:RadioButtons.ItemsSource>
-                </ui:RadioButtons>
+                    </modern:RadioButtons.ItemsSource>
+                </modern:RadioButtons>
             </GroupBox>
 
-            <Expander Header="Transition style">
-                <ui:RadioButtons
+            <GroupBox Header="Transition style">
+                <ComboBox
                     SelectedItem="{Binding Transition}"
                     SelectedIndex="{Binding Default.SelectedTransition, Source={StaticResource Settings}}"
                     ItemsSource="{x:Static transitions:TransitionCollection.Transitions}" />
-            </Expander>
+            </GroupBox>
 
             <GroupBox Header="License">
-                <ui:SimpleStackPanel Margin="10">
+                <modern:SimpleStackPanel Margin="10">
                     <TextBlock>
-                        Created by © 2021 sabihoshi under the
+                        Created by © 2022 sabihoshi under the
                         <Hyperlink NavigateUri="{Binding Default.LicenseUri, Source={StaticResource Settings}}">
                             MIT License
                         </Hyperlink>
@@ -180,8 +185,8 @@
                         This project is not affiliated nor endorsed by miHoYo.
                         Genshin Impact™ and other properties belong to their respective owners.
                     </TextBlock>
-                </ui:SimpleStackPanel>
+                </modern:SimpleStackPanel>
             </GroupBox>
-        </ui:SimpleStackPanel>
+        </modern:SimpleStackPanel>
     </ScrollViewer>
 </UserControl>

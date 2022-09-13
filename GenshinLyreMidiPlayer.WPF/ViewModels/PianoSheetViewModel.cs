@@ -83,9 +83,9 @@ public class PianoSheetViewModel : Screen
             foreach (var note in notes)
             {
                 var id = note.NoteNumber - SettingsPage.KeyOffset;
-                var transpose = SettingsPage.Transpose.Key;
-                if (Settings.TransposeNotes)
-                    LyrePlayer.TransposeNote(instrument, ref id, transpose);
+                var transpose = SettingsPage.Transpose?.Key;
+                if (Settings.TransposeNotes && transpose is not null)
+                    LyrePlayer.TransposeNote(instrument, ref id, transpose.Value);
 
                 if (!LyrePlayer.TryGetKey(layout, instrument, id, out var key)) continue;
 

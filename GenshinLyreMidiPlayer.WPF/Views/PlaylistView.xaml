@@ -6,7 +6,8 @@
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
     xmlns:d="http://schemas.microsoft.com/expression/blend/2008" mc:Ignorable="d"
 
-    xmlns:ui="http://schemas.modernwpf.com/2019"
+    xmlns:ui="http://schemas.lepo.co/wpfui/2022/xaml"
+    xmlns:modern="http://schemas.modernwpf.com/2019"
     xmlns:s="https://github.com/canton7/Stylet"
 
     xmlns:componentModel="clr-namespace:System.ComponentModel;assembly=WindowsBase"
@@ -84,16 +85,16 @@
                 <ui:FontIcon Glyph="&#xE8E5;" />
             </Button>
 
-            <TextBlock Grid.Column="1" VerticalAlignment="Center">
+            <TextBlock Grid.Column="1" Margin="10,0" VerticalAlignment="Center">
                 Current song: <Run Text="{Binding OpenedFile.Title, Mode=OneWay, FallbackValue=Open...}" />
             </TextBlock>
 
-            <ui:SimpleStackPanel
+            <modern:SimpleStackPanel
                 Grid.Column="2" Orientation="Horizontal"
                 HorizontalAlignment="Center">
                 <Button Command="{s:Action RemoveTrack}" Content="Remove" />
                 <Button Command="{s:Action ClearPlaylist}" Content="Clear Playlist" />
-            </ui:SimpleStackPanel>
+            </modern:SimpleStackPanel>
         </Grid>
 
         <ListView
@@ -119,7 +120,7 @@
             </ListView.GroupStyle>
         </ListView>
 
-        <ui:SimpleStackPanel
+        <modern:SimpleStackPanel
             Grid.Row="2" Orientation="Horizontal"
             HorizontalAlignment="Center">
             <Button Command="{s:Action ToggleShuffle}">
@@ -128,6 +129,6 @@
             <Button Command="{s:Action ToggleLoop}">
                 <ui:FontIcon Glyph="{Binding LoopStateString}" />
             </Button>
-        </ui:SimpleStackPanel>
+        </modern:SimpleStackPanel>
     </Grid>
 </UserControl>

@@ -3,7 +3,8 @@
     xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
     xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
     xmlns:s="https://github.com/canton7/Stylet"
-    xmlns:ui="http://schemas.modernwpf.com/2019"
+    xmlns:ui="http://schemas.lepo.co/wpfui/2022/xaml"
+    xmlns:modern="http://schemas.modernwpf.com/2019"
     xmlns:wpf="clr-namespace:GenshinLyreMidiPlayer.WPF">
     <Application.Resources>
         <ResourceDictionary>
@@ -15,14 +16,16 @@
                     </s:ApplicationLoader.Bootstrapper>
                 </s:ApplicationLoader>
 
-                <ui:ThemeResources />
-                <ui:XamlControlsResources />
+	            <modern:ThemeResources />
+	            <modern:XamlControlsResources />
+	            <modern:IntellisenseResources Source="/ModernWpf;component/DesignTime/DesignTimeResources.xaml" />
 
-                <ui:IntellisenseResources Source="/ModernWpf;component/DesignTime/DesignTimeResources.xaml" />
+	            <ui:ThemesDictionary Theme="Dark" />
+	            <ui:ControlsDictionary />
 
             </ResourceDictionary.MergedDictionaries>
 
-            <Style TargetType="ui:SimpleStackPanel">
+            <Style TargetType="modern:SimpleStackPanel">
                 <Setter Property="Spacing" Value="10" />
                 <Style.Resources>
                     <Style TargetType="ComboBox" BasedOn="{StaticResource {x:Type ComboBox}}">
@@ -42,7 +45,7 @@
                 </Style.Resources>
             </Style>
 
-            <Style TargetType="ui:NumberBox">
+            <Style TargetType="modern:NumberBox">
                 <Setter Property="Minimum" Value="0" />
                 <Setter Property="SpinButtonPlacementMode" Value="Compact" />
             </Style>

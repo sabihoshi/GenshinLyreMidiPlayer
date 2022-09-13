@@ -1,29 +1,39 @@
-using System.Collections.Generic;
 using System.Linq;
+using System.Windows.Controls;
 using GenshinLyreMidiPlayer.Data;
 using GenshinLyreMidiPlayer.WPF.Views;
 using JetBrains.Annotations;
-using ModernWpf.Controls;
+using ModernWpf;
 using Stylet;
 using StyletIoC;
+using Wpf.Ui.Appearance;
+using Wpf.Ui.Common;
+using Wpf.Ui.Controls;
+using Wpf.Ui.Controls.Interfaces;
+using Wpf.Ui.Mvvm.Contracts;
+using AutoSuggestBox = Wpf.Ui.Controls.AutoSuggestBox;
 
 namespace GenshinLyreMidiPlayer.WPF.ViewModels;
 
 [UsedImplicitly]
-public class MainWindowViewModel : Conductor<IScreen>.StackNavigation
+public class MainWindowViewModel : Conductor<IScreen>
 {
+    public static NavigationStore Navigation = null!;
     private readonly IContainer _ioc;
-    private readonly Stack<NavigationViewItem> _history = new();
-    private NavigationView _navView = null!;
+    private readonly IThemeService _theme;
 
-    public MainWindowViewModel(IContainer ioc)
+    public MainWindowViewModel(IContainer ioc, IThemeService theme)
     {
-        _ioc = ioc;
+        Title = $"Genshin Lyre MIDI Player {SettingsPageViewModel.ProgramVersion}";
+
+        _ioc   = ioc;
+        _theme = theme;
 
         PlaylistView   = new(ioc, this);
         SettingsView   = new(ioc, this);
-        PlayerView     = new(ioc, this);
         PianoSheetView = new(this);
+
+        ActiveItem = PlayerView = new(ioc, this);
     }
 
     public bool ShowUpdate => SettingsView.NeedsUpdate && ActiveItem != SettingsView;
@@ -36,67 +46,57 @@ public class MainWindowViewModel : Conductor<IScreen>.StackNavigation
 
     public SettingsPageViewModel SettingsView { get; }
 
-    public string Title { get; set; } = "Genshin Lyre MIDI Player";
+    public string Title { get; set; }
+
+    public void Navigate(INavigation sender, RoutedNavigationEventArgs args)
+    {
+        if ((args.CurrentPage as NavigationItem)?.Tag is IScreen viewModel)
+            ActivateItem(viewModel);
+
+        NotifyOfPropertyChange(() => ShowUpdate);
+    }
+
+    public void NavigateToSettings() => ActivateItem(SettingsView);
+
+    public void ToggleTheme()
+    {
+        ThemeManager.Current.ApplicationTheme
+            = _theme.GetTheme() is ThemeType.Dark
+                ? ApplicationTheme.Light
+                : ApplicationTheme.Dark;
+
+        SettingsView.OnThemeChanged();
+    }
+
+    public void SearchSong(AutoSuggestBox sender, TextChangedEventArgs e)
+    {
+        if (ActiveItem != PlaylistView)
+        {
+            ActivateItem(PlaylistView);
+
+            var playlist = Navigation.Items
+                .OfType<NavigationItem>()
+                .First(nav => nav.Tag == PlaylistView);
+            var index = Navigation.Items.IndexOf(playlist);
+            Navigation.SelectedPageIndex = index;
+        }
+
+        PlaylistView.FilterText = sender.Text;
+    }
 
     protected override async void OnViewLoaded()
     {
-        // Work around because events do not conform to the signatures Stylet supports
-        _navView = ((MainWindowView) View).NavView;
-
-        _navView.AutoSuggestBox.TextChanged += AutoSuggestBoxOnTextChanged;
-
-        _navView.SelectionChanged += Navigate;
-        _navView.BackRequested    += NavigateBack;
-
-        var menuItems = _navView.MenuItems.Cast<NavigationViewItemBase>();
-        _navView.SelectedItem = menuItems.FirstOrDefault(item => item is NavigationViewItem);
+        Navigation = ((MainWindowView) View).RootNavigation;
+        _theme.SetTheme(_theme.GetSystemTheme());
 
         if (!SettingsView.TryGetLocation()) _ = SettingsView.LocationMissing();
-
         if (SettingsView.AutoCheckUpdates)
         {
             _ = SettingsView.CheckForUpdate()
-                .ContinueWith(_ => NotifyOfPropertyChange(() => ShowUpdate));
+                .ContinueWith(_ => { NotifyOfPropertyChange(() => ShowUpdate); });
         }
 
         await using var db = _ioc.Get<LyreContext>();
         await PlaylistView.AddFiles(db.History);
-    }
-
-    private void AutoSuggestBoxOnTextChanged(AutoSuggestBox sender, AutoSuggestBoxTextChangedEventArgs e)
-    {
-        PlaylistView.OnFilterTextChanged(sender, e);
-        if (ActiveItem != PlaylistView)
-        {
-            var playlist = (NavigationViewItem) _navView.MenuItems
-                .Cast<NavigationViewItemBase>()
-                .First(nav => nav.Tag == PlaylistView);
-
-            _navView.SelectedItem = playlist;
-        }
-    }
-
-    private void Navigate(NavigationView sender, NavigationViewSelectionChangedEventArgs args)
-    {
-        if (args.IsSettingsSelected)
-            Activate(SettingsView);
-        else if ((args.SelectedItem as NavigationViewItem)?.Tag is IScreen viewModel)
-            Activate(viewModel);
-
-        sender.IsBackEnabled = _history.Count > 1;
-        NotifyOfPropertyChange(() => ShowUpdate);
-
-        void Activate(IScreen viewModel)
-        {
-            ActivateItem(viewModel);
-            _history.Push((NavigationViewItem) sender.SelectedItem);
-        }
-    }
-
-    private void NavigateBack(NavigationView sender, NavigationViewBackRequestedEventArgs args)
-    {
-        _history.Pop();
-        sender.SelectedItem  = _history.Pop();
-        sender.IsBackEnabled = _history.Count > 1;
     }
 }

@@ -220,8 +220,9 @@ public class LyrePlayerViewModel : Screen,
         MidiTracks.Clear();
         MoveSlider(TimeSpan.Zero);
 
-        Playback            = null;
-        Playlist.OpenedFile = null;
+        Playback               = null;
+        Playlist.OpenedFile    = null;
+        SettingsPage.Transpose = null;
     }
 
     public async void Next()
@@ -356,8 +357,8 @@ public class LyrePlayerViewModel : Screen,
     private int ApplyNoteSettings(Keyboard.Instrument instrument, int noteId)
     {
         noteId -= Playlist.OpenedFile?.History.Key ?? SettingsPage.KeyOffset;
-        return Settings.TransposeNotes
-            ? LyrePlayer.TransposeNote(instrument, ref noteId, SettingsPage.Transpose.Key)
+        return Settings.TransposeNotes && SettingsPage.Transpose is not null
+            ? LyrePlayer.TransposeNote(instrument, ref noteId, SettingsPage.Transpose.Value.Key)
             : noteId;
     }
 
@@ -399,7 +400,8 @@ public class LyrePlayerViewModel : Screen,
                 var exceptionDialog = new ErrorContentDialog(
                     new MissingNotesException(
                         "Some notes cannot be played by this instrument, and may play incorrectly. " +
-                        "This can be solved by snapping to the nearest semitone."),
+                        "This can be solved by snapping to the nearest semitone. " +
+                        "You can choose to shift the notes up or down, or ignore the missing notes."),
                     options, "Ignore");
 
                 var result = await exceptionDialog.ShowAsync();

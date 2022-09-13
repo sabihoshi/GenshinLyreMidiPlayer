@@ -1,4 +1,4 @@
-﻿<UserControl
+<UserControl
     x:Class="GenshinLyreMidiPlayer.WPF.Views.PianoSheetView"
     xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
     xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
@@ -6,7 +6,8 @@
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
     xmlns:d="http://schemas.microsoft.com/expression/blend/2008" mc:Ignorable="d"
 
-    xmlns:ui="http://schemas.modernwpf.com/2019"
+    xmlns:ui="http://schemas.lepo.co/wpfui/2022/xaml"
+    xmlns:modern="http://schemas.modernwpf.com/2019"
     xmlns:s="https://github.com/canton7/Stylet"
 
     xmlns:viewModels="clr-namespace:GenshinLyreMidiPlayer.WPF.ViewModels"
@@ -26,13 +27,13 @@
             <RowDefinition Height="Auto" />
         </Grid.RowDefinitions>
 
-        <ui:SimpleStackPanel Grid.Row="0">
+        <modern:SimpleStackPanel Grid.Row="0">
             <TextBlock VerticalAlignment="Center">
                 Current song:
                 <Run Text="{Binding PlaylistView.OpenedFile.Title, Mode=OneWay, FallbackValue=Nothing}" />
             </TextBlock>
 
-            <ui:SimpleStackPanel Orientation="Horizontal">
+            <modern:SimpleStackPanel Orientation="Horizontal">
                 <GroupBox Header="Delimiter">
                     <TextBox Text="{Binding Delimiter, UpdateSourceTrigger=PropertyChanged}" />
                 </GroupBox>
@@ -44,25 +45,25 @@
                         SelectedIndex="{Binding Default.SelectedLayout, Source={StaticResource Settings}}"
                         DisplayMemberPath="Value" />
                 </GroupBox>
-            </ui:SimpleStackPanel>
+            </modern:SimpleStackPanel>
 
-            <ui:SimpleStackPanel Orientation="Horizontal">
+            <modern:SimpleStackPanel Orientation="Horizontal">
                 <GroupBox Header="Split Size">
-                    <ui:SimpleStackPanel Orientation="Horizontal">
-                        <ui:NumberBox Header="Bars" Value="{Binding Bars}" />
-                        <ui:NumberBox Header="Beats" Value="{Binding Beats}" />
-                        <ui:NumberBox Header="Shorten every" ToolTip="This will divide the delimiter by this number"
+                    <modern:SimpleStackPanel Orientation="Horizontal">
+                        <modern:NumberBox Header="Bars" Value="{Binding Bars}" />
+                        <modern:NumberBox Header="Beats" Value="{Binding Beats}" />
+                        <modern:NumberBox Header="Shorten every" ToolTip="This will divide the delimiter by this number"
                                       Minimum="1" Value="{Binding Shorten}" />
-                    </ui:SimpleStackPanel>
+                    </modern:SimpleStackPanel>
                 </GroupBox>
-            </ui:SimpleStackPanel>
-        </ui:SimpleStackPanel>
+            </modern:SimpleStackPanel>
+        </modern:SimpleStackPanel>
 
         <TextBox Grid.Row="1" Text="{Binding Result, Mode=OneWay}" IsReadOnly="True" Margin="0,10" />
 
-        <ui:SimpleStackPanel Grid.Row="2" Orientation="Horizontal">
+        <modern:SimpleStackPanel Grid.Row="2" Orientation="Horizontal">
             <Button Content="Copy" />
             <Button Content="Refresh" Command="{s:Action Update}" />
-        </ui:SimpleStackPanel>
+        </modern:SimpleStackPanel>
     </Grid>
 </UserControl>

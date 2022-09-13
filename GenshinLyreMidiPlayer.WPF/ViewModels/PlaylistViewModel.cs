@@ -9,7 +9,6 @@ using GenshinLyreMidiPlayer.WPF.ModernWPF.Errors;
 using Melanchall.DryWetMidi.Core;
 using Microsoft.Win32;
 using ModernWpf;
-using ModernWpf.Controls;
 using Stylet;
 using StyletIoC;
 using MidiFile = GenshinLyreMidiPlayer.Data.Midi.MidiFile;
@@ -44,6 +43,8 @@ public class PlaylistViewModel : Screen
     public BindableCollection<MidiFile> Tracks { get; } = new();
 
     public bool Shuffle { get; set; }
+
+    public IEnumerable<string> TrackTitles => Tracks.Select(t => t.Title);
 
     public LoopMode Loop { get; set; } = LoopMode.All;
 
@@ -125,6 +126,10 @@ public class PlaylistViewModel : Screen
         await db.SaveChangesAsync();
 
         Tracks.Clear();
+        FilteredTracks.Clear();
+        History.Clear();
+
+        
         OpenedFile   = null;
         SelectedFile = null;
     }
@@ -171,9 +176,6 @@ public class PlaylistViewModel : Screen
             _events.Publish(SelectedFile);
     }
 
-    public void OnFilterTextChanged(AutoSuggestBox sender, AutoSuggestBoxTextChangedEventArgs e)
-        => FilterText = sender.Text;
-
     public void OnOpenedFileChanged()
     {
         if (OpenedFile is null) return;
@@ -181,7 +183,8 @@ public class PlaylistViewModel : Screen
         var transpose = SettingsPageViewModel.TransposeNames
             .FirstOrDefault(e => e.Key == OpenedFile.History.Transpose);
 
-        _main.SettingsView.Transpose = transpose;
+        if (OpenedFile.History.Transpose is not null)
+            _main.SettingsView.Transpose = transpose;
         _main.SettingsView.KeyOffset = OpenedFile.History.Key;
     }
 
