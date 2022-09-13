@@ -1,12 +1,10 @@
 # 【 Genshin 原神 Windsong Lyre MIDI Auto Player 】
 
-A MIDI to key player for Genshin Impact's Windsong Lyre made using C# and WPF using Windows Fluent design. If you enjoyed this project, consider [contributing](#contributing) or 🌟 starring the repository. Thank you~
-
-> Check out [yoroshikun](https://github.com/yoroshikun)'s Flutter implementation of a **[Genshin Lyre Player](https://github.com/yoroshikun/flutter_genshin_lyre_player)** written in Dart!
+A MIDI to key player for Genshin Impact's Windsong Lyre, Floral Zither, and Vintage Lyre made using C# and WPF using Windows Mica design. If you enjoyed this project, consider [contributing](#contributing) or 🌟 starring the repository. Thank you~
 
 ## **[Download latest version][latest]** [![GitHub all releases](https://img.shields.io/github/downloads/sabihoshi/GenshinLyreMidiPlayer/total?style=social)][latest] [![GitHub release (latest by date)](https://img.shields.io/github/v/release/sabihoshi/GenshinLyreMidiPlayer)][latest]
 
-![2021-04-13_22-51-12](https://user-images.githubusercontent.com/25006819/114573455-f8f34d00-9caa-11eb-8288-57c193ca2d04.png)
+![2022-09-14_04-24-19](https://user-images.githubusercontent.com/25006819/190002173-fa8e2b0d-8817-4980-81f1-fb491c584310.png)
 
 ## How to use
 
@@ -20,11 +18,11 @@ A MIDI to key player for Genshin Impact's Windsong Lyre made using C# and WPF us
 > The reason this appears is because the application is not signed. Signing costs money which can get very expensive.
 
 ## Features
-![GenshinLyreMidiPlayer WPF_2021-05-14_19-33-05](https://user-images.githubusercontent.com/25006819/118265668-1acf3200-b4ec-11eb-8b88-ded036563e18.png)
+![GenshinLyreMidiPlayer WPF_2022-09-14_04-20-22](https://user-images.githubusercontent.com/25006819/190002309-ba67a17d-6b3f-4239-ba73-1e0e05b9ad1b.png)
 * The ability to change the key. By default, it is keyed to C major.
 * You can play multiple tracks of a MIDI file at the same time.
 * You can enable transposing of notes, otherwise it will skip the notes entirely.
-* Written in C# WPF with modern fluent design.
+* Written in C# WPF with W11 Mica design.
 * Change the keyboard layout (QWERTZ, AZERTY, DVORAK, etc.)
 * You can test out MIDI files by playing through the speakers.
 * History and Settings are now persisted even if you close the app.
@@ -34,7 +32,7 @@ A MIDI to key player for Genshin Impact's Windsong Lyre made using C# and WPF us
 # Piano Sheet [![](https://img.shields.io/badge/v2.1.0.1-New!-yellow)](https://github.com/sabihoshi/GenshinLyreMidiPlayer/releases/tag/v2.1.0.1)
 The first version of the Piano Sheet has been added, this allows you to easily share songs to other people, or for yourself to try. You can change the delimiter as well as the split size, and spacing. This will use the current keyboard layout that you have chosen.
 
-![2021-05-29_21-54-52](https://user-images.githubusercontent.com/25006819/120073859-b5bf3300-c0cc-11eb-878d-73c3796254a9.gif)
+![GenshinLyreMidiPlayer WPF_2022-09-14_04-27-50](https://user-images.githubusercontent.com/25006819/190002764-b5a74b2c-2402-462f-b35e-70ab4c45b5ec.gif)
 
 ### Media Controls
 You can now control the Lyre natively by using your media controls that some keyboards have as special function keys. This integrates with other music applications as well.
@@ -47,7 +45,7 @@ If you have your own MIDI instrument, this will let you play directly to the Gen
 ### Playlist Controls & History
 A playlist allows you to play songs continuously without having to open a new file after a song has finished.
 
-![GenshinLyreMidiPlayer_2021-04-13_22-27-05](https://user-images.githubusercontent.com/25006819/114570421-6651ae80-9ca8-11eb-9cb2-c9e322df14f0.png)
+![2022-09-14_04-28-38](https://user-images.githubusercontent.com/25006819/190002884-17fc502c-5235-42c9-9283-3703328a63ea.png)
 
 ### Hold notes & Merge nearby notes
   - You can set the player to hold sustained notes (does not really make a difference. Off by default.)
@@ -56,12 +54,12 @@ A playlist allows you to play songs continuously without having to open a new fi
 ### Light Mode
 You can set the player to light mode/dark mode (uses your system's theme by default.)
 
-![GenshinLyreMidiPlayer_2021-04-05_08-58-35](https://user-images.githubusercontent.com/25006819/113526575-237b4100-95ed-11eb-813c-1e9c661624cf.png)
+![GenshinLyreMidiPlayer WPF_2022-09-14_04-29-00](https://user-images.githubusercontent.com/25006819/190002946-e43658c1-cf3a-469d-9ab5-a166f34f673c.png)
 
 ### Mini Mode
 You can resize the player as small as you want and it should close the panels accordingly.
 
-![GenshinLyreMidiPlayer_2021-04-13_22-28-11](https://user-images.githubusercontent.com/25006819/114570320-4e7a2a80-9ca8-11eb-8907-a47025a0539a.png)
+![GenshinLyreMidiPlayer WPF_2022-09-14_04-21-55](https://user-images.githubusercontent.com/25006819/190002986-aabb84df-924f-48fc-9354-573635dc2551.png)
 
 ## Upcoming
 * Drag and drop MIDI files into the player.
@@ -91,7 +89,7 @@ This project has a [Code of Conduct](CODE_OF_CONDUCT.md), please follow it in al
 If you just want to run the program, there are precompiled releases that can be found in [here](https://github.com/sabihoshi/GenshinLyreMidiPlayer/releases).
 ### Requirements
 * [Git](https://git-scm.com) for cloning the project
-* [.NET 5.0](https://dotnet.microsoft.com/download) SDK
+* [.NET 6.0](https://dotnet.microsoft.com/download) SDK
 
 #### Publish a single binary for Windows
 ```bat
@@ -125,7 +123,7 @@ If you want to build using the [.Net Core 3.1 SDK](https://dotnet.microsoft.com/
 #### Target Framework
 Change the `TargetFramework` of both projects into `netcoreapp3.1`.
 ```diff
-- <TargetFramework>net5.0-windows10.0.19041.0</TargetFramework>
+- <TargetFramework>net6.0-windows10.0.22621.0</TargetFramework>
 + <TargetFramework>netcoreapp3.1</TargetFramework>
 ```
 
