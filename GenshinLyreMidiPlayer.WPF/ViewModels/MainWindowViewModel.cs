@@ -89,7 +89,7 @@ public class MainWindowViewModel : Conductor<IScreen>
         Navigation = ((MainWindowView) View).RootNavigation;
         _theme.SetTheme(_theme.GetSystemTheme());
 
-        if (!SettingsView.TryGetLocation()) _ = SettingsView.LocationMissing();
+        if (!await SettingsView.TryGetLocationAsync()) _ = SettingsView.LocationMissing();
         if (SettingsView.AutoCheckUpdates)
         {
             _ = SettingsView.CheckForUpdate()

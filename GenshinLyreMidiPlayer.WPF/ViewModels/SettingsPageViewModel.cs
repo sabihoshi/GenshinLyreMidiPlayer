@@ -193,7 +193,7 @@ public class SettingsPageViewModel : Screen
 
     private PlaylistViewModel Playlist => _main.PlaylistView;
 
-    public bool TryGetLocation()
+    public async Task<bool> TryGetLocationAsync()
     {
         var locations = new[]
         {
@@ -213,7 +213,13 @@ public class SettingsPageViewModel : Screen
             AppContext.BaseDirectory + "YuanShen.exe"
         };
 
-        return locations.Any(TrySetLocation);
+        foreach (var location in locations)
+        {
+            if (await TrySetLocationAsync(location))
+                return true;
+        }
+
+        return false;
     }
 
     public async Task CheckForUpdate()
@@ -247,10 +253,10 @@ public class SettingsPageViewModel : Screen
         var dialog = new ContentDialog
         {
             Title   = "Error",
-            Content = "Could not find Game's Location",
+            Content = "Could not find Game's Location, please find GenshinImpact.exe or YuanShen.exe",
 
             PrimaryButtonText   = "Find Manually...",
-            SecondaryButtonText = "Ignore",
+            SecondaryButtonText = "Ignore (Notes might not play)",
             CloseButtonText     = "Exit"
         };
 
@@ -279,12 +285,12 @@ public class SettingsPageViewModel : Screen
         {
             Filter = "Executable|*.exe|All files (*.*)|*.*",
             InitialDirectory = WindowHelper.InstallLocation is null
-                ? string.Empty
+                ? @"C:\Program Files\Genshin Impact\Genshin Impact Game\"
                 : Path.Combine(WindowHelper.InstallLocation, "Genshin Impact Game")
         };
 
         var success = openFileDialog.ShowDialog() == true;
-        var set = TrySetLocation(openFileDialog.FileName);
+        var set = await TrySetLocationAsync(openFileDialog.FileName);
 
         if (!(success && set)) await LocationMissing();
     }
@@ -332,9 +338,22 @@ public class SettingsPageViewModel : Screen
             _ = CheckForUpdate();
     }
 
-    private bool TrySetLocation(string? location)
+    private async Task<bool> TrySetLocationAsync(string? location)
     {
         if (!File.Exists(location)) return false;
+        if (Path.GetFileName(location).Equals("launcher.exe", StringComparison.OrdinalIgnoreCase))
+        {
+            var dialog = new ContentDialog
+            {
+                Title   = "Incorrect Location",
+                Content = "launcher.exe is not the game, please find GenshinImpact.exe",
+
+                CloseButtonText = "Ok"
+            };
+
+            await dialog.ShowAsync();
+            return false;
+        }
 
         Settings.GenshinLocation = location;
         NotifyOfPropertyChange(() => Settings.GenshinLocation);
