@@ -103,7 +103,7 @@
             <GroupBox Header="Location">
                 <modern:SimpleStackPanel Orientation="Horizontal">
                     <Button Command="{s:Action SetLocation}" Background="Transparent">
-                        <ui:FontIcon Glyph="&#xE8E5;" />
+                        <ui:FontIcon Glyph="&#xE8E5;" FontFamily="{StaticResource SegoeFluentIcons}" />
                     </Button>
                     <TextBlock Text="{x:Static viewModels:SettingsPageViewModel.GenshinLocation}"
                                VerticalAlignment="Center" />
@@ -121,6 +121,7 @@
                                 Visibility="{Binding IsCheckingUpdate, Converter={x:Static s:BoolToVisibilityConverter.InverseInstance}}">
                             <ui:FontIcon
                                 Glyph="&#xE72C;"
+                                FontFamily="{StaticResource SegoeFluentIcons}" 
                                 FontSize="{Binding ElementName=VersionText, Path=FontSize}" />
                         </Button>
                         <ui:ProgressRing 

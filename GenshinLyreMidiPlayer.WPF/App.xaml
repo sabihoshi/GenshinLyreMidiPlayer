@@ -49,6 +49,8 @@
                 <Setter Property="Minimum" Value="0" />
                 <Setter Property="SpinButtonPlacementMode" Value="Compact" />
             </Style>
+
+            <FontFamily x:Key="SegoeFluentIcons">pack://application:,,,/Fonts/#Segoe Fluent Icons</FontFamily>
         </ResourceDictionary>
     </Application.Resources>
 </Application>
