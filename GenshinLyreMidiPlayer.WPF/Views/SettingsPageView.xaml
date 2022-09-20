@@ -103,7 +103,7 @@
             <GroupBox Header="Location">
                 <modern:SimpleStackPanel Orientation="Horizontal">
                     <Button Command="{s:Action SetLocation}" Background="Transparent">
-                        <ui:FontIcon Glyph="&#xE8E5;" />
+                        <modern:FontIcon Glyph="&#xE8E5;" />
                     </Button>
                     <TextBlock Text="{x:Static viewModels:SettingsPageViewModel.GenshinLocation}"
                                VerticalAlignment="Center" />
@@ -119,7 +119,7 @@
                     <modern:SimpleStackPanel Orientation="Horizontal">
                         <Button Command="{s:Action CheckForUpdate}"
                                 Visibility="{Binding IsCheckingUpdate, Converter={x:Static s:BoolToVisibilityConverter.InverseInstance}}">
-                            <ui:FontIcon
+                            <modern:FontIcon
                                 Glyph="&#xE72C;"
                                 FontSize="{Binding ElementName=VersionText, Path=FontSize}" />
                         </Button>
