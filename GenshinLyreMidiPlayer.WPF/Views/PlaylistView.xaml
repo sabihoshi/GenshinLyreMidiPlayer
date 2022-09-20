@@ -39,12 +39,11 @@
                     <ColumnDefinition Width="*" />
                 </Grid.ColumnDefinitions>
 
-                <ui:FontIcon
+                <modern:FontIcon
                     Grid.Column="0" Grid.Row="0"
                     Grid.RowSpan="2" Margin="5"
                     VerticalAlignment="Center" HorizontalAlignment="Center"
-                    Glyph="&#xEC4F;" 
-                    FontFamily="{StaticResource SegoeFluentIcons}" />
+                    Glyph="&#xEC4F;" />
 
                 <TextBlock
                     Grid.Column="0" Grid.Row="0" Grid.RowSpan="2"
@@ -83,7 +82,7 @@
             </Grid.ColumnDefinitions>
 
             <Button Command="{s:Action OpenFile}" Background="Transparent">
-                <ui:FontIcon Glyph="&#xE8E5;" FontFamily="{StaticResource SegoeFluentIcons}" />
+                <modern:FontIcon Glyph="&#xE8E5;" />
             </Button>
 
             <TextBlock Grid.Column="1" Margin="10,0" VerticalAlignment="Center">
@@ -125,10 +124,10 @@
             Grid.Row="2" Orientation="Horizontal"
             HorizontalAlignment="Center">
             <Button Command="{s:Action ToggleShuffle}">
-                <ui:FontIcon Glyph="&#xE14B;" FontFamily="{StaticResource SegoeFluentIcons}" Foreground="{Binding ShuffleStateColor}" />
+                <modern:FontIcon Glyph="&#xE14B;" Foreground="{Binding ShuffleStateColor}" />
             </Button>
             <Button Command="{s:Action ToggleLoop}">
-                <ui:FontIcon Glyph="{Binding LoopStateString}" FontFamily="{StaticResource SegoeFluentIcons}" />
+                <modern:FontIcon Glyph="{Binding LoopStateString}" />
             </Button>
         </modern:SimpleStackPanel>
     </Grid>

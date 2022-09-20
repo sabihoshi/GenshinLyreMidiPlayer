@@ -25,7 +25,7 @@
 
 		<modern:SimpleStackPanel Orientation="Horizontal" Grid.Row="0">
 			<Button Command="{s:Action OpenFile}" Background="Transparent">
-                <ui:FontIcon Glyph="&#xE8E5;" FontFamily="{StaticResource SegoeFluentIcons}" />
+                <modern:FontIcon Glyph="&#xE8E5;"  />
 			</Button>
 			<TextBlock VerticalAlignment="Center" Text="{Binding Playlist.OpenedFile.Title, Mode=OneWay, FallbackValue=Open...}" />
 		</modern:SimpleStackPanel>
@@ -36,24 +36,24 @@
 			HorizontalAlignment="Center">
 
 			<Button s:View.ActionTarget="{Binding Playlist}" Command="{s:Action ToggleShuffle}">
-                <ui:FontIcon Glyph="&#xE14B;" FontFamily="{StaticResource SegoeFluentIcons}" Foreground="{Binding Playlist.ShuffleStateColor}" />
+                <modern:FontIcon Glyph="&#xE14B;" Foreground="{Binding Playlist.ShuffleStateColor}" />
 			</Button>
 
 			<Button Command="{s:Action Previous}"
 			        IsHitTestVisible="{Binding CanHitPrevious}">
-                <ui:FontIcon Glyph="&#xE892;" FontFamily="{StaticResource SegoeFluentIcons}" />
+                <modern:FontIcon Glyph="&#xE892;"  />
 			</Button>
 			<Button Command="{s:Action PlayPause}"
 			        IsHitTestVisible="{Binding CanHitPlayPause}">
-                <ui:FontIcon Glyph="{Binding PlayPauseIcon}" FontFamily="{StaticResource SegoeFluentIcons}" />
+                <modern:FontIcon Glyph="{Binding PlayPauseIcon}"  />
 			</Button>
 			<Button Command="{s:Action Next}"
 			        IsHitTestVisible="{Binding CanHitNext}">
-                <ui:FontIcon Glyph="&#xE893;" FontFamily="{StaticResource SegoeFluentIcons}" />
+                <modern:FontIcon Glyph="&#xE893;"  />
 			</Button>
 
 			<Button s:View.ActionTarget="{Binding Playlist}" Command="{s:Action ToggleLoop}">
-                <ui:FontIcon Glyph="{Binding Playlist.LoopStateString}" FontFamily="{StaticResource SegoeFluentIcons}" />
+                <modern:FontIcon Glyph="{Binding Playlist.LoopStateString}"  />
 			</Button>
 		</modern:SimpleStackPanel>
 
@@ -120,7 +120,7 @@
 					SelectedItem="{Binding SelectedMidiInput}"
 					DisplayMemberPath="DeviceName" />
 				<Button Command="{s:Action RefreshDevices}">
-                    <ui:FontIcon Glyph="&#xE72C;" FontFamily="{StaticResource SegoeFluentIcons}" />
+                    <modern:FontIcon Glyph="&#xE72C;"  />
 				</Button>
 			</modern:SimpleStackPanel>
 		</GroupBox>
