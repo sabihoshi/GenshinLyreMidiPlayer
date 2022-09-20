@@ -45,11 +45,7 @@
     </ItemGroup>
 
     <ItemGroup>
-        <None Remove="Fonts\SegoeFluentIcons.ttf" />
         <None Remove="item_windsong_lyre.png" />
-        <Resource Include="Fonts\SegoeFluentIcons.ttf">
-          <CopyToOutputDirectory>Never</CopyToOutputDirectory>
-        </Resource>
         <Resource Include="item_windsong_lyre.png" />
     </ItemGroup>
 
