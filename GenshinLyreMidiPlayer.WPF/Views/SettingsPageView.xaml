@@ -103,7 +103,7 @@
             <GroupBox Header="Location">
                 <modern:SimpleStackPanel Orientation="Horizontal">
                     <Button Command="{s:Action SetLocation}" Background="Transparent">
-                        <modern:FontIcon Glyph="&#xE8E5;" />
+                        <ui:FontIcon Glyph="&#xE8E5;" FontFamily="Segoe MDL2 Assets" />
                     </Button>
                     <TextBlock Text="{x:Static viewModels:SettingsPageViewModel.GenshinLocation}"
                                VerticalAlignment="Center" />
@@ -112,16 +112,15 @@
 
             <GroupBox Header="Version">
                 <modern:SimpleStackPanel>
-                    <TextBlock x:Name="VersionText" VerticalAlignment="Center" Style="{DynamicResource SubtitleTextBlockStyle}">
-                            You are running version
-                            v<Run Text="{Binding ProgramVersion, Mode=OneTime}" />
-                        </TextBlock>
                     <modern:SimpleStackPanel Orientation="Horizontal">
+	                    <TextBlock x:Name="VersionText" VerticalAlignment="Center"
+	                               Style="{DynamicResource SubtitleTextBlockStyle}">
+		                    You are running version
+		                    v<Run Text="{Binding ProgramVersion, Mode=OneTime}" />
+	                    </TextBlock>
                         <Button Command="{s:Action CheckForUpdate}"
-                                Visibility="{Binding IsCheckingUpdate, Converter={x:Static s:BoolToVisibilityConverter.InverseInstance}}">
-                            <modern:FontIcon
-                                Glyph="&#xE72C;"
-                                FontSize="{Binding ElementName=VersionText, Path=FontSize}" />
+	                            Visibility="{Binding IsCheckingUpdate, Converter={x:Static s:BoolToVisibilityConverter.InverseInstance}}">
+                            <ui:FontIcon Glyph="&#xE72C;" FontFamily="Segoe MDL2 Assets" />
                         </Button>
                         <ui:ProgressRing 
 	                        IsIndeterminate="True" IsEnabled="{Binding IsCheckingUpdate}"

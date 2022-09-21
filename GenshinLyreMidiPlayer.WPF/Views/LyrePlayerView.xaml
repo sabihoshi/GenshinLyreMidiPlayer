@@ -25,7 +25,7 @@
 
 		<modern:SimpleStackPanel Orientation="Horizontal" Grid.Row="0">
 			<Button Command="{s:Action OpenFile}" Background="Transparent">
-                <modern:FontIcon Glyph="&#xE8E5;"  />
+                <ui:FontIcon Glyph="&#xE8E5;" FontFamily="Segoe MDL2 Assets" />
 			</Button>
 			<TextBlock VerticalAlignment="Center" Text="{Binding Playlist.OpenedFile.Title, Mode=OneWay, FallbackValue=Open...}" />
 		</modern:SimpleStackPanel>
@@ -36,24 +36,25 @@
 			HorizontalAlignment="Center">
 
 			<Button s:View.ActionTarget="{Binding Playlist}" Command="{s:Action ToggleShuffle}">
-                <modern:FontIcon Glyph="&#xE14B;" Foreground="{Binding Playlist.ShuffleStateColor}" />
+                <ui:FontIcon Glyph="&#xE14B;" FontFamily="Segoe MDL2 Assets"
+                             Foreground="{Binding Playlist.ShuffleStateColor}" />
 			</Button>
 
 			<Button Command="{s:Action Previous}"
 			        IsHitTestVisible="{Binding CanHitPrevious}">
-                <modern:FontIcon Glyph="&#xE892;"  />
+                <ui:FontIcon Glyph="&#xE892;" FontFamily="Segoe MDL2 Assets" />
 			</Button>
 			<Button Command="{s:Action PlayPause}"
 			        IsHitTestVisible="{Binding CanHitPlayPause}">
-                <modern:FontIcon Glyph="{Binding PlayPauseIcon}"  />
+                <ui:FontIcon Glyph="{Binding PlayPauseIcon}" FontFamily="Segoe MDL2 Assets" />
 			</Button>
 			<Button Command="{s:Action Next}"
 			        IsHitTestVisible="{Binding CanHitNext}">
-                <modern:FontIcon Glyph="&#xE893;"  />
+                <ui:FontIcon Glyph="&#xE893;" FontFamily="Segoe MDL2 Assets" />
 			</Button>
 
 			<Button s:View.ActionTarget="{Binding Playlist}" Command="{s:Action ToggleLoop}">
-                <modern:FontIcon Glyph="{Binding Playlist.LoopStateString}"  />
+                <ui:FontIcon Glyph="{Binding Playlist.LoopStateString}" FontFamily="Segoe MDL2 Assets" />
 			</Button>
 		</modern:SimpleStackPanel>
 
@@ -120,7 +121,7 @@
 					SelectedItem="{Binding SelectedMidiInput}"
 					DisplayMemberPath="DeviceName" />
 				<Button Command="{s:Action RefreshDevices}">
-                    <modern:FontIcon Glyph="&#xE72C;"  />
+                    <ui:FontIcon Glyph="&#xE72C;" FontFamily="Segoe MDL2 Assets" />
 				</Button>
 			</modern:SimpleStackPanel>
 		</GroupBox>

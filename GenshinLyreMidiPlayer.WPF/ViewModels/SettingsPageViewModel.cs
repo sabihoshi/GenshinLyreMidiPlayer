@@ -323,7 +323,7 @@ public class SettingsPageViewModel : Screen
         {
             ApplicationTheme.Light => ThemeType.Light,
             ApplicationTheme.Dark  => ThemeType.Dark,
-            _                      => _theme.GetSystemTheme()
+            _                      => ThemeType.Dark
         });
 
         Settings.Modify(s => s.AppTheme = (int?) ThemeManager.Current.ApplicationTheme ?? -1);
