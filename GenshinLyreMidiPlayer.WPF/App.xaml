@@ -44,8 +44,8 @@
                     </Style>
                 </Style.Resources>
             </Style>
-
-            <Style TargetType="modern:NumberBox">
+            
+	        <Style TargetType="modern:NumberBox">
                 <Setter Property="Minimum" Value="0" />
                 <Setter Property="SpinButtonPlacementMode" Value="Compact" />
             </Style>

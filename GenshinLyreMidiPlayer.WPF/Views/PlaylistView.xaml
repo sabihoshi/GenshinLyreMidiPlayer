@@ -16,7 +16,7 @@
     xmlns:viewModels="clr-namespace:GenshinLyreMidiPlayer.WPF.ViewModels"
     xmlns:midi="clr-namespace:GenshinLyreMidiPlayer.Data.Midi;assembly=GenshinLyreMidiPlayer.Data"
 
-    d:DataContext="{d:DesignInstance viewModels:PlaylistViewModel}">
+    d:DataContext="{d:DesignInstance Type=viewModels:PlaylistViewModel}">
     <UserControl.Resources>
         <modernWpf:TrackGroupKeyConverter x:Key="TrackGroupKeyConverter" />
         <CollectionViewSource x:Key="Tracks" Source="{Binding FilteredTracks}">
@@ -39,11 +39,11 @@
                     <ColumnDefinition Width="*" />
                 </Grid.ColumnDefinitions>
 
-                <modern:FontIcon
+                <ui:FontIcon
                     Grid.Column="0" Grid.Row="0"
                     Grid.RowSpan="2" Margin="5"
                     VerticalAlignment="Center" HorizontalAlignment="Center"
-                    Glyph="&#xEC4F;" />
+                    Glyph="&#xEC4F;" FontFamily="Segoe MDL2 Assets" />
 
                 <TextBlock
                     Grid.Column="0" Grid.Row="0" Grid.RowSpan="2"
@@ -82,10 +82,10 @@
             </Grid.ColumnDefinitions>
 
             <Button Command="{s:Action OpenFile}" Background="Transparent">
-                <modern:FontIcon Glyph="&#xE8E5;" />
+                <ui:FontIcon Glyph="&#xE8E5;" FontFamily="Segoe MDL2 Assets" />
             </Button>
 
-            <TextBlock Grid.Column="1" Margin="10,0" VerticalAlignment="Center">
+	        <TextBlock Grid.Column="1" Margin="10,0" VerticalAlignment="Center">
                 Current song: <Run Text="{Binding OpenedFile.Title, Mode=OneWay, FallbackValue=Open...}" />
             </TextBlock>
 
@@ -124,10 +124,11 @@
             Grid.Row="2" Orientation="Horizontal"
             HorizontalAlignment="Center">
             <Button Command="{s:Action ToggleShuffle}">
-                <modern:FontIcon Glyph="&#xE14B;" Foreground="{Binding ShuffleStateColor}" />
+	            <ui:FontIcon Glyph="&#xE14B;" FontFamily="Segoe MDL2 Assets"
+	                         Foreground="{Binding Playlist.ShuffleStateColor}" />
             </Button>
             <Button Command="{s:Action ToggleLoop}">
-                <modern:FontIcon Glyph="{Binding LoopStateString}" />
+                <ui:FontIcon Glyph="{Binding LoopStateString}" FontFamily="Segoe MDL2 Assets" />
             </Button>
         </modern:SimpleStackPanel>
     </Grid>

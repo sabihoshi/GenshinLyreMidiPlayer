@@ -60,10 +60,14 @@ public class MainWindowViewModel : Conductor<IScreen>
 
     public void ToggleTheme()
     {
-        ThemeManager.Current.ApplicationTheme
-            = _theme.GetTheme() is ThemeType.Dark
-                ? ApplicationTheme.Light
-                : ApplicationTheme.Dark;
+        ThemeManager.Current.ApplicationTheme = _theme.GetTheme() switch
+        {
+            ThemeType.Unknown => ApplicationTheme.Dark,
+            ThemeType.Dark => ApplicationTheme.Light,
+            ThemeType.Light => ApplicationTheme.Dark,
+            ThemeType.HighContrast => ApplicationTheme.Dark,
+            _ => ApplicationTheme.Dark
+        };
 
         SettingsView.OnThemeChanged();
     }
@@ -87,7 +91,7 @@ public class MainWindowViewModel : Conductor<IScreen>
     protected override async void OnViewLoaded()
     {
         Navigation = ((MainWindowView) View).RootNavigation;
-        _theme.SetTheme(_theme.GetSystemTheme());
+        SettingsView.OnThemeChanged();
 
         if (!await SettingsView.TryGetLocationAsync()) _ = SettingsView.LocationMissing();
         if (SettingsView.AutoCheckUpdates)
