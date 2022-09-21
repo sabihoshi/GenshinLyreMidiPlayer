@@ -316,6 +316,13 @@ public class SettingsPageViewModel : Screen
         PlayTimerToken = null;
     }
 
+    public ThemeType GetSystemTheme()
+    {
+        var SystemThemeColor = new Windows.UI.ViewManagement.UISettings().GetColorValue(Windows.UI.ViewManagement.UIColorType.Background).ToString();
+        var SystemTheme = SystemThemeColor == "#FFFFFFFF" ? ThemeType.Light : ThemeType.Dark;
+        return SystemTheme;
+    }
+
     [UsedImplicitly]
     public void OnThemeChanged()
     {
@@ -323,7 +330,7 @@ public class SettingsPageViewModel : Screen
         {
             ApplicationTheme.Light => ThemeType.Light,
             ApplicationTheme.Dark  => ThemeType.Dark,
-            _                      => _theme.GetSystemTheme()
+            _                      => GetSystemTheme()
         });
 
         Settings.Modify(s => s.AppTheme = (int?) ThemeManager.Current.ApplicationTheme ?? -1);
@@ -348,8 +355,9 @@ public class SettingsPageViewModel : Screen
                 Title   = "Incorrect Location",
                 Content = "launcher.exe is not the game, please find GenshinImpact.exe",
 
-                CloseButtonText = "Ok"
+                CloseButtonText = "Ok",
             };
+            
 
             await dialog.ShowAsync();
             return false;

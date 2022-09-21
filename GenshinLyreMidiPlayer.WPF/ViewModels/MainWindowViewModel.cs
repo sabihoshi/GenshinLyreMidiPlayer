@@ -87,7 +87,13 @@ public class MainWindowViewModel : Conductor<IScreen>
     protected override async void OnViewLoaded()
     {
         Navigation = ((MainWindowView) View).RootNavigation;
-        _theme.SetTheme(_theme.GetSystemTheme());
+
+        _theme.SetTheme(ThemeManager.Current.ApplicationTheme switch
+        {
+            ApplicationTheme.Light => ThemeType.Light,
+            ApplicationTheme.Dark  => ThemeType.Dark,
+            _                      => SettingsView.GetSystemTheme()
+        });
 
         if (!await SettingsView.TryGetLocationAsync()) _ = SettingsView.LocationMissing();
         if (SettingsView.AutoCheckUpdates)
