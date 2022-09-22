@@ -319,20 +319,11 @@ public class SettingsPageViewModel : Screen
     [UsedImplicitly]
     public void OnThemeChanged()
     {
-        ThemeManager.Current.ApplicationTheme ??= _theme.GetSystemTheme() switch
-        {
-            ThemeType.Unknown      => ApplicationTheme.Light,
-            ThemeType.Dark         => ApplicationTheme.Dark,
-            ThemeType.Light        => ApplicationTheme.Light,
-            ThemeType.HighContrast => ApplicationTheme.Dark,
-            _                      => ApplicationTheme.Light
-        };
-        
         _theme.SetTheme(ThemeManager.Current.ApplicationTheme switch
         {
             ApplicationTheme.Light => ThemeType.Light,
             ApplicationTheme.Dark  => ThemeType.Dark,
-            _                      => ThemeType.Light
+            _                      => _theme.GetSystemTheme()
         });
 
         Settings.Modify(s => s.AppTheme = (int?) ThemeManager.Current.ApplicationTheme ?? -1);

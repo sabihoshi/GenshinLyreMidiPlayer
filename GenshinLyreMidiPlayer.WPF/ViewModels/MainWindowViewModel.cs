@@ -62,11 +62,11 @@ public class MainWindowViewModel : Conductor<IScreen>
     {
         ThemeManager.Current.ApplicationTheme = _theme.GetTheme() switch
         {
-            ThemeType.Unknown => ApplicationTheme.Dark,
-            ThemeType.Dark => ApplicationTheme.Light,
-            ThemeType.Light => ApplicationTheme.Dark,
+            ThemeType.Unknown      => ApplicationTheme.Dark,
+            ThemeType.Dark         => ApplicationTheme.Light,
+            ThemeType.Light        => ApplicationTheme.Dark,
             ThemeType.HighContrast => ApplicationTheme.Dark,
-            _ => ApplicationTheme.Dark
+            _                      => ApplicationTheme.Dark
         };
 
         SettingsView.OnThemeChanged();
