@@ -34,9 +34,9 @@ public class SettingsPageViewModel : Screen
 {
     public static readonly Dictionary<Transpose, string> TransposeNames = new()
     {
-        [Ignore] = "Ignore notes",
-        [Up]     = "Shift one semitone up",
-        [Down]   = "Shift one semitone down"
+        [Ignore] = "忽略注释",
+        [Up]     = "上移一个半音",
+        [Down]   = "下移一个半音"
     };
 
     private static readonly Settings Settings = Settings.Default;
@@ -183,7 +183,7 @@ public class SettingsPageViewModel : Screen
 
     public string Key => $"Key: {KeyOffsets[KeyOffset]}";
 
-    public string TimerText => CanChangeTime ? "Start" : "Stop";
+    public string TimerText => CanChangeTime ? "开始" : "停止";
 
     [UsedImplicitly] public string UpdateString { get; set; } = string.Empty;
 
@@ -227,19 +227,19 @@ public class SettingsPageViewModel : Screen
         if (IsCheckingUpdate)
             return;
 
-        UpdateString     = "Checking for updates...";
+        UpdateString     = "检查更新中...";
         IsCheckingUpdate = true;
 
         try
         {
             LatestVersion = await GetLatestVersion() ?? new GitVersion();
             UpdateString = LatestVersion.Version > ProgramVersion
-                ? "(Update available!)"
+                ? "(更新可用！)"
                 : string.Empty;
         }
         catch (Exception)
         {
-            UpdateString = "Failed to check updates";
+            UpdateString = "检查更新失败";
         }
         finally
         {
@@ -252,12 +252,12 @@ public class SettingsPageViewModel : Screen
     {
         var dialog = new ContentDialog
         {
-            Title   = "Error",
-            Content = "Could not find Game's Location, please find GenshinImpact.exe or YuanShen.exe",
+            Title   = "错误",
+            Content = "找不到游戏位置，请查找 GenshinImpact.exe 或 YuanShen.exe",
 
-            PrimaryButtonText   = "Find Manually...",
-            SecondaryButtonText = "Ignore (Notes might not play)",
-            CloseButtonText     = "Exit"
+            PrimaryButtonText   = "手动查找...",
+            SecondaryButtonText = "忽略（音符可能无法播放）",
+            CloseButtonText     = "退出"
         };
 
         var result = await dialog.ShowAsync();
@@ -345,8 +345,8 @@ public class SettingsPageViewModel : Screen
         {
             var dialog = new ContentDialog
             {
-                Title   = "Incorrect Location",
-                Content = "launcher.exe is not the game, please find GenshinImpact.exe",
+                Title   = "位置不正确",
+                Content = "launcher.exe 不是游戏，请找GenshinImpact.exe 或 yuanshen.exe",
 
                 CloseButtonText = "Ok"
             };

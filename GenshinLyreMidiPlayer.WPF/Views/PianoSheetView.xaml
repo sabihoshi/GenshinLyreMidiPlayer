@@ -1,4 +1,5 @@
-<UserControl
+<?xml version="1.0" encoding="GB2312"?>
+    <UserControl
     x:Class="GenshinLyreMidiPlayer.WPF.Views.PianoSheetView"
     xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
     xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
@@ -6,7 +7,6 @@
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
     xmlns:d="http://schemas.microsoft.com/expression/blend/2008" mc:Ignorable="d"
 
-    xmlns:ui="http://schemas.lepo.co/wpfui/2022/xaml"
     xmlns:modern="http://schemas.modernwpf.com/2019"
     xmlns:s="https://github.com/canton7/Stylet"
 
@@ -29,16 +29,16 @@
 
         <modern:SimpleStackPanel Grid.Row="0">
             <TextBlock VerticalAlignment="Center">
-                Current song:
-                <Run Text="{Binding PlaylistView.OpenedFile.Title, Mode=OneWay, FallbackValue=Nothing}" />
+                当前歌曲：
+                <Run Text="{Binding PlaylistView.OpenedFile.Title, Mode=OneWay, FallbackValue=无}" />
             </TextBlock>
 
             <modern:SimpleStackPanel Orientation="Horizontal">
-                <GroupBox Header="Delimiter">
+                <GroupBox Header="定界符">
                     <TextBox Text="{Binding Delimiter, UpdateSourceTrigger=PropertyChanged}" />
                 </GroupBox>
 
-                <GroupBox Header="Layout">
+                <GroupBox Header="布局">
                     <ComboBox
                         ItemsSource="{x:Static core:Keyboard.LayoutNames}"
                         SelectedItem="{Binding SelectedLayout}"
@@ -48,11 +48,11 @@
             </modern:SimpleStackPanel>
 
             <modern:SimpleStackPanel Orientation="Horizontal">
-                <GroupBox Header="Split Size">
+                <GroupBox Header="拆分大小">
                     <modern:SimpleStackPanel Orientation="Horizontal">
                         <modern:NumberBox Header="Bars" Value="{Binding Bars}" />
-                        <modern:NumberBox Header="Beats" Value="{Binding Beats}" />
-                        <modern:NumberBox Header="Shorten every" ToolTip="This will divide the delimiter by this number"
+                        <modern:NumberBox Header="节拍" Value="{Binding Beats}" />
+                        <modern:NumberBox Header="缩短" ToolTip="这会将分隔符除以这个数字"
                                       Minimum="1" Value="{Binding Shorten}" />
                     </modern:SimpleStackPanel>
                 </GroupBox>
@@ -62,8 +62,8 @@
         <TextBox Grid.Row="1" Text="{Binding Result, Mode=OneWay}" IsReadOnly="True" Margin="0,10" />
 
         <modern:SimpleStackPanel Grid.Row="2" Orientation="Horizontal">
-            <Button Content="Copy" />
-            <Button Content="Refresh" Command="{s:Action Update}" />
+            <Button Content="复制" />
+            <Button Content="刷新" Command="{s:Action Update}" />
         </modern:SimpleStackPanel>
     </Grid>
 </UserControl>

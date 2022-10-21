@@ -1,4 +1,5 @@
-<ui:UiWindow
+<?xml version="1.0" encoding="GB2312"?>
+    <ui:UiWindow
 	x:Class="GenshinLyreMidiPlayer.WPF.Views.MainWindowView"
 	xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
 	xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
@@ -34,7 +35,7 @@
 					    New update!
 				    </ui:Hyperlink>
                     <ui:AutoSuggestBox 
-	                    MinWidth="200" MaxWidth="250" PlaceholderText="Search..."
+	                    MinWidth="200" MaxWidth="250" PlaceholderText="搜索..."
 	                    TextChanged="{s:Action SearchSong}" ItemsSource="{Binding PlaylistView.TrackTitles}"
                         Text="{Binding PlaylistView.FilterText}" />
                 </modern:SimpleStackPanel>
@@ -44,8 +45,10 @@
 				<ui:NotifyIcon FocusOnLeftClick="True" MenuOnRightClick="True" TooltipText="MIDI Player">
 					<ui:NotifyIcon.Menu>
                         <ContextMenu>
+                            <!-- ReSharper disable Xaml.RedundantResource -->
                             <ui:MenuItem Command="{s:Action PlayPause, Target=PlaylistView}" Header="Play" SymbolIcon="Play16" />
-							<ui:MenuItem Command="{s:Action Next}" Header="Next" SymbolIcon="Next16" />
+                            <ui:MenuItem Command="{s:Action Next}" Header="Next" SymbolIcon="Next16" />
+                            <!-- ReSharper restore Xaml.RedundantResource -->
 						</ContextMenu>
 					</ui:NotifyIcon.Menu>
 				</ui:NotifyIcon>
@@ -63,20 +66,20 @@
 				SelectedPageIndex="0" Navigated="{s:Action Navigate}"
 				Frame="{Binding ElementName=RootFrame, Mode=OneWay}">
 				<ui:NavigationStore.Items>
-					<ui:NavigationItem Content="Player" Icon="Play12"
+					<ui:NavigationItem Content="播放器" Icon="Play12"
 					                   PageType="{x:Type pages:LyrePlayerView}"
 					                   Tag="{Binding PlayerView}" />
 					<ui:NavigationSeparator />
-					<ui:NavigationItem Content="Playlist" Icon="TextBulletListSquareSearch20"
+					<ui:NavigationItem Content="播放列表" Icon="TextBulletListSquareSearch20"
 					                   PageType="{x:Type pages:LyrePlayerView}"
 					                   Tag="{Binding PlaylistView}" />
-					<ui:NavigationItem Content="Sheet" Icon="BookOpenMicrophone20"
+					<ui:NavigationItem Content="乐谱" Icon="BookOpenMicrophone20"
 					                   PageType="{x:Type pages:LyrePlayerView}"
 					                   Tag="{Binding PianoSheetView}" />
 				</ui:NavigationStore.Items>
 				<ui:NavigationStore.Footer>
-					<ui:NavigationItem Content="Theme" Icon="DarkTheme24" Command="{s:Action ToggleTheme}" />
-					<ui:NavigationItem Content="Settings" Icon="Settings16"
+					<ui:NavigationItem Content="主题" Icon="DarkTheme24" Command="{s:Action ToggleTheme}" />
+					<ui:NavigationItem Content="设置" Icon="Settings16"
 					                   PageType="{x:Type pages:SettingsPageView}"
 					                   Tag="{Binding SettingsView}" />
 				</ui:NavigationStore.Footer>
@@ -94,8 +97,8 @@
 					<ui:Breadcrumb
 						Grid.Row="0" Margin="18"
 						HorizontalAlignment="Left" VerticalAlignment="Top"
-						FontSize="24" Navigation="{Binding ElementName=RootNavigation, Mode=OneWay}" />
-					<Frame x:Name="RootFrame" Visibility="Hidden" />
+						FontSize="24" Navigation="{Binding ElementName=RootNavigation, Mode=OneWay}" Current="播放" />
+					<Frame Grid.Row="0" x:Name="RootFrame" Visibility="Hidden" />
 					<modernWpf:AnimatedContentControl Grid.Row="1" Margin="10" s:View.Model="{Binding ActiveItem}" />
 				</Grid>
 			</Border>

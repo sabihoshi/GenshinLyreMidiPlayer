@@ -6,11 +6,11 @@ public static class TransitionCollection
 {
     public static List<CaptionedObject<Transition>> Transitions = new()
     {
-        new(new EntranceTransition(), "Entrance"),
-        new(new DrillInTransition(), "Drill in"),
-        new(new SlideTransition(Direction.FromLeft), "Slide from Left"),
-        new(new SlideTransition(Direction.FromRight), "Slide from Right"),
-        new(new SlideTransition(Direction.FromBottom), "Slide from Bottom"),
-        new(new SuppressTransition(), "Suppress")
+        new(new EntranceTransition(), "输入"),
+        new(new DrillInTransition(), "键入"),
+        new(new SlideTransition(Direction.FromLeft), "从左侧滑动"),
+        new(new SlideTransition(Direction.FromRight), "从右侧滑动"),
+        new(new SlideTransition(Direction.FromBottom), "从底部滑动"),
+        new(new SuppressTransition(), "平")
     };
 }

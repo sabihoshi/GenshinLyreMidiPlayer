@@ -30,14 +30,14 @@ public static class Keyboard
 
     public static readonly Dictionary<Instrument, string> InstrumentNames = new()
     {
-        [Instrument.WindsongLyre] = "Windsong Lyre",
-        [Instrument.FloralZither] = "Floral Zither",
-        [Instrument.VintageLyre]  = "Vintage Lyre"
+        [Instrument.WindsongLyre] = "风物之诗琴",
+        [Instrument.FloralZither] = "镜花之琴",
+        [Instrument.VintageLyre]  = "老旧的诗琴"
     };
 
     public static readonly Dictionary<Layout, string> LayoutNames = new()
     {
-        [Layout.QWERTY]      = "QWERTY",
+        [Layout.QWERTY]      = "QWERTY标准键盘",
         [Layout.QWERTZ]      = "QWERTZ",
         [Layout.AZERTY]      = "AZERTY",
         [Layout.DVORAK]      = "DVORAK",

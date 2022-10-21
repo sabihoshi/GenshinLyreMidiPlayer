@@ -4,7 +4,7 @@ namespace GenshinLyreMidiPlayer.Data.Entities;
 
 public enum Transpose
 {
-    [Description("Ignore missing notes")] Ignore,
-    [Description("Transpose up")] Up,
-    [Description("Transpose down")] Down
+    [Description("忽略遗漏的记录")] Ignore,
+    [Description("向上移调")] Up,
+    [Description("向下移调")] Down
 }
