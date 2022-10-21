@@ -125,7 +125,7 @@
             HorizontalAlignment="Center">
             <Button Command="{s:Action ToggleShuffle}">
 	            <ui:FontIcon Glyph="&#xE14B;" FontFamily="Segoe MDL2 Assets"
-	                         Foreground="{Binding Playlist.ShuffleStateColor}" />
+	                         Foreground="{Binding ShuffleStateColor}" />
             </Button>
             <Button Command="{s:Action ToggleLoop}">
                 <ui:FontIcon Glyph="{Binding LoopStateString}" FontFamily="Segoe MDL2 Assets" />

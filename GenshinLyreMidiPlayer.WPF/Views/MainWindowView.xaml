@@ -44,8 +44,10 @@
 				<ui:NotifyIcon FocusOnLeftClick="True" MenuOnRightClick="True" TooltipText="MIDI Player">
 					<ui:NotifyIcon.Menu>
                         <ContextMenu>
+                            <!-- ReSharper disable Xaml.RedundantResource -->
                             <ui:MenuItem Command="{s:Action PlayPause, Target=PlaylistView}" Header="Play" SymbolIcon="Play16" />
-							<ui:MenuItem Command="{s:Action Next}" Header="Next" SymbolIcon="Next16" />
+                            <ui:MenuItem Command="{s:Action Next}" Header="Next" SymbolIcon="Next16" />
+                            <!-- ReSharper restore Xaml.RedundantResource -->
 						</ContextMenu>
 					</ui:NotifyIcon.Menu>
 				</ui:NotifyIcon>
@@ -95,7 +97,7 @@
 						Grid.Row="0" Margin="18"
 						HorizontalAlignment="Left" VerticalAlignment="Top"
 						FontSize="24" Navigation="{Binding ElementName=RootNavigation, Mode=OneWay}" />
-					<Frame x:Name="RootFrame" Visibility="Hidden" />
+					<Frame Grid.Row="0" x:Name="RootFrame" Visibility="Hidden" />
 					<modernWpf:AnimatedContentControl Grid.Row="1" Margin="10" s:View.Model="{Binding ActiveItem}" />
 				</Grid>
 			</Border>
