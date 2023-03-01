@@ -2,6 +2,8 @@
 
 A MIDI to key player for Genshin Impact's Windsong Lyre, Floral Zither, and Vintage Lyre made using C# and WPF using Windows Mica design. If you enjoyed this project, consider [contributing](#contributing) or 🌟 starring the repository. Thank you~
 
+ [简体中文](README-CN.md) 
+ 
 ## **[Download latest version][latest]** [![GitHub all releases](https://img.shields.io/github/downloads/sabihoshi/GenshinLyreMidiPlayer/total?style=social)][latest] [![GitHub release (latest by date)](https://img.shields.io/github/v/release/sabihoshi/GenshinLyreMidiPlayer)][latest]
 
 ![2022-09-14_04-24-19](https://user-images.githubusercontent.com/25006819/190002173-fa8e2b0d-8817-4980-81f1-fb491c584310.png)

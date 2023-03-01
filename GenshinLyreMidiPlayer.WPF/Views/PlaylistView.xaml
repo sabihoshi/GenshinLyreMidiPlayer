@@ -1,4 +1,5 @@
-<UserControl
+<?xml version="1.0" encoding="GB2312"?>
+    <UserControl
     x:Class="GenshinLyreMidiPlayer.WPF.Views.PlaylistView"
     xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
     xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
@@ -86,14 +87,14 @@
             </Button>
 
 	        <TextBlock Grid.Column="1" Margin="10,0" VerticalAlignment="Center">
-                Current song: <Run Text="{Binding OpenedFile.Title, Mode=OneWay, FallbackValue=Open...}" />
+                Current song: <Run Text="{Binding OpenedFile.Title, Mode=OneWay, FallbackValue=打开...}" />
             </TextBlock>
 
             <modern:SimpleStackPanel
                 Grid.Column="2" Orientation="Horizontal"
                 HorizontalAlignment="Center">
-                <Button Command="{s:Action RemoveTrack}" Content="Remove" />
-                <Button Command="{s:Action ClearPlaylist}" Content="Clear Playlist" />
+                <Button Command="{s:Action RemoveTrack}" Content="移除" />
+                <Button Command="{s:Action ClearPlaylist}" Content="清空列表" />
             </modern:SimpleStackPanel>
         </Grid>
 

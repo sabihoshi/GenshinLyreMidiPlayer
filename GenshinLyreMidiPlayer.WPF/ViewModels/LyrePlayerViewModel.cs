@@ -70,7 +70,7 @@ public class LyrePlayerViewModel : Screen,
         }
         catch (ArgumentException e)
         {
-            new ErrorContentDialog(e, closeText: "Ignore").ShowAsync();
+            new ErrorContentDialog(e, closeText: "忽略").ShowAsync();
 
             SettingsPage.CanUseSpeakers = false;
             Settings.UseSpeakers        = false;
@@ -79,7 +79,7 @@ public class LyrePlayerViewModel : Screen,
 
     public BindableCollection<MidiInput> MidiInputs { get; } = new()
     {
-        new("None")
+        new("无")
     };
 
     public BindableCollection<MidiTrack> MidiTracks { get; } = new();
@@ -251,7 +251,7 @@ public class LyrePlayerViewModel : Screen,
         _inputDevice?.Dispose();
 
         if (SelectedMidiInput?.DeviceName is not null
-            && SelectedMidiInput.DeviceName != "None")
+            && SelectedMidiInput.DeviceName != "无")
         {
             _inputDevice = InputDevice.GetByName(SelectedMidiInput.DeviceName);
 
@@ -307,7 +307,7 @@ public class LyrePlayerViewModel : Screen,
     public void RefreshDevices()
     {
         MidiInputs.Clear();
-        MidiInputs.Add(new("None"));
+        MidiInputs.Add(new("无"));
 
         foreach (var device in InputDevice.GetAll())
         {
@@ -399,10 +399,10 @@ public class LyrePlayerViewModel : Screen,
                 var options = new Enum[] { Transpose.Up, Transpose.Down };
                 var exceptionDialog = new ErrorContentDialog(
                     new MissingNotesException(
-                        "Some notes cannot be played by this instrument, and may play incorrectly. " +
-                        "This can be solved by snapping to the nearest semitone. " +
-                        "You can choose to shift the notes up or down, or ignore the missing notes."),
-                    options, "Ignore");
+                        "本乐器无法演奏某些音符，并且可能无法正确演奏。 " +
+                        "这可以通过捕捉到最近的半音来解决。 " +
+                        "您可以选择向上或向下移动音符，或忽略丢失的音符。"),
+                    options, "忽略");
 
                 var result = await exceptionDialog.ShowAsync();
 
