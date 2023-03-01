@@ -1,5 +1,4 @@
 <?xml version="1.0" encoding="gbk"?>
-
 <UserControl
 	x:Class="GenshinLyreMidiPlayer.WPF.Views.LyrePlayerView"
 	xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
@@ -29,7 +28,7 @@
 			<Button Command="{s:Action OpenFile}" Background="Transparent">
                 <ui:FontIcon Glyph="&#xE8E5;" FontFamily="Segoe MDL2 Assets" />
 			</Button>
-			<TextBlock VerticalAlignment="Center" Text="{Binding Playlist.OpenedFile.Title, Mode=OneWay, FallbackValue=open...}" />
+			<TextBlock VerticalAlignment="Center" Text="{Binding Playlist.OpenedFile.Title, Mode=OneWay, FallbackValue=打开...}" />
 		</modern:SimpleStackPanel>
 
 		<modern:SimpleStackPanel
@@ -81,7 +80,7 @@
 			           Text="{Binding MaximumTime, StringFormat=m\\:ss}" />
 		</Grid>
 
-		<GroupBox Grid.Row="3" Header="MIDI音轨">
+		<GroupBox Grid.Row="3" Header="MIDI 音轨">
 			<Grid>
 				<Grid.RowDefinitions>
 					<RowDefinition Height="Auto" />
