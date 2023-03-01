@@ -97,8 +97,8 @@
 					<ui:Breadcrumb
 						Grid.Row="0" Margin="18"
 						HorizontalAlignment="Left" VerticalAlignment="Top"
-						FontSize="24" Navigation="{Binding ElementName=RootNavigation, Mode=OneWay}" Current="²¥·Å" />
-					<Frame Grid.Row="0" x:Name="RootFrame" Visibility="Hidden" />
+						FontSize="24" Navigation="{Binding ElementName=RootNavigation, Mode=OneWay}" />
+					<Frame x:Name="RootFrame" Visibility="Hidden" />
 					<modernWpf:AnimatedContentControl Grid.Row="1" Margin="10" s:View.Model="{Binding ActiveItem}" />
 				</Grid>
 			</Border>
