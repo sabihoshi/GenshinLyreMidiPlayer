@@ -1,4 +1,4 @@
-<?xml version="1.0" encoding="GB2312"?>
+<?xml version="1.0" encoding="gbk"?>
     <ui:UiWindow
 	x:Class="GenshinLyreMidiPlayer.WPF.Views.MainWindowView"
 	xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
