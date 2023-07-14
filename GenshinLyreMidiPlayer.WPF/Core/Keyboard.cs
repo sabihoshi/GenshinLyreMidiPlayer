@@ -19,7 +19,7 @@ public static class Keyboard
 
     public enum Layout
     {
-        QWERTY,
+        123456,
         QWERTZ,
         AZERTY,
         DVORAK,
@@ -37,7 +37,7 @@ public static class Keyboard
 
     public static readonly Dictionary<Layout, string> LayoutNames = new()
     {
-        [Layout.QWERTY]      = "QWERTY",
+        [Layout.QWERTY]      = "123456",
         [Layout.QWERTZ]      = "QWERTZ",
         [Layout.AZERTY]      = "AZERTY",
         [Layout.DVORAK]      = "DVORAK",
@@ -181,16 +181,8 @@ public static class Keyboard
         VirtualKeyCode.VK_I
     };
 
-    private static readonly IReadOnlyList<VirtualKeyCode> QWERTY = new List<VirtualKeyCode>
+    private static readonly IReadOnlyList<VirtualKeyCode> 123456 = new List<VirtualKeyCode>
     {
-        VirtualKeyCode.VK_Z,
-        VirtualKeyCode.VK_X,
-        VirtualKeyCode.VK_C,
-        VirtualKeyCode.VK_V,
-        VirtualKeyCode.VK_B,
-        VirtualKeyCode.VK_N,
-        VirtualKeyCode.VK_M,
-
         VirtualKeyCode.VK_A,
         VirtualKeyCode.VK_S,
         VirtualKeyCode.VK_D,
@@ -205,7 +197,15 @@ public static class Keyboard
         VirtualKeyCode.VK_R,
         VirtualKeyCode.VK_T,
         VirtualKeyCode.VK_Y,
-        VirtualKeyCode.VK_U
+        VirtualKeyCode.VK_U,
+
+        VirtualKeyCode.VK_1,
+        VirtualKeyCode.VK_2,
+        VirtualKeyCode.VK_3,
+        VirtualKeyCode.VK_4,
+        VirtualKeyCode.VK_5,
+        VirtualKeyCode.VK_6,
+        VirtualKeyCode.VK_7
     };
 
     private static readonly IReadOnlyList<VirtualKeyCode> QWERTZ = new List<VirtualKeyCode>
@@ -291,7 +291,7 @@ public static class Keyboard
 
     public static IEnumerable<VirtualKeyCode> GetLayout(Layout layout) => layout switch
     {
-        Layout.QWERTY      => QWERTY,
+        Layout.123456      => 123456,
         Layout.QWERTZ      => QWERTZ,
         Layout.AZERTY      => AZERTY,
         Layout.DVORAK      => DVORAK,
